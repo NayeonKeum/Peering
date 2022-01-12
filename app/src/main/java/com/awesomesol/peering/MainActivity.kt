@@ -18,6 +18,7 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
 
         binding.tvMessage.setText("안녕")
+        //sdlfjsdlkfslkdjf
 
     }
 
