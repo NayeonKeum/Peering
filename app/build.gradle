@@ -27,13 +27,14 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
 }
 
@@ -51,6 +52,14 @@ dependencies {
 
     // BottomNavigation Animation
     implementation 'nl.joery.animatedbottombar:library:1.0.9'
+
+    // Kakao
+    implementation "com.kakao.sdk:v2-user:2.3.0" // 카카오 로그인
+    implementation "com.kakao.sdk:v2-talk:2.3.0" // 친구, 메시지(카카오톡)
+    implementation "com.kakao.sdk:v2-story:2.3.0" // 카카오스토리
+    implementation "com.kakao.sdk:v2-link:2.3.0" // 메시지(카카오링크)
+    implementation "com.kakao.sdk:v2-navi:2.3.0" // 카카오내비
+    implementation 'com.kakao.sdk:usermgmt:1.27.0' // 카카오 로그인 버튼 만들 때 사용
 
 
 

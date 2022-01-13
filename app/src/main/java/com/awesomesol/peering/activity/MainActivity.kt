@@ -3,6 +3,7 @@ package com.awesomesol.peering.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarFragment
 import com.awesomesol.peering.character.CharacterFragment
@@ -10,6 +11,9 @@ import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.feed.FeedFragment
 import com.awesomesol.peering.friend.FriendFragment
 import nl.joery.animatedbottombar.AnimatedBottomBar
+import com.kakao.sdk.common.util.Utility
+import android.app.Application
+import com.kakao.auth.KakaoSDK
 
 class MainActivity : AppCompatActivity() {
 
@@ -66,7 +70,6 @@ class MainActivity : AppCompatActivity() {
         val calendarFragment = CalendarFragment()
         supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
                 .commit()
-
 
     }
 
