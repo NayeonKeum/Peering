@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity() {
     private var mBinding: ActivityLoginBinding? = null
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
-    var callback = SessionCallback()
+    private lateinit var callback: SessionCallback
 
 
     override fun onCreate(savedInstanceState: Bundle?)
@@ -106,8 +106,13 @@ class LoginActivity : AppCompatActivity() {
                     Log.e("카카오 로그인", "결과 : $result")
                     Log.e("카카오 로그인", "아이디 : ${result!!.id}")
                     Log.e("카카오 로그인", "이메일 : ${result.kakaoAccount.email}")
-                    Log.e("카카오 로그인", "프로필 이미지 : ${result.profileImagePath}")
+                    Log.e("카카오 로그인", "프로필 이미지 : ${result.kakaoAccount.profile.profileImageUrl}")
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    intent.putExtra("id", result.id)
+                    intent.putExtra("email", result!!.kakaoAccount.email)
+                    intent.putExtra("nickname", result!!.kakaoAccount.profile.nickname)
+                    intent.putExtra("profileImagePath", result.kakaoAccount.profile.profileImageUrl.toString())
+
                     startActivity(intent)
                     finish()
                 }
