@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/action_home"
+        android:enabled="true"
+        android:icon="@drawable/bottom_home"
+        android:title="캘린더" />
+    <item
+        android:id="@+id/action_license_info"
+        android:enabled="true"
+        android:icon="@drawable/bottom_home"
+        android:title="피드" />
+    <item
+        android:id="@+id/action_community"
+        android:enabled="true"
+        android:icon="@drawable/bottom_home"
+        android:title="친구" />
+    <item
+        android:id="@+id/action_my_page"
+        android:enabled="true"
+        android:icon="@drawable/bottom_home"
+        android:title="캐릭터" />
+</menu>
