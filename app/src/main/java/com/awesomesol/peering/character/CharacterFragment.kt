@@ -1,33 +1,43 @@
 package com.awesomesol.peering.character
 
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.TextView
 import com.awesomesol.peering.R
+import com.bumptech.glide.Glide
+import com.kakao.sdk.user.UserApiClient
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CharacterFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CharacterFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+
+    lateinit var id:String
+    lateinit var email:String
+    lateinit var nickname:String
+    lateinit var profileImagePath: String
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
+            id = it.getString("id").toString()
+            email = it.getString("email").toString()
+            nickname = it.getString("nickname").toString()
+            profileImagePath = it.getString("profileImagePath").toString()
         }
+
+        Log.e("카카오 캐릭", id)
+        Log.e("카카오 캐릭", email)
+        Log.e("카카오 캐릭", nickname)
+        Log.e("카카오 캐릭", profileImagePath)
+
+
     }
 
     override fun onCreateView(
@@ -35,26 +45,19 @@ class CharacterFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_character, container, false)
+        var viewFrag=inflater.inflate(R.layout.fragment_character, container, false)
+        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.setText(nickname)
+        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_email)?.setText(email)
+
+        activity?.let {
+            viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)?.let { it1 ->
+                Glide.with(it)
+                    .load(profileImagePath)
+                    .into(it1)
+            }
+        }
+
+        return viewFrag
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CharacterFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CharacterFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
-    }
 }

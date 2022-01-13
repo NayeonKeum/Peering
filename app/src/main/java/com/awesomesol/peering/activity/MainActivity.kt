@@ -13,6 +13,7 @@ import com.awesomesol.peering.friend.FriendFragment
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import com.kakao.sdk.common.util.Utility
 import android.app.Application
+import android.net.Uri
 import com.kakao.auth.KakaoSDK
 
 class MainActivity : AppCompatActivity() {
@@ -22,6 +23,12 @@ class MainActivity : AppCompatActivity() {
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
 
+    lateinit var id:String
+    lateinit var email:String
+    lateinit var nickname:String
+    lateinit var profileImagePath:String
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,6 +37,17 @@ class MainActivity : AppCompatActivity() {
         // 바인딩
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        id= intent.getStringExtra("id").toString()
+        email=intent.getStringExtra("email").toString()
+        nickname=intent.getStringExtra("nickname").toString()
+        profileImagePath = intent.getStringExtra("profileImagePath").toString()
+
+        Log.e("카카오 메인", id)
+        Log.e("카카오 메인", email)
+        Log.e("카카오 메인", nickname)
+        Log.e("카카오 메인", profileImagePath)
+
 
         // Bottom Navigation
         binding.bottomNavigation.setOnTabSelectListener(object :
@@ -60,6 +78,12 @@ class MainActivity : AppCompatActivity() {
                     }
                     3 -> {
                         val characterFragment = CharacterFragment()
+                        val userBundle = Bundle()
+                        userBundle.putString("id", id)
+                        userBundle.putString("email", email)
+                        userBundle.putString("nickname", nickname)
+                        userBundle.putString("profileImagePath", profileImagePath)
+                        characterFragment.arguments =userBundle
                         supportFragmentManager.beginTransaction()
                                 .replace(R.id.main_screen_panel, characterFragment).commit()
                     }
@@ -79,4 +103,5 @@ class MainActivity : AppCompatActivity() {
         mBinding = null
         super.onDestroy()
     }
+
 }
