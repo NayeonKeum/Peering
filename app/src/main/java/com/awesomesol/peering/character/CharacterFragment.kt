@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.net.toUri
 import com.awesomesol.peering.R
 import com.bumptech.glide.Glide
 import com.kakao.sdk.user.UserApiClient
@@ -38,6 +39,7 @@ class CharacterFragment : Fragment() {
         Log.e("카카오 캐릭", profileImagePath)
 
 
+
     }
 
     override fun onCreateView(
@@ -46,15 +48,13 @@ class CharacterFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         var viewFrag=inflater.inflate(R.layout.fragment_character, container, false)
-        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.setText(nickname)
-        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_email)?.setText(email)
+        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.text=nickname
+        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_email)?.text=email
 
-        activity?.let {
-            viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)?.let { it1 ->
-                Glide.with(it)
-                    .load(profileImagePath)
-                    .into(it1)
-            }
+        viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)?.let {
+            Glide.with(viewFrag)
+                .load(profileImagePath)
+                .into(it)
         }
 
         return viewFrag

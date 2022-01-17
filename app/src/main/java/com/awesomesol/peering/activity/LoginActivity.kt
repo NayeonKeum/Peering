@@ -123,9 +123,9 @@ class LoginActivity : AppCompatActivity() {
 
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
                     intent.putExtra("id", uid)
-                    intent.putExtra("email", nickName)
-                    intent.putExtra("nickname", profileUrl)
-                    intent.putExtra("profileImagePath", email)
+                    intent.putExtra("email", email)
+                    intent.putExtra("nickname", nickName)
+                    intent.putExtra("profileImagePath", profileUrl)
 
                     val user= UserInfo(uid, nickName, profileUrl, email)
 
