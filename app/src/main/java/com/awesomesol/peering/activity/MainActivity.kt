@@ -15,9 +15,12 @@ import com.awesomesol.peering.friend.FriendFragment
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import com.awesomesol.peering.calendar.CommentInfo
 import com.awesomesol.peering.calendar.PostInfo
+import com.awesomesol.peering.character.UserInfo
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.user.UserApiClient
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
@@ -49,15 +52,22 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        uid= intent.getStringExtra("id").toString()
-        email=intent.getStringExtra("email").toString()
-        nickname=intent.getStringExtra("nickname").toString()
-        profileImagePath = intent.getStringExtra("profileImagePath").toString()
 
-        Log.e(TAG, uid)
-        Log.e(TAG, email)
-        Log.e(TAG, nickname)
-        Log.e(TAG, profileImagePath)
+        UserApiClient.instance.me { user, error ->
+            uid = user?.id.toString()
+            nickname = user?.kakaoAccount?.profile?.nickname.toString()
+            profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
+            email = user?.kakaoAccount?.email.toString()
+
+
+            val user= UserInfo(uid, nickname, profileImagePath, email)
+
+            fs.collection("users").document(uid).set(user)
+                .addOnSuccessListener { Log.d(TAG, "fs 에 유저 정보 저장 쨘") }
+                .addOnFailureListener{e-> Log.d(TAG, "에러 났음 쨘", e)}
+        }
+
+
 
 
         /* 여기는 전부 firestore 사용 예시~ */

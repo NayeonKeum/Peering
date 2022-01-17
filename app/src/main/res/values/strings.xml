@@ -1,5 +1,4 @@
 <resources>
     <string name="app_name">Peering</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="kakao_app_key">be78d09b4140cf769f40fba0f8cab07f</string>
 </resources>
