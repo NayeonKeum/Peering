@@ -1,11 +1,14 @@
 package com.awesomesol.peering.calendar
 
+import android.net.Uri
+import java.time.LocalDate
 import java.time.LocalDateTime
 
 data class PostInfo(
-    val pid:String,
+    val pid:String, // pk
     val uid:String,
-    val time: LocalDateTime,
     val title:String,
-    val content:ContentInfo
+    val calDate: String,
+    val contentText:String,
+    //val contentPhoto: Uri,
     )

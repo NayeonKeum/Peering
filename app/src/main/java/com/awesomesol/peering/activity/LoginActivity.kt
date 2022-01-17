@@ -6,8 +6,11 @@ import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
 import com.awesomesol.peering.R
+import com.awesomesol.peering.character.UserInfo
 import com.awesomesol.peering.databinding.ActivityLoginBinding
 import com.awesomesol.peering.databinding.ActivityMainBinding
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 import com.kakao.auth.ApiErrorCode
 import com.kakao.auth.ISessionCallback
@@ -27,7 +30,10 @@ class LoginActivity : AppCompatActivity() {
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
     private lateinit var callback: SessionCallback
+    val TAG="로그인"
 
+
+    val fs= Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -49,6 +55,9 @@ class LoginActivity : AppCompatActivity() {
             Session.getCurrentSession().addCallback(callback)
             Session.getCurrentSession().checkAndImplicitOpen()
         }
+
+
+
 
 
     }
@@ -107,11 +116,22 @@ class LoginActivity : AppCompatActivity() {
                     Log.e("카카오 로그인", "아이디 : ${result!!.id}")
                     Log.e("카카오 로그인", "이메일 : ${result.kakaoAccount.email}")
                     Log.e("카카오 로그인", "프로필 이미지 : ${result.kakaoAccount.profile.profileImageUrl}")
+                    val uid=result!!.id.toString()
+                    val nickName=result!!.kakaoAccount.profile.nickname
+                    val profileUrl=result.kakaoAccount.profile.profileImageUrl.toString()
+                    val email = result.kakaoAccount.email
+
                     val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    intent.putExtra("id", result.id)
-                    intent.putExtra("email", result!!.kakaoAccount.email)
-                    intent.putExtra("nickname", result!!.kakaoAccount.profile.nickname)
-                    intent.putExtra("profileImagePath", result.kakaoAccount.profile.profileImageUrl.toString())
+                    intent.putExtra("id", uid)
+                    intent.putExtra("email", nickName)
+                    intent.putExtra("nickname", profileUrl)
+                    intent.putExtra("profileImagePath", email)
+
+                    val user= UserInfo(uid, nickName, profileUrl, email)
+
+                    fs.collection("users").document(result.id.toString()).set(user)
+                        .addOnSuccessListener { Log.d(TAG, "fs 에 유저 정보 저장 쨘") }
+                        .addOnFailureListener{e-> Log.d(TAG, "에러 났음 쨘", e)}
 
                     startActivity(intent)
                     finish()
