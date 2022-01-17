@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "109583493929",
+    "firebase_url": "https://peering-58c65-default-rtdb.firebaseio.com",
+    "project_id": "peering-58c65",
+    "storage_bucket": "peering-58c65.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:109583493929:android:444a52eba3f3b39f476538",
+        "android_client_info": {
+          "package_name": "com.awesomesol.peering"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "109583493929-mg64bq1t56odmdspga09clb7nc7oec83.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCReBINvHU4VR9T1UgCGHa1_jiI-mqJxv4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "109583493929-mg64bq1t56odmdspga09clb7nc7oec83.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
