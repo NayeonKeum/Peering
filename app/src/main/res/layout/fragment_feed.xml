@@ -17,7 +17,7 @@
             android:layout_marginTop="16dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rv_"
+                android:id="@+id/rv_FeedFragment"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent" />
 
