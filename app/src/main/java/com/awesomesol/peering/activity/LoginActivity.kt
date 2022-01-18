@@ -3,21 +3,18 @@ package com.awesomesol.peering.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import com.awesomesol.peering.R
 import com.awesomesol.peering.databinding.ActivityLoginBinding
-import com.awesomesol.peering.databinding.ActivityMainBinding
 
-import com.kakao.auth.ApiErrorCode
-import com.kakao.auth.ISessionCallback
-import com.kakao.auth.Session
-import com.kakao.network.ErrorResult
-import com.kakao.usermgmt.UserManagement
-import com.kakao.usermgmt.callback.MeV2ResponseCallback
-import com.kakao.usermgmt.response.MeV2Response
-import com.kakao.util.exception.KakaoException
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
+import com.kakao.sdk.auth.LoginClient
+import com.kakao.sdk.auth.model.OAuthToken
+
+import com.kakao.sdk.common.model.AuthErrorCause.*
+import com.kakao.sdk.user.UserApiClient
 
 
 class LoginActivity : AppCompatActivity() {
@@ -26,8 +23,10 @@ class LoginActivity : AppCompatActivity() {
     private var mBinding: ActivityLoginBinding? = null
     // 매번 null 체크를 할 필요 없이 편의성을 위해 바인딩 변수 재 선언
     private val binding get() = mBinding!!
-    private lateinit var callback: SessionCallback
+    val TAG="로그인"
 
+
+    val fs= Firebase.firestore
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -39,84 +38,96 @@ class LoginActivity : AppCompatActivity() {
         mBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        callback = SessionCallback()
-        Session.getCurrentSession().addCallback(callback)
-        Session.getCurrentSession().checkAndImplicitOpen()
-
-        binding.kakaoLogin.setOnClickListener {
-            callback = SessionCallback()
-            Session.getCurrentSession().addCallback(callback)
-            Session.getCurrentSession().checkAndImplicitOpen()
+        
+        // 자동로그인
+        UserApiClient.instance.accessTokenInfo { tokenInfo, error ->
+            if (error != null) {
+                Toast.makeText(this, "토큰 정보 보기 실패", Toast.LENGTH_SHORT).show()
+            }
+            else if (tokenInfo != null) {
+                Toast.makeText(this, "[자동 로그인] 토큰 정보 보기 성공", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
+            }
         }
 
-
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?)
-    {
-        if (Session.getCurrentSession().handleActivityResult(requestCode, resultCode, data))
-        {
-            Log.e("로그인", "onActivityResult()에서 세션 획득!!")
-            return
-        }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
-
-    override fun onDestroy()
-    {
-        mBinding = null
-        super.onDestroy()
-        Session.getCurrentSession().removeCallback(callback)
-    }
-
-    inner class SessionCallback : ISessionCallback
-    {
-        override fun onSessionOpenFailed(exception: KakaoException?)
-        {
-            Log.e("Log", "Session Call back :: onSessionOpenFailed: ${exception?.message}")
-        }
-
-        override fun onSessionOpened()
-        {
-            UserManagement.getInstance().me(object : MeV2ResponseCallback()
-            {
-
-                override fun onFailure(errorResult: ErrorResult?)
-                {
-                    val result = errorResult?.errorCode
-                    if (result == ApiErrorCode.CLIENT_ERROR_CODE)
-                    {
-                        Toast.makeText(this@LoginActivity, "네트워크 연결이 불안정합니다. 다시 시도해 주세요", Toast.LENGTH_SHORT).show()
-                        finish()
+        val callback: (OAuthToken?, Throwable?) -> Unit = { token, error ->
+            if (error != null) {
+                when {
+                    error.toString() == AccessDenied.toString() -> {
+                        Toast.makeText(this, "접근이 거부 됨(동의 취소)", Toast.LENGTH_SHORT).show()
                     }
-                    else
-                    {
-                        Toast.makeText(this@LoginActivity, "로그인 도중 오류가 발생했습니다 : ${errorResult?.errorMessage}", Toast.LENGTH_SHORT).show()
+                    error.toString() == InvalidClient.toString() -> {
+                        Toast.makeText(this, "유효하지 않은 앱", Toast.LENGTH_SHORT).show()
+                    }
+                    error.toString() == InvalidGrant.toString() -> {
+                        Toast.makeText(this, "인증 수단이 유효하지 않아 인증할 수 없는 상태", Toast.LENGTH_SHORT).show()
+                    }
+                    error.toString() == InvalidRequest.toString() -> {
+                        Toast.makeText(this, "요청 파라미터 오류", Toast.LENGTH_SHORT).show()
+                    }
+                    error.toString() == InvalidScope.toString() -> {
+                        Toast.makeText(this, "유효하지 않은 scope ID", Toast.LENGTH_SHORT).show()
+                    }
+                    error.toString() == Misconfigured.toString() -> {
+                        Toast.makeText(this, "설정이 올바르지 않음(android key hash)", Toast.LENGTH_SHORT).show()
+                    }
+                    error.toString() == ServerError.toString() -> {
+                        Toast.makeText(this, "서버 내부 에러", Toast.LENGTH_SHORT).show()
+                    }
+                    error.toString() == Unauthorized.toString() -> {
+                        Toast.makeText(this, "앱이 요청 권한이 없음", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> { // Unknown
+                        Toast.makeText(this, "기타 에러", Toast.LENGTH_SHORT).show()
                     }
                 }
-
-                override fun onSessionClosed(errorResult: ErrorResult?)
-                {
-                    Toast.makeText(this@LoginActivity, "세션이 닫혔습니다. 다시 시도해 주세요", Toast.LENGTH_SHORT).show()
-                }
-
-                override fun onSuccess(result: MeV2Response?)
-                {
-                    Log.e("카카오 로그인", "결과 : $result")
-                    Log.e("카카오 로그인", "아이디 : ${result!!.id}")
-                    Log.e("카카오 로그인", "이메일 : ${result.kakaoAccount.email}")
-                    Log.e("카카오 로그인", "프로필 이미지 : ${result.kakaoAccount.profile.profileImageUrl}")
-                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    intent.putExtra("id", result.id)
-                    intent.putExtra("email", result!!.kakaoAccount.email)
-                    intent.putExtra("nickname", result!!.kakaoAccount.profile.nickname)
-                    intent.putExtra("profileImagePath", result.kakaoAccount.profile.profileImageUrl.toString())
-
-                    startActivity(intent)
-                    finish()
-                }
-            })
+            }
+            else if (token != null) {
+                Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+            }
         }
+
+        binding.kakaoLogin.setOnClickListener{
+            // 카카오톡이 설치되어 있으면 카카오톡으로 로그인, 아니면 카카오계정으로 로그인
+            LoginClient.instance.run {
+                if (isKakaoTalkLoginAvailable(this@LoginActivity)) {
+                    loginWithKakaoTalk(this@LoginActivity, callback = callback)
+                } else {
+                    loginWithKakaoAccount(this@LoginActivity, callback = callback)
+                }
+            }
+        }
+//
+//        binding.kakaoLogoutButton.setOnClickListener {
+//            UserApiClient.instance.logout { error ->
+//                if (error != null) {
+//                    Toast.makeText(this, "로그아웃 실패 $error", Toast.LENGTH_SHORT).show()
+//                }else {
+//                    Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_SHORT).show()
+//                }
+//                val intent = Intent(this, MainActivity::class.java)
+//                startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
+//            }
+//        }
+//
+//        binding.kakaoUnlinkButton.setOnClickListener {
+//            UserApiClient.instance.unlink { error ->
+//                if (error != null) {
+//                    Toast.makeText(this, "회원 탈퇴 실패 $error", Toast.LENGTH_SHORT).show()
+//                }else {
+//                    Toast.makeText(this, "회원 탈퇴 성공", Toast.LENGTH_SHORT).show()
+//                    val intent = Intent(this, MainActivity::class.java)
+//                    startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
+//                }
+//            }
+//        }
+//
+
+
+
     }
+
 }
