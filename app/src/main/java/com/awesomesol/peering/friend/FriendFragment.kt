@@ -12,7 +12,8 @@ import com.kakao.usermgmt.UserManagement
 
 
 class FriendFragment : Fragment() {
-    
+    // 우리 친구... 이메일로 초대 보내느건가?!?! 어떻게 보내는 거였지...
+
     val TAG="친구"
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -25,13 +26,11 @@ class FriendFragment : Fragment() {
             }
             else if (friends != null) {
                 Log.i(TAG, "카카오톡 친구 목록 가져오기 성공 \n${friends.elements.joinToString("\n")}")
-
+                Log.d(TAG, friends.toString())
                 // 친구의 UUID 로 메시지 보내기 가능
             }
         }
-
-
-
+        
 
     }
 
