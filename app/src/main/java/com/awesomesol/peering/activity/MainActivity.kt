@@ -20,10 +20,13 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.common.KakaoSdk
+import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.util.*
+import java.util.EnumSet.range
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +40,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var email:String
     lateinit var nickname:String
     lateinit var profileImagePath:String
+    var friendList: ArrayList<String> = arrayListOf()
 
     val TAG="메인"
     val fs= Firebase.firestore
@@ -58,13 +62,29 @@ class MainActivity : AppCompatActivity() {
             nickname = user?.kakaoAccount?.profile?.nickname.toString()
             profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
             email = user?.kakaoAccount?.email.toString()
+            // 카카오톡 친구 목록 가져오기 (기본)
+            TalkApiClient.instance.friends { friends, error ->
+                if (error != null) {
+                    Log.e(TAG, "카카오톡 친구 목록 가져오기 실패", error)
+                }
+                else if (friends != null) {
+                    Log.i(TAG, "카카오톡 친구 목록 가져오기 성공 \n${friends.elements.joinToString("\n")}")
+                    Log.d(TAG, friends.toString())
 
+                    for (i in 0 until friends.totalCount){
+                        friendList.add(friends.elements[0].id.toString())
+                    }
+                    // 친구의 UUID 로 메시지 보내기 가능
 
-            val user= UserInfo(uid, nickname, profileImagePath, email)
+                    val user= UserInfo(uid, nickname, profileImagePath, email, friendList)
 
-            fs.collection("users").document(uid).set(user)
-                .addOnSuccessListener { Log.d(TAG, "fs 에 유저 정보 저장 쨘") }
-                .addOnFailureListener{e-> Log.d(TAG, "에러 났음 쨘", e)}
+                    fs.collection("users").document(uid).set(user)
+                            .addOnSuccessListener { Log.d(TAG, "fs 에 유저 정보 저장 쨘") }
+                            .addOnFailureListener{e-> Log.d(TAG, "에러 났음 쨘", e)}
+
+                }
+            }
+
         }
 
 
