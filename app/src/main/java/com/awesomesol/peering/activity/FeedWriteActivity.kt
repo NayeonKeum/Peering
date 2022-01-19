@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.awesomesol.peering.R
 import com.awesomesol.peering.databinding.ActivityFeedWriteBinding
-import com.awesomesol.peering.feed.FeedFragment
+import com.awesomesol.peering.friend.FeedFragment
 
 class FeedWriteActivity : AppCompatActivity() {
     private lateinit var binding : ActivityFeedWriteBinding

@@ -8,6 +8,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.awesomesol.peering.R
+import com.awesomesol.peering.character.UserInfo
 import com.awesomesol.peering.databinding.ActivityLoginBinding
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
