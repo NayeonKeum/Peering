@@ -1,4 +1,4 @@
-package com.awesomesol.peering.feed
+package com.awesomesol.peering.friend
 
 data class FeedModel (
     var mainImg : String = "",

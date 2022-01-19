@@ -5,26 +5,17 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.annotation.RequiresApi
-import androidx.core.net.toUri
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarFragment
 import com.awesomesol.peering.character.CharacterFragment
 import com.awesomesol.peering.databinding.ActivityMainBinding
-import com.awesomesol.peering.feed.FeedFragment
-import com.awesomesol.peering.friend.FriendFragment
+import com.awesomesol.peering.friend.FeedFragment
+import com.awesomesol.peering.catDiary.catDiaryFragment
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import com.awesomesol.peering.calendar.CommentInfo
-import com.awesomesol.peering.calendar.PostInfo
 import com.awesomesol.peering.character.UserInfo
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.user.UserApiClient
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
-import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
 
@@ -166,16 +157,15 @@ class MainActivity : AppCompatActivity() {
                                 .replace(R.id.main_screen_panel, calendarFragment).commit()
                     }
                     1 -> {
-                        val feedFragment = FeedFragment()
+                        val friendFragment = catDiaryFragment()
                         supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_screen_panel, feedFragment).commit()
+                                .replace(R.id.main_screen_panel, friendFragment).commit()
                     }
 
                     2 -> {
-                        val friendFragment = FriendFragment()
+                        val feedFragment = FeedFragment()
                         supportFragmentManager.beginTransaction()
-                            .replace(R.id.main_screen_panel, friendFragment).commit()
-
+                                .replace(R.id.main_screen_panel, feedFragment).commit()
                     }
                     3 -> {
                         val characterFragment = CharacterFragment()
