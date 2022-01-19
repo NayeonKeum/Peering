@@ -6,4 +6,9 @@
     <color name="theme_blue">#8AC6D1</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="purple_200">#B292EC</color>
+    <color name="purple_500">#6D3FBF</color>
+    <color name="purple_700">#5717CA</color>
+    <color name="teal_200">#81DDD5</color>
 </resources>
