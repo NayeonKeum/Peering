@@ -11,4 +11,5 @@ data class PostInfo(
     val calDate: String,
     val contentText:String,
     //val contentPhoto: Uri,
+    val category: HashMap<String, ArrayList<String>>,
     )
