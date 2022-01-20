@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var email:String
     lateinit var nickname:String
     lateinit var profileImagePath:String
-    var friendList: ArrayList<String> = arrayListOf()
+    var friendList: HashMap<String, Int> = hashMapOf()
 
     val TAG="메인"
     val fs= Firebase.firestore
@@ -68,7 +68,7 @@ class MainActivity : AppCompatActivity() {
                     Log.d(TAG, friends.toString())
 
                     for (i in 0 until friends.totalCount){
-                        friendList.add(friends.elements[0].id.toString())
+                        friendList.put(friends.elements[0].id.toString(), 0) // 이거 일단 다 0으로 넣음
                     }
                     // 친구의 UUID 로 메시지 보내기 가능
 
