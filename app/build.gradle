@@ -78,7 +78,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-analytics-ktx'
     implementation 'com.google.firebase:firebase-firestore-ktx'
 
-    // 캘린더
+    //calendarview
+    implementation 'com.prolificinteractive:material-calendarview:1.4.3'
     implementation "androidx.viewpager2:viewpager2:1.1.0-alpha01"
     implementation 'joda-time:joda-time:2.10.6'
 
