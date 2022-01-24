@@ -18,7 +18,7 @@ class OneDayDecorator(color: Int) : DayViewDecorator {
 
     override fun decorate(view: DayViewFacade) {
         view.addSpan(StyleSpan(Typeface.BOLD))
-        view.addSpan(RelativeSizeSpan(1.4f))
+        view.addSpan(RelativeSizeSpan(1.6f))
         view.addSpan(ForegroundColorSpan(color))
     }
 

@@ -34,7 +34,7 @@ class GalleryFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false)
+        return inflater.inflate(R.layout.fragment_gallery, container, false)
     }
 
     override fun onResume() {
@@ -130,7 +130,7 @@ class GalleryFragment : Fragment() {
                 val calendar = Calendar.getInstance()
                 calendar.timeInMillis = dateTaken
                 val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
-
+                Log.d(TAG, date)
                 if (date in calendarImages.keys){
                     // 날짜가 이미 있다면
                     calendarImages.get(date)?.add(uri.toString())
@@ -153,7 +153,7 @@ class GalleryFragment : Fragment() {
             cursor.close()
             Log.d(TAG, calendarImages.toString())
         }
-        view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get("1970-01-01")?.get(0)?.toUri())
+        view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get("2022-01-21")?.get(0)?.toUri())
 
 
 

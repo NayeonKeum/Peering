@@ -1,17 +1,30 @@
 package com.awesomesol.peering.calendar
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
 import android.graphics.Color
+import android.graphics.Typeface
 import android.os.AsyncTask
 import android.os.Bundle
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awesomesol.peering.R
+import com.awesomesol.peering.activity.MainActivity
 import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import kotlinx.android.synthetic.main.activity_splash.view.*
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -38,15 +51,34 @@ class CalendarFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_calendar, container, false)
 
+
+        return inflater.inflate(R.layout.fragment_calendar, container, false)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        // 글쓰기로!
+        view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
+            val galleryFragment = GalleryFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, galleryFragment).commit()
+        }
 
         calendarView = view?.findViewById(R.id.calendarView)!!
-        view?.findViewById<TextView>(R.id.tv_caltitle)?.text="My Cal"
 
+        calendarView.addDecorators(activity?.let { MySelectorDecorator(it) }, activity?.let { SundayDecorator(it) }, SaturdayDecorator())
+
+        // 오늘 날짜 색
+        val oneDayDecorator = OneDayDecorator(context?.resources!!.getColor(R.color.black))
+        calendarView.addDecorator(oneDayDecorator)
+        
         calendarView.selectedDate = CalendarDay.today()
-        calendarView.addDecorators(SundayDecorator(), SaturdayDecorator())
-        calendarView.addDecorator(activity?.let { MySelectorDecorator(it) })
+        //calendarView.addDecorator()
+
+
+
 
         result = date_rate.keys.toTypedArray()
         result_ratio = DoubleArray(result.size)
@@ -63,12 +95,6 @@ class CalendarFragment : Fragment() {
             }
         }
 
-
-        // 오늘 날짜 색
-        val colorPrimary = resources.getColor(R.color.theme_blue)
-        val oneDayDecorator = OneDayDecorator(colorPrimary)
-        calendarView.addDecorators(oneDayDecorator)
-
         ApiSimulator(result).executeOnExecutor(Executors.newSingleThreadExecutor());
 
 //        calendarView.setOnDateChangedListener { widget, date, selected ->
@@ -78,10 +104,7 @@ class CalendarFragment : Fragment() {
 //            var selectedDate: String? = null
 //
 //        }
-
-       return view
     }
-
 
 
     inner class ApiSimulator(var Time_Result: Array<String>) : AsyncTask<Void?, Void?, List<CalendarDay>>() {
@@ -119,10 +142,9 @@ class CalendarFragment : Fragment() {
         override fun onPostExecute(calendarDays: List<CalendarDay>) {
             super.onPostExecute(calendarDays)
             calendarView.addDecorators(
-                activity?.let { EventDecorator0_4(Color.GREEN, calendarDays, result_ratio, it) },
+                activity?.let { EventDecorator0_4(calendarDays, result_ratio, it) },
             )}
 
     }
-
 
 }

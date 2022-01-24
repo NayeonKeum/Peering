@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarFragment
+import com.awesomesol.peering.calendar2.Calendar2Fragment
 import com.awesomesol.peering.character.CharacterFragment
 import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment

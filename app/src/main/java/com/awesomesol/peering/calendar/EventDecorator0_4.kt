@@ -13,13 +13,11 @@ import java.util.*
  * Decorate several days with a dot
  */
 class EventDecorator0_4(
-    color: Int,
     dates: Collection<CalendarDay?>,
     result_ratio: DoubleArray,
     context: Activity
 ) : DayViewDecorator {
     private val drawable: Drawable = context.resources.getDrawable(R.drawable.more0_4)
-    private val color: Int = color
     private val dates = HashSet<CalendarDay>()
     private val result_ratio: DoubleArray = result_ratio
     override fun shouldDecorate(day: CalendarDay): Boolean {

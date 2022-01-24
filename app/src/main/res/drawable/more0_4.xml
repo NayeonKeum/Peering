@@ -3,6 +3,5 @@
     android:shape="rectangle" android:padding="10dp">/>
 
     <solid
-        android:color="@color/theme_green" />
-
+        android:color="@color/theme_yellow" />
 </shape>
