@@ -4,20 +4,24 @@
         android:id="@+id/action_home"
         android:enabled="true"
         android:icon="@drawable/calendar"
-        android:title="캘린더" />
+        android:title="캘린더"
+        android:iconTint="@color/theme_blue"/>
     <item
         android:id="@+id/action_community"
         android:enabled="true"
         android:icon="@drawable/catdiary"
-        android:title="종합" />
+        android:title="종합"
+        android:iconTint="@color/theme_blue"/>
     <item
         android:id="@+id/action_license_info"
         android:enabled="true"
         android:icon="@drawable/friend"
-        android:title="친구" />
+        android:title="친구"
+        android:iconTint="@color/theme_blue"/>
     <item
         android:id="@+id/action_my_page"
         android:enabled="true"
         android:icon="@drawable/profile"
-        android:title="캐릭터" />
+        android:title="캐릭터"
+        android:iconTint="@color/theme_blue"/>
 </menu>
