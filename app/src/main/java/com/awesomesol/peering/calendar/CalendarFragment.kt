@@ -1,163 +1,150 @@
 package com.awesomesol.peering.calendar
 
-import android.Manifest
-import android.content.ContentUris.withAppendedId
-import android.content.pm.PackageManager
-import android.database.Cursor
-import android.net.Uri
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Color
+import android.graphics.Typeface
+import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.MediaStore
-import android.text.format.DateFormat.format
+import android.text.style.ForegroundColorSpan
+import android.text.style.RelativeSizeSpan
+import android.text.style.StyleSpan
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.net.toUri
+import android.widget.Button
+import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.awesomesol.peering.R
+import com.awesomesol.peering.activity.MainActivity
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.DayViewDecorator
+import com.prolificinteractive.materialcalendarview.DayViewFacade
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import kotlinx.android.synthetic.main.activity_splash.view.*
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
+import java.util.concurrent.Executors
 
 class CalendarFragment : Fragment() {
-    
-    private val TAG="캘린더"
-    private var calendarImages:HashMap<String, ArrayList<String>> = hashMapOf()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+
+    private lateinit var calendarView: MaterialCalendarView
+
+    private lateinit var result: Array<String>
+    private lateinit var result_ratio: DoubleArray
+    
+    val TAG="캘린더"
+
+
+    var date_rate: HashMap<String, Double> = hashMapOf(
+        Pair("2022-01-01", 0.1), Pair(
+            "2022-01-02",
+            0.2
+        ), Pair("2022-01-05", 0.0), Pair("2022-01-07", 0.1), Pair("2022-01-22", 0.0)
+    )
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
+
+
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
 
-    override fun onResume() {
-        super.onResume()
-        //권한 체크
-        checkPermission()
-    }
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
 
-
-    private fun checkPermission() {
-        if (activity?.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
-        } else {
-            initView()
+        // 글쓰기로!
+        view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
+            val galleryFragment = GalleryFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, galleryFragment).commit()
         }
-    }
 
-    override fun onRequestPermissionsResult(
-            requestCode: Int,
-            permissions: Array<out String>,
-            grantResults: IntArray
-    ) {
-        when (requestCode) {
-            200 -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initView()
-                } else {
-                    Toast.makeText(activity, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
+        calendarView = view?.findViewById(R.id.calendarView)!!
+
+        calendarView.addDecorators(activity?.let { MySelectorDecorator(it) }, activity?.let { SundayDecorator(it) }, SaturdayDecorator())
+
+        // 오늘 날짜 색
+        val oneDayDecorator = OneDayDecorator(context?.resources!!.getColor(R.color.black))
+        calendarView.addDecorator(oneDayDecorator)
+        
+        calendarView.selectedDate = CalendarDay.today()
+        //calendarView.addDecorator()
+
+
+
+
+        result = date_rate.keys.toTypedArray()
+        result_ratio = DoubleArray(result.size)
+        val ratio_col: Collection<Double> = date_rate.values
+        for (i in ratio_col.indices) {
+            if (ratio_col.toTypedArray()[i].javaClass.name == "java.lang.Long") {
+                if (ratio_col.toTypedArray()[i].toLong() == 0L) {
+                    result_ratio[i] = 0.0
+                } else if (ratio_col.toTypedArray()[i].toLong() == 1L) {
+                    result_ratio[i] = 1.0
                 }
+            } else {
+                result_ratio[i] = ratio_col.toTypedArray()[i]
             }
         }
-    }
 
-    private fun initView() {
-        try {
-            val cursor = getImageData()
+        ApiSimulator(result).executeOnExecutor(Executors.newSingleThreadExecutor());
 
-            getImages(cursor)
-
-        } catch (e: SecurityException) {
-            Toast.makeText(activity, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "스토리지에 접근 권한을 허가해주세요")
-        // finish()
-        }
-    }
-
-    private fun getImageData(): Cursor {
-
-        val resolver = activity?.contentResolver
-        var queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
-        //가져올 컬럼명
-        val what = arrayOf(
-                MediaStore.Images.ImageColumns._ID,
-                MediaStore.Images.ImageColumns.TITLE,
-                MediaStore.Images.ImageColumns.DATE_TAKEN
-        )
-
-        //정렬
-        val orderBy = MediaStore.Images.ImageColumns.DATE_TAKEN + " ASC"
-
-        //1건만 가져온다.
-        //queryUri = queryUri.buildUpon().appendQueryParameter("limit", "1").build()
-
-        return resolver!!.query(queryUri, what, null, null, orderBy)!!
+//        calendarView.setOnDateChangedListener { widget, date, selected ->
+//            val Year: Int = date.year
+//            val Month: Int = date.month + 1
+//            val Day: Int = date.day
+//            var selectedDate: String? = null
+//
+//        }
     }
 
 
-    private fun getImages(cursor:Cursor){
-        if (cursor != null) {
-            var dateImageList:ArrayList<String> = arrayListOf()
-            while (cursor.moveToNext()) {
-                // 날짜별 이미지 리스트 초기화
-
-                //1. 각 컬럼의 열 인덱스를 취득한다.
-                val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
-                val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
-                val dateTakenColNum =
-                        cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
-
-                //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
-                val id = cursor.getLong(idColNum) // 0
-                val title = cursor.getString(titleColNum) // 1
-                val dateTaken = cursor.getLong(dateTakenColNum) // 2
-//                val imageUri =
-//                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-
-                var uri=withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-
-                //3. 데이터를 View로 설정
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = dateTaken
-                val date = format ("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
-
-                if (date in calendarImages.keys){
-                    // 날짜가 이미 있다면
-                    calendarImages.get(date)?.add(uri.toString())
-                }
-                else{
-                    // 날짜가 없음!
-                    Log.d(TAG, "날짜가 없음")
-                    calendarImages.put(date, arrayListOf())
-                    dateImageList= arrayListOf()
-                    dateImageList.add(uri.toString())
-
-                }
-
-//                textView.text = "촬용일시: $text"
-//                imageView.setImageURI(imageUri)
-
-//                Log.d(TAG, "DATE: "+date)
-//                Log.d(TAG, "ID: "+id)
-//                Log.d(TAG, "TITLE: "+title)
-//                Log.d(TAG, "URI: "+uri)
+    inner class ApiSimulator(var Time_Result: Array<String>) : AsyncTask<Void?, Void?, List<CalendarDay>>() {
+        override fun doInBackground(vararg p0: Void?): List<CalendarDay>{
+            try {
+                Thread.sleep(500)
+            } catch (e: InterruptedException) {
+                e.printStackTrace()
             }
-            cursor.close()
-            Log.d(TAG, calendarImages.toString())
+
+            /*특정날짜 달력에 점표시해주는곳*/
+            /*월은 0이 1월 년,일은 그대로*/
+            // string 문자열인 Time_Result 을 받아와서 ,를 기준으로 자르고 string을 int 로 변환
+            val calendar = Calendar.getInstance()
+            val dates: ArrayList<CalendarDay> = ArrayList<CalendarDay>()
+            for (i in 0 until Time_Result.size + 1) {
+                val day: CalendarDay = CalendarDay.from(calendar)
+                if (i >= 0 && i < Time_Result.size) {
+                    val time = Time_Result[i]!!.split("-").toTypedArray()
+                    val year = time[0].toInt()
+                    val month = time[1].toInt()
+                    val dayy = time[2].toInt()
+                    calendar[year, month - 1] = dayy
+                }
+                if (i > 0) {
+                    dates.add(day)
+                }
+            }
+            for (i in dates.indices) {
+                Log.d(TAG, "고른 날짜들: "+dates[i].toString())
+            }
+            return dates
         }
-        view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get("2022-01-21")?.get(1)?.toUri())
 
-
+        override fun onPostExecute(calendarDays: List<CalendarDay>) {
+            super.onPostExecute(calendarDays)
+            calendarView.addDecorators(
+                activity?.let { EventDecorator0_4(calendarDays, result_ratio, it) },
+            )}
 
     }
+
 }

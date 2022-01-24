@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarFragment
+import com.awesomesol.peering.calendar2.Calendar2Fragment
 import com.awesomesol.peering.character.CharacterFragment
 import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment
@@ -15,14 +16,8 @@ import nl.joery.animatedbottombar.AnimatedBottomBar
 import com.awesomesol.peering.character.UserInfo
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.common.KakaoSdk
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.util.*
-import java.util.EnumSet.range
-import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
@@ -37,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var nickname:String
     lateinit var profileImagePath:String
     var friendList: HashMap<String, Int> = hashMapOf()
+
 
     val TAG="메인"
     val fs= Firebase.firestore
@@ -82,7 +78,6 @@ class MainActivity : AppCompatActivity() {
             }
 
         }
-
 
 
 
@@ -206,6 +201,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+
 
         val calendarFragment = CalendarFragment()
         supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
