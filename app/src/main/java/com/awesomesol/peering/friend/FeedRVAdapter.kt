@@ -3,9 +3,11 @@ package com.awesomesol.peering.friend
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.bumptech.glide.Glide
 
 class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<FeedRVAdapter.Viewholder>() {
 
@@ -29,7 +31,8 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Fee
             name.text = item.nickname
             val content = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_content)
             content.text = item.content
-
+            val ivprofile = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem_profileImg)
+            Glide.with(itemView).load(R.drawable.feed_profile).circleCrop().into(ivprofile)
         }
     }
 }
