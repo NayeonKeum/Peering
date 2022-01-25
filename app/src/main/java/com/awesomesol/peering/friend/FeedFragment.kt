@@ -48,7 +48,7 @@ class FeedFragment : Fragment() {
         val rv = view.findViewById<RecyclerView>(R.id.rv_FeedFragment)
 
         val items = ArrayList<FeedModel>()
-        items.add(FeedModel("a", "b", "Kim", "안녕"))
+        items.add(FeedModel("a", "b", "Kim", "오늘은 따사로운 햇살과 함께 코딩을 했다. 낭만 속의 비낭만..... 소리 없는 아우성..... 집인데 집에 가고 싶었다...하하핳"))
         items.add(FeedModel("a", "b", "Lee", "hihihi"))
         items.add(FeedModel("a", "b", "Kang", "hello"))
         items.add(FeedModel("a", "b", "Cho", "hey"))
