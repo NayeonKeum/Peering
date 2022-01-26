@@ -2,6 +2,7 @@ package com.awesomesol.peering.calendar
 
 import android.Manifest
 import android.content.ContentUris
+import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
@@ -12,10 +13,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.net.toUri
 import com.awesomesol.peering.R
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import kotlinx.android.synthetic.main.fragment_gallery.*
+import kotlinx.android.synthetic.main.fragment_gallery.view.*
+import kotlinx.android.synthetic.main.fragment_post_bottomsheet_photos.*
+import java.lang.reflect.TypeVariable
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -34,8 +43,25 @@ class GalleryFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_gallery, container, false)
+        val view=inflater.inflate(R.layout.fragment_gallery, container, false)
+
+        val bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)
+        val bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
+
+        // 전체 숨김
+        // behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        // peekHight 만큼
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+
+        inflater.inflate(R.layout.fragment_post_bottomsheet_photos, container).findViewById<ImageView>(R.id.iv_bottomsheet_up).setOnClickListener {
+            // 전체 보여주기
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        }
+
+
+        return view
     }
+
 
     override fun onResume() {
         super.onResume()

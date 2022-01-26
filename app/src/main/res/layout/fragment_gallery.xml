@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,7 +7,6 @@
     tools:context=".calendar.GalleryFragment"
     android:clipToOutline="true"
     android:background="@drawable/gradience_vertical">
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -152,8 +151,6 @@
             app:layout_constraintStart_toStartOf="@+id/group_402" />
 
 
-
-
         <ImageView
             android:id="@+id/iv_CalendarFragment_test"
             android:layout_width="153dp"
@@ -164,6 +161,26 @@
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic" />
 
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/ll_PostFragment_bottomsheet"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/theme_yellow"
+        android:gravity="center"
+        android:maxHeight="300dp"
+        app:behavior_peekHeight="199dp"
+        app:behavior_hideable="true"
+        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
+        >
+
+        <include
+            android:id="@+id/bottomsheetview"
+            layout="@layout/fragment_post_bottomsheet_photos"
+            />
+
+    </LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

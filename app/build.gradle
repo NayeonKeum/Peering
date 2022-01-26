@@ -92,4 +92,8 @@ dependencies {
     //noinspection GradleCompatible
     implementation 'com.android.support:design:26.1.0'
 
+    // bottomsheet dialog
+    implementation 'com.google.android.material:material:1.1.0'
+
+
 }
