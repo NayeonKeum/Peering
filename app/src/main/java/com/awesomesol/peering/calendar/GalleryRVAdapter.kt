@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.LayoutInflaterCompat
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import kotlin.coroutines.coroutineContext
@@ -56,6 +57,10 @@ class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapt
 //                    = LayoutInflater.from(context).inflate(R.layout.fragment_post, this, false)
         }
 
+    }
+
+    override fun getItemId(position: Int): Long {
+        return super.getItemId(position)
     }
 
     //  total count of items in the list
