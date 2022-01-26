@@ -7,8 +7,7 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarFragment
-import com.awesomesol.peering.calendar.GalleryFragment
-import com.awesomesol.peering.calendar2.Calendar2Fragment
+import com.awesomesol.peering.calendar.PostFragment
 import com.awesomesol.peering.character.CharacterFragment
 import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment
@@ -173,8 +172,8 @@ class MainActivity : AppCompatActivity() {
             ) {
                 when (newIndex) {
                     0 -> {
-                        //val calendarFragment = CalendarFragment()
-                        val calendarFragment = GalleryFragment()
+                        val calendarFragment = CalendarFragment()
+                        //val calendarFragment = PostFragment()
                         supportFragmentManager.beginTransaction()
                                 .replace(R.id.main_screen_panel, calendarFragment).commit()
                     }
@@ -205,8 +204,8 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        //val calendarFragment = CalendarFragment()
-        val calendarFragment = GalleryFragment()
+        val calendarFragment = CalendarFragment()
+        //val calendarFragment = PostFragment()
         supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
                 .commit()
 

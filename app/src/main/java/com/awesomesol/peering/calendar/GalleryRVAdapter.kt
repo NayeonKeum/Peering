@@ -1,17 +1,22 @@
 package com.awesomesol.peering.calendar
 
 import android.content.Context
+import android.media.Image
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.LayoutInflaterCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import kotlin.coroutines.coroutineContext
 
 class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
 
     var dataList = emptyList<GalleryData>()
-
+    val TAG="갤러리 어댑터"
+    lateinit private var iv_PostFragment:ImageView
     internal fun setDataList(dataList: List<GalleryData>) {
         this.dataList = dataList
     }
@@ -30,6 +35,7 @@ class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapt
 
         // Inflate the custom layout
         var view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_post_rv_item, parent, false)
+        //iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById(R.id.iv_PostFragment)
         return ViewHolder(view)
     }
 
@@ -41,6 +47,15 @@ class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapt
 
         // Set item views based on your views and data model
         holder.iv.setImageURI(data.imageUri)
+
+        holder.iv.setOnClickListener {
+            //var iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById<ImageView>(R.id.iv_PostFragment)
+            iv_PostFragment.setImageURI(data.imageUri)
+            Log.d(TAG, "이미지뷰 찾음? $iv_PostFragment")
+//            fun ViewGroup.inflate(resId: Int, attach: Boolean = false): View
+//                    = LayoutInflater.from(context).inflate(R.layout.fragment_post, this, false)
+        }
+
     }
 
     //  total count of items in the list

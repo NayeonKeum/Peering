@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".calendar.GalleryFragment"
+    tools:context=".calendar.PostFragment"
     android:clipToOutline="true"
     android:background="@drawable/gradience_vertical">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -150,16 +150,24 @@
             app:layout_constraintEnd_toEndOf="@+id/group_402"
             app:layout_constraintStart_toStartOf="@+id/group_402" />
 
-
         <ImageView
-            android:id="@+id/iv_CalendarFragment_test"
-            android:layout_width="153dp"
-            android:layout_height="106dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:src="@tools:sample/backgrounds/scenic" />
+            android:id="@+id/iv_PostFragment"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:layout_marginTop="51dp"
+            android:src="@drawable/ic_launcher_background"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toBottomOf="@+id/group_402" />
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/et_PostFragment"
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/iv_PostFragment"
+            app:layout_constraintStart_toStartOf="@+id/iv_PostFragment"
+            app:layout_constraintTop_toBottomOf="@+id/iv_PostFragment" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

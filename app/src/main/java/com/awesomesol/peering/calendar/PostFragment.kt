@@ -2,7 +2,6 @@ package com.awesomesol.peering.calendar
 
 import android.Manifest
 import android.content.ContentUris
-import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
@@ -13,25 +12,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
-import com.google.android.material.bottomsheet.BottomSheetDialog
-import kotlinx.android.synthetic.main.fragment_gallery.*
-import kotlinx.android.synthetic.main.fragment_gallery.view.*
-import kotlinx.android.synthetic.main.fragment_post_bottomsheet_photos.*
-import java.lang.reflect.TypeVariable
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class GalleryFragment : Fragment() {
+class PostFragment : Fragment() {
 
 
     private val TAG="갤러리"
@@ -52,12 +45,12 @@ class GalleryFragment : Fragment() {
             savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        val view=inflater.inflate(R.layout.fragment_gallery, container, false)
-
+        val view=inflater.inflate(R.layout.fragment_post, container, false)
 
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(R.id.rv_PostFragment)
         Log.d(TAG, rv.toString())
-        rv.layoutManager=GridLayoutManager(context, 3)
+        //rv.layoutManager=GridLayoutManager(context, 3)
+        rv.layoutManager=LinearLayoutManager(context).also{it.orientation=LinearLayoutManager.HORIZONTAL}
         galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
         rv.adapter=galleryRVAdapter
 
