@@ -6,6 +6,7 @@
     android:layout_width="50dp">
 
     <TextView
+        android:id="@+id/tv_CalendarFragment_caldate"
         android:layout_width="20dp"
         android:layout_height="20dp"
         xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,6 +16,7 @@
         android:gravity="center"
         android:textSize="10sp" />
     <ImageView
+        android:id="@+id/iv_CalendarFragment_caldateimg"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:src="@drawable/account"

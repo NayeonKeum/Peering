@@ -40,10 +40,7 @@ class CalendarFragment : Fragment() {
 
 
     var date_rate: HashMap<String, Double> = hashMapOf(
-        Pair("2022-01-01", 0.1), Pair(
-            "2022-01-02",
-            0.2
-        ), Pair("2022-01-05", 0.0), Pair("2022-01-07", 0.1), Pair("2022-01-22", 0.0)
+        Pair("2022-01-01", 0.1), Pair("2022-01-02", 0.2), Pair("2022-01-05", 0.0), Pair("2022-01-07", 0.1), Pair("2022-01-22", 0.0)
     )
 
     override fun onCreateView(
