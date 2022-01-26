@@ -18,6 +18,8 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.net.toUri
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -31,11 +33,18 @@ import kotlin.collections.HashMap
 
 class GalleryFragment : Fragment() {
 
-    private val TAG="캘린더"
+
+    private val TAG="갤러리"
     private var calendarImages:HashMap<String, ArrayList<String>> = hashMapOf()
+    private lateinit var  galleryRVAdapter: GalleryRVAdapter
+    private var targetDate="2022-01-21"
+    private var dataList = mutableListOf<GalleryData>()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        //권한 체크
+        checkPermission()
     }
 
     override fun onCreateView(
@@ -45,6 +54,26 @@ class GalleryFragment : Fragment() {
         // Inflate the layout for this fragment
         val view=inflater.inflate(R.layout.fragment_gallery, container, false)
 
+
+        val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(R.id.rv_PostFragment)
+        Log.d(TAG, rv.toString())
+        rv.layoutManager=GridLayoutManager(context, 3)
+        galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
+        rv.adapter=galleryRVAdapter
+
+        Log.d(TAG, "targetDate에 있는 사진 개수: "+calendarImages.get(targetDate)?.size)
+        val datasize: Int? =calendarImages.get(targetDate)?.size
+
+        for (i : Int in 0..(datasize!!-1)){
+            calendarImages.get(targetDate)?.get(i)?.toUri()?.let { GalleryData(it, 0) }?.let {
+                dataList.add(it)
+            }
+        }
+        Log.d(TAG, dataList.toString())
+        galleryRVAdapter.setDataList(dataList)
+
+
+        // 바텀 쉿 부착!
         val bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)
         val bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
 
@@ -62,24 +91,14 @@ class GalleryFragment : Fragment() {
         return view
     }
 
-
-    override fun onResume() {
-        super.onResume()
-        //권한 체크
-        checkPermission()
-    }
-
-
     private fun checkPermission() {
         if (activity?.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
         } else {
             // 갤러리 연동 분기점
             initView()
-
         }
     }
-
     override fun onRequestPermissionsResult(
             requestCode: Int,
             permissions: Array<out String>,
@@ -179,9 +198,8 @@ class GalleryFragment : Fragment() {
             cursor.close()
             Log.d(TAG, calendarImages.toString())
         }
-        view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get("2022-01-21")?.get(0)?.toUri())
-
-
+        // view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get(targetDate)?.get(0)?.toUri())
 
     }
+
 }

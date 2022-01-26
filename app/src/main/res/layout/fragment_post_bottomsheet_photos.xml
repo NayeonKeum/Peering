@@ -4,7 +4,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="#efefef"
+    android:background="@drawable/gallery_btmsht"
     android:padding="10dp">
 
     <LinearLayout
@@ -19,85 +19,16 @@
             android:layout_width="27dp"
             android:layout_gravity="center"
             />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_launcher_foreground"
-                android:background="@drawable/ic_launcher_background"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Test 01"
-                android:textSize="22sp"
-                android:gravity="center"/>
-        </LinearLayout>
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="8dp"
             android:background="#dddddd"/>
 
-        <LinearLayout
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_PostFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_launcher_foreground"
-                android:background="@drawable/ic_launcher_background"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Test 02"
-                android:textSize="22sp"
-                android:gravity="center"/>
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="#dddddd"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_launcher_foreground"
-                android:background="@drawable/ic_launcher_background"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Test 03"
-                android:textSize="22sp"
-                android:gravity="center"/>
-        </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:layout_marginVertical="8dp"
-            android:background="#dddddd"/>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <ImageView
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:src="@drawable/ic_launcher_foreground"
-                android:background="@drawable/ic_launcher_background"/>
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Test 04"
-                android:textSize="22sp"
-                android:gravity="center"/>
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            />
     </LinearLayout>
 </ScrollView>
