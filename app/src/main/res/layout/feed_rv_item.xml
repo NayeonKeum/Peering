@@ -10,11 +10,41 @@
     android:orientation="horizontal"
     android:gravity="center_horizontal">
 
-    <ImageView
-        android:id="@+id/iv_FeedRVItem_mainImg"
-        android:src="@drawable/feed_main_img"
-        android:layout_width="154dp"
-        android:layout_height="216dp" />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+        <ImageView
+            android:id="@+id/iv_FeedRVItem_mainImg"
+            android:src="@drawable/feed_main_img"
+            android:layout_width="150dp"
+            android:layout_height="150dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <ImageView
+                android:id="@+id/iv_FeedRVItem_Img"
+                android:src="@drawable/feed_img"
+                android:layout_width="75dp"
+                android:layout_height="75dp" />
+            <TextView
+                android:id="@+id/tv_FeedRVItem_forimg"
+                android:background="@drawable/bg_feed_img"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:gravity="center"
+                android:text="+3"
+                android:textColor="@color/theme_green"
+                android:textStyle="bold"
+                android:textSize="18sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+
 
     <LinearLayout
         android:layout_width="match_parent"
