@@ -13,27 +13,147 @@
         android:layout_height="match_parent">
 
         <View
+            android:id="@+id/view"
             android:layout_width="0dp"
             android:layout_height="723dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_alignParentRight="true"
             android:layout_marginStart="12dp"
-            android:layout_marginTop="82dp"
+            android:layout_marginTop="80dp"
             android:layout_marginEnd="12dp"
             android:background="@drawable/rectangle_6"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/tv_PostFragment_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="calendar_gallery"
-            app:layout_constraintBottom_toTopOf="@+id/iv_CalendarFragment_test"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="27dp"
+            android:layout_marginTop="36dp"
+            android:gravity="top"
+            android:text="2022년 1월 1일"
+            android:textSize="20sp"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" />
+
+        <View
+            android:id="@+id/group_40"
+            android:layout_width="300dp"
+            android:layout_height="26dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="75dp"
+            android:layout_marginEnd="33dp"
+            android:background="#00000000"
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="@+id/tv_PostFragment_date"
+            app:layout_constraintTop_toTopOf="@+id/view"/>
+
+        <ImageView
+            android:id="@+id/group"
+            android:layout_width="16dp"
+            android:layout_height="18.29dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="75dp"
+            android:layout_marginStart="32dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:background="#00000000"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view"
+            android:src="@drawable/cat_title"
+            />
+
+        <TextView
+            android:id="@+id/tv_PostFragment_catTitle"
+            android:layout_width="81dp"
+            android:layout_height="17dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="11dp"
+            android:gravity="top"
+            android:text="솔룩스 회식팟"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/group"
+            app:layout_constraintStart_toEndOf="@+id/group"
+            app:layout_constraintTop_toTopOf="@+id/group" />
+
+        <View
+            android:id="@+id/catline1"
+            android:layout_width="300dp"
+            android:layout_height="1dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/catline"
+            app:layout_constraintBottom_toBottomOf="@+id/group_40"
+            app:layout_constraintEnd_toEndOf="@+id/group_40"
+            app:layout_constraintStart_toStartOf="@+id/group_40" />
+
+
+        <View
+            android:id="@+id/group_402"
+            android:layout_width="300dp"
+            android:layout_height="26dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="7dp"
+            android:background="#00000000"
+            app:layout_constraintEnd_toEndOf="@+id/group_40"
+            app:layout_constraintStart_toStartOf="@+id/group_40"
+            app:layout_constraintTop_toBottomOf="@+id/group_40" />
+
+        <ImageView
+            android:id="@+id/group2"
+            android:layout_width="16dp"
+            android:layout_height="18.29dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginTop="108dp"
+            android:layout_marginStart="32dp"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentBottom="true"
+            android:background="#00000000"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view"
+            android:src="@drawable/cat_sub"
+            />
+
+        <TextView
+            android:id="@+id/tv_PostFragment_catSub"
+            android:layout_width="81dp"
+            android:layout_height="17dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginStart="11dp"
+            android:gravity="top"
+            android:text="놀기 / 방탈출"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="@+id/group2"
+            app:layout_constraintStart_toEndOf="@+id/group2"
+            app:layout_constraintTop_toTopOf="@+id/group2" />
+
+        <View
+            android:id="@+id/catline2"
+            android:layout_width="300dp"
+            android:layout_height="1dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:background="@drawable/catline"
+            app:layout_constraintBottom_toBottomOf="@+id/group_402"
+            app:layout_constraintEnd_toEndOf="@+id/group_402"
+            app:layout_constraintStart_toStartOf="@+id/group_402" />
+
+
+
+
         <ImageView
             android:id="@+id/iv_CalendarFragment_test"
             android:layout_width="153dp"
@@ -43,6 +163,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:src="@tools:sample/backgrounds/scenic" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>
