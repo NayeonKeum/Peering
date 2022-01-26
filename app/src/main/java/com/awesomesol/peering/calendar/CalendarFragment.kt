@@ -1,30 +1,16 @@
 package com.awesomesol.peering.calendar
 
-import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.Typeface
 import android.os.AsyncTask
 import android.os.Bundle
-import android.text.style.ForegroundColorSpan
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.awesomesol.peering.R
-import com.awesomesol.peering.activity.MainActivity
 import com.prolificinteractive.materialcalendarview.CalendarDay
-import com.prolificinteractive.materialcalendarview.DayViewDecorator
-import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
-import kotlinx.android.synthetic.main.activity_splash.view.*
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -40,10 +26,7 @@ class CalendarFragment : Fragment() {
 
 
     var date_rate: HashMap<String, Double> = hashMapOf(
-        Pair("2022-01-01", 0.1), Pair(
-            "2022-01-02",
-            0.2
-        ), Pair("2022-01-05", 0.0), Pair("2022-01-07", 0.1), Pair("2022-01-22", 0.0)
+        Pair("2022-01-01", 0.1), Pair("2022-01-02", 0.2), Pair("2022-01-05", 0.0), Pair("2022-01-07", 0.1), Pair("2022-01-22", 0.0)
     )
 
     override fun onCreateView(
@@ -51,7 +34,6 @@ class CalendarFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
 
         return inflater.inflate(R.layout.fragment_calendar, container, false)
     }
@@ -61,7 +43,7 @@ class CalendarFragment : Fragment() {
 
         // 글쓰기로!
         view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
-            val galleryFragment = GalleryFragment()
+            val galleryFragment = PostFragment()
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_screen_panel, galleryFragment).commit()
         }
