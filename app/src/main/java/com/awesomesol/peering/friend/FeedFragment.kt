@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.FeedWriteActivity
+import com.awesomesol.peering.calendar.CalendarFragment
 import com.bumptech.glide.Glide
 import com.kakao.sdk.talk.TalkApiClient
 import kotlinx.android.synthetic.main.activity_splash.*
+import kotlinx.android.synthetic.main.feed_rv_item.*
 import kotlinx.android.synthetic.main.fragment_feed.*
 
 class FeedFragment : Fragment() {
@@ -63,14 +65,17 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        writeBtnClick()
+        moreBtnClick()
     }
-    fun writeBtnClick(){
+    // recyclerview 클릭 수정
+    fun moreBtnClick(){
         iv_FeedFragment_friends.setOnClickListener {
-            val intent = Intent(getActivity(), FeedWriteActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) // activity back stack 모두 제거
-            startActivity(intent)
+            val diaryreadFragment = DiaryReadFragment()
+
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, diaryreadFragment).commitNow()
         }
     }
+
 
 }
