@@ -8,8 +8,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="red">#F44336</color>
     <color name="blue">#3F51B5</color>
-
-
+    <color name="light_gray">#AEAEAE</color>
+    <color name="trans">#002196F3</color>
     <color name="purple_200">#B292EC</color>
     <color name="purple_500">#FFB6B9</color>
     <color name="purple_700">#FFB6B9</color>
