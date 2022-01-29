@@ -8,6 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.core.view.LayoutInflaterCompat
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
@@ -18,6 +20,9 @@ class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapt
     var dataList = emptyList<GalleryData>()
     val TAG="갤러리 어댑터"
     lateinit private var iv_PostFragment:ImageView
+
+    lateinit private var fragmentManager:FragmentManager
+
     internal fun setDataList(dataList: List<GalleryData>) {
         this.dataList = dataList
     }
@@ -31,12 +36,16 @@ class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapt
         }
     }
 
+    fun setFM(fragmentManager:FragmentManager){
+        this.fragmentManager=fragmentManager
+    }
+
     // Usually involves inflating a layout from XML and returning the holder
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryRVAdapter.ViewHolder {
 
         // Inflate the custom layout
         var view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_post_rv_item, parent, false)
-        //iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById(R.id.iv_PostFragment)
+        iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById(R.id.iv_PostFragment)
         return ViewHolder(view)
     }
 
@@ -50,9 +59,22 @@ class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapt
         holder.iv.setImageURI(data.imageUri)
 
         holder.iv.setOnClickListener {
-            //var iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById<ImageView>(R.id.iv_PostFragment)
+            var iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById<ImageView>(R.id.iv_PostFragment)
             iv_PostFragment.setImageURI(data.imageUri)
             Log.d(TAG, "이미지뷰 찾음? $iv_PostFragment")
+
+            val frg= fragmentManager.findFragmentById(R.id.fragment_post);
+            val ft = fragmentManager.beginTransaction();
+            // Log.d(TAG, frg.toString())
+            if (frg != null) {
+                Log.d(TAG, "프랙 찾음")
+                ft.detach(frg)
+                ft.attach(frg);
+                ft.commit();
+            };
+
+
+
 //            fun ViewGroup.inflate(resId: Int, attach: Boolean = false): View
 //                    = LayoutInflater.from(context).inflate(R.layout.fragment_post, this, false)
         }

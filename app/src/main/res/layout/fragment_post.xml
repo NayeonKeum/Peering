@@ -5,8 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".calendar.PostFragment"
+    android:id="@+id/fragment_post"
+
     android:clipToOutline="true"
-    android:background="@drawable/gradience_vertical">
+    android:background="@drawable/gradience_vertical"
+    android:tag="fragment_post">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">

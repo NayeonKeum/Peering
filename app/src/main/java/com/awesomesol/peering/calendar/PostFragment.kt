@@ -2,6 +2,7 @@ package com.awesomesol.peering.calendar
 
 import android.Manifest
 import android.content.ContentUris
+import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,6 +34,9 @@ class PostFragment : Fragment() {
     private lateinit var  galleryRVAdapter: GalleryRVAdapter
     private var targetDate="2022-01-21"
     private var dataList = mutableListOf<GalleryData>()
+
+    private lateinit var bottomView:View
+    private lateinit var bottomSheetBehavior:BottomSheetBehavior<View>
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,7 +57,12 @@ class PostFragment : Fragment() {
         //rv.layoutManager=GridLayoutManager(context, 3)
         rv.layoutManager=LinearLayoutManager(context).also{it.orientation=LinearLayoutManager.HORIZONTAL}
         galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
+        //galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
+
+        galleryRVAdapter.setView(view)
+        //parentFragmentManager
         rv.adapter=galleryRVAdapter
+
 
         Log.d(TAG, "targetDate에 있는 사진 개수: "+calendarImages.get(targetDate)?.size)
         val datasize: Int? =calendarImages.get(targetDate)?.size
@@ -67,8 +77,8 @@ class PostFragment : Fragment() {
 
 
         // 바텀 쉿 부착!
-        val bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)
-        val bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
+        bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)!!
+        bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
 
         // 전체 숨김
         // behavior.state = BottomSheetBehavior.STATE_HIDDEN
@@ -82,6 +92,88 @@ class PostFragment : Fragment() {
 
 
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false)
+
+    }
+
+    class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
+
+        var dataList = emptyList<GalleryData>()
+        val TAG="갤러리 어댑터"
+
+        lateinit var parentView: View
+
+        lateinit private var iv_PostFragment:ImageView
+
+        lateinit private var fragmentManager: FragmentManager
+
+        internal fun setDataList(dataList: List<GalleryData>) {
+            this.dataList = dataList
+        }
+
+        // Provide a direct reference to each of the views with data items
+
+        class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+            var iv: ImageView
+            init {
+                iv = itemView.findViewById(R.id.img_PostFragment_rv_itemimg)
+            }
+        }
+
+        fun setView(parentView:View){
+            this.parentView=parentView
+        }
+
+        // Usually involves inflating a layout from XML and returning the holder
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryRVAdapter.ViewHolder {
+
+            // Inflate the custom layout
+            var view = LayoutInflater.from(parent.context).inflate(R.layout.fragment_post_rv_item, parent, false)
+            iv_PostFragment=LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false).findViewById(R.id.iv_PostFragment)
+            return ViewHolder(view)
+        }
+
+        // Involves populating data into the item through holder
+        override fun onBindViewHolder(holder: GalleryRVAdapter.ViewHolder, position: Int) {
+
+            // Get the data model based on position
+            var data = dataList[position]
+
+            // Set item views based on your views and data model
+            holder.iv.setImageURI(data.imageUri)
+
+            holder.iv.setOnClickListener {
+                var iv_PostFragment=parentView.findViewById<ImageView>(R.id.iv_PostFragment)
+                iv_PostFragment.setImageURI(data.imageUri)
+                Log.d(TAG, "이미지뷰 찾음? $iv_PostFragment")
+
+//                val frg= fragmentManager.findFragmentById(R.id.fragment_post);
+//                val ft = fragmentManager.beginTransaction();
+//                // Log.d(TAG, frg.toString())
+//                if (frg != null) {
+//                    Log.d(TAG, "프랙 찾음")
+//                    ft.detach(frg)
+//                    ft.attach(frg);
+//                    ft.commit();
+//                };
+
+
+//            fun ViewGroup.inflate(resId: Int, attach: Boolean = false): View
+//                    = LayoutInflater.from(context).inflate(R.layout.fragment_post, this, false)
+            }
+
+        }
+
+        override fun getItemId(position: Int): Long {
+            return super.getItemId(position)
+        }
+
+        //  total count of items in the list
+        override fun getItemCount() = dataList.size
     }
 
     private fun checkPermission() {
