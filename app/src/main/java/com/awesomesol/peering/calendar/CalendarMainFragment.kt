@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.viewpager2.widget.ViewPager2
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
@@ -41,6 +42,15 @@ class CalendarMainFragment : BaseFragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_first, container, false)
         calendarViewPager = view.calendarViewPager
+
+
+        view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
+            val galleryFragment = PostFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, galleryFragment).commit()
+        }
+
+
         return view
     }
 
@@ -52,7 +62,7 @@ class CalendarMainFragment : BaseFragment() {
     fun initView() {
         val calendarPagerFragmentStateAdapter = CalendarPagerFragmentStateAdapter(requireActivity())
         calendarViewPager.adapter = calendarPagerFragmentStateAdapter
-        calendarViewPager.orientation = ViewPager2.ORIENTATION_VERTICAL
+        calendarViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         calendarPagerFragmentStateAdapter.apply {
             calendarViewPager.setCurrentItem(this.firstFragmentPosition, false)
         }

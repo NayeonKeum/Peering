@@ -57,11 +57,6 @@ class CalendarFragment2(index: Int) : Fragment() {
         initView(view)
         initCalendar()
 
-        view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
-            val galleryFragment = PostFragment()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_screen_panel, galleryFragment).commit()
-        }
         return view
     }
 
