@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.format.DateFormat
@@ -18,7 +19,6 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
@@ -26,6 +26,7 @@ import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class PostFragment : Fragment() {
@@ -34,7 +35,7 @@ class PostFragment : Fragment() {
     private val TAG="갤러리"
     private var calendarImages:HashMap<String, ArrayList<String>> = hashMapOf()
     private lateinit var  galleryRVAdapter: GalleryRVAdapter
-    private var targetDate="2022-01-21"
+    private var targetDate="2022-01-29"
     private var dataList = mutableListOf<GalleryData>()
 
     private lateinit var bottomView:View
@@ -45,13 +46,15 @@ class PostFragment : Fragment() {
     private var sliderViewPager: ViewPager2? = null
     private var layoutIndicator: LinearLayout? = null
 
-    private val images = arrayOf(
-        "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-        "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-        "https://cdn.pixabay.com/photo/2020/03/08/21/41/landscape-4913841_1280.jpg",
-        "https://cdn.pixabay.com/photo/2020/09/02/18/03/girl-5539094_1280.jpg",
-        "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-    )
+//    private val images = arrayOf(
+//        "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
+//        "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
+//        "https://cdn.pixabay.com/photo/2020/03/08/21/41/landscape-4913841_1280.jpg",
+//        "https://cdn.pixabay.com/photo/2020/09/02/18/03/girl-5539094_1280.jpg",
+//        "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
+//    )
+
+    private var images:ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,6 +89,8 @@ class PostFragment : Fragment() {
         for (i : Int in 0..(datasize!!-1)){
             calendarImages.get(targetDate)?.get(i)?.toUri()?.let { GalleryData(it, 0) }?.let {
                 dataList.add(it)
+                // 초기엔 뭐가 없으니까 일단!!
+                images.add(it.imageUri.toString())
             }
         }
         Log.d(TAG, dataList.toString())
@@ -109,6 +114,7 @@ class PostFragment : Fragment() {
         }
 
 
+        // 초기에 해주는 거!
         sliderViewPager = view.findViewById(R.id.sliderViewPager)
         layoutIndicator = view.findViewById(R.id.layoutIndicators)
 
@@ -125,13 +131,13 @@ class PostFragment : Fragment() {
         setupIndicators(images.size)
 
 
-
         return view
     }
 
     override fun onResume() {
         super.onResume()
         LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false)
+        sliderViewPager!!.refreshDrawableState()
 
     }
 
@@ -139,29 +145,32 @@ class PostFragment : Fragment() {
     class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
 
         var dataList = emptyList<GalleryData>()
-        val TAG="갤러리 어댑터"
+        var useImages:ArrayList<String> = arrayListOf()
+        //val TAG="갤러리 어댑터"
 
         lateinit var parentView: View
 
-        lateinit private var iv_PostFragment:ImageView
-
-        lateinit private var fragmentManager: FragmentManager
+        lateinit var sliderViewPager:ViewPager2
+        lateinit var layoutIndicator:LinearLayout
 
         internal fun setDataList(dataList: List<GalleryData>) {
             this.dataList = dataList
         }
 
         // Provide a direct reference to each of the views with data items
-
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var iv: ImageView
+            var addminus:ImageView
             init {
                 iv = itemView.findViewById(R.id.img_PostFragment_rv_itemimg)
+                addminus=itemView.findViewById(R.id.iv_PostFragment_addminusbtn)
             }
         }
 
         fun setView(parentView: View){
             this.parentView=parentView
+            sliderViewPager = parentView.findViewById(R.id.sliderViewPager)
+            layoutIndicator = parentView.findViewById(R.id.layoutIndicators)
         }
 
         // Usually involves inflating a layout from XML and returning the holder
@@ -173,11 +182,6 @@ class PostFragment : Fragment() {
                 parent,
                 false
             )
-            iv_PostFragment=LayoutInflater.from(context).inflate(
-                R.layout.fragment_post,
-                null,
-                false
-            ).findViewById(R.id.iv_PostFragment)
             return ViewHolder(view)
         }
 
@@ -186,13 +190,50 @@ class PostFragment : Fragment() {
 
             // Get the data model based on position
             var data = dataList[position]
+            if(dataList[position].used==0){
+                holder.addminus.setImageResource(R.drawable.gallery_add)
+            }
+            else{
+                holder.addminus.setImageResource(R.drawable.gallery_minus)
+                holder.addminus.setImageResource(R.drawable.gallery_minus)
+            }
 
             // Set item views based on your views and data model
             holder.iv.setImageURI(data.imageUri)
 
+            // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
             holder.iv.setOnClickListener {
-                var iv_PostFragment=parentView.findViewById<ImageView>(R.id.iv_PostFragment)
-                iv_PostFragment.setImageURI(data.imageUri)
+                Log.d("뷰페이저", dataList[position].imageUri.toString())
+                if(dataList[position].used==0){
+                    // 사용 안 한 거
+                        // 더하는 액션 하고
+                    dataList[position].used=1 // 이거 서버에 전달해야햠
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                }
+                else{
+                    // 사용 한 거
+                        // 빼는 액션하고
+                    dataList[position].used=0 // 이거 서버에 전달해야햠
+                    holder.addminus.setImageResource(R.drawable.gallery_add)
+                }
+
+                useImages= arrayListOf()
+                for (i:Int in dataList.indices){
+                    if(dataList[i].used==1){
+                        useImages.add(dataList[i].imageUri.toString())
+                    }
+                }
+
+                sliderViewPager = parentView.findViewById(R.id.sliderViewPager)
+                sliderViewPager!!.adapter = ImageSliderAdapter(context, useImages)
+                sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        setCurrentIndicator(position)
+                    }
+                })
+                setupIndicators(useImages.size)
+
             }
         }
         override fun getItemId(position: Int): Long {
@@ -200,6 +241,60 @@ class PostFragment : Fragment() {
         }
         //  total count of items in the list
         override fun getItemCount() = dataList.size
+
+
+        // 중복으로 들어가긴 하는데
+        // 뷰페이지 어댑터2
+        // 이미지 넘어가는 뷰페이지 어댑터
+        private fun setupIndicators(count: Int) {
+            val indicators = arrayOfNulls<ImageView>(count)
+            Log.d("뷰페이저 indicators 개수", indicators.size.toString())
+            val params = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            params.setMargins(16, 8, 16, 8)
+            for (i in indicators.indices) {
+                indicators[i] = ImageView(context)
+                indicators[i]!!.setImageDrawable(
+                    context?.let {
+                        ContextCompat.getDrawable(
+                            it,
+                            R.drawable.bg_indicator_inactive
+                        )
+                    }
+                )
+                indicators[i]!!.layoutParams = params
+                layoutIndicator!!.addView(indicators[i])
+            }
+            setCurrentIndicator(0)
+        }
+
+        private fun setCurrentIndicator(position: Int) {
+            val childCount = layoutIndicator!!.childCount
+            for (i in 0 until childCount) {
+                val imageView = layoutIndicator!!.getChildAt(i) as ImageView
+                if (i == position) {
+                    imageView.setImageDrawable(
+                        context?.let {
+                            ContextCompat.getDrawable(
+                                it,
+                                R.drawable.bg_indicator_active
+                            )
+                        }
+                    )
+                } else {
+                    imageView.setImageDrawable(
+                        context?.let {
+                            ContextCompat.getDrawable(
+                                it,
+                                R.drawable.bg_indicator_inactive
+                            )
+                        }
+                    )
+                }
+            }
+        }
+
     }
 
     // 이미지 넘어가는 뷰페이지 어댑터
