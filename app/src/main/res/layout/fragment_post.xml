@@ -156,7 +156,7 @@
         <ImageView
             android:id="@+id/iv_PostFragment"
             android:layout_width="250dp"
-            android:layout_height="200dp"
+            android:layout_height="100dp"
             android:layout_marginTop="51dp"
             android:src="@drawable/ic_launcher_background"
             app:layout_constraintEnd_toEndOf="@+id/view"
@@ -173,6 +173,47 @@
             app:layout_constraintTop_toBottomOf="@+id/iv_PostFragment" />
 
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="350dp"
+        android:layout_height="200dp"
+        app:layout_constraintEnd_toEndOf="@+id/et_PostFragment"
+        app:layout_constraintStart_toStartOf="@+id/et_PostFragment"
+        app:layout_constraintTop_toBottomOf="@+id/et_PostFragment" >
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/sliderViewPager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <View
+            android:id="@+id/viewFadingEdge"
+            android:layout_width="match_parent"
+            android:layout_height="55dp"
+            android:background="@drawable/bg_fading_edge"
+            app:layout_constraintBottom_toBottomOf="@id/sliderViewPager" />
+
+        <LinearLayout
+            android:id="@+id/layoutIndicators"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:paddingBottom="8dp"
+            app:layout_constraintBottom_toBottomOf="@id/viewFadingEdge"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
@@ -180,11 +221,11 @@
         android:id="@+id/ll_PostFragment_bottomsheet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/theme_yellow"
         android:gravity="center"
         android:maxHeight="300dp"
         app:behavior_peekHeight="199dp"
         app:behavior_hideable="true"
+        android:background="@drawable/rounded_dialog"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
 
