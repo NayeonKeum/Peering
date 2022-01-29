@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_first.view.*
 
 class CalendarMainFragment : BaseFragment() {
 
-    private val TAG = javaClass.simpleName
+    private val TAG = "캘린더 메인 프랙"
     lateinit var mContext: Context
 
     lateinit var calendarViewPager: ViewPager2

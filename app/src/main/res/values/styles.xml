@@ -37,6 +37,7 @@
     <style name="LineView">
         <item name="android:background">@color/trans</item>
     </style>
+
     <style name="LightColorTextViewStyle" parent="@style/Widget.AppCompat.TextView">
         <item name="android:textColor">@color/light_gray</item>
         <item name="android:background">@color/trans</item>

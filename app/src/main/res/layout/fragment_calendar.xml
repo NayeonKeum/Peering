@@ -5,7 +5,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:clipToOutline="true"
     android:background="@drawable/gradience_vertical"
     >
@@ -45,17 +44,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:mcv_showOtherDates="all" >
 
-        <View
-            android:id="@+id/rectangle_6"
-            android:layout_width="0dp"
-            android:layout_height="723dp"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="82dp"
-            android:layout_marginEnd="12dp"
-            android:background="@drawable/rectangle_6" />
     </com.prolificinteractive.materialcalendarview.MaterialCalendarView>
 
     <Button

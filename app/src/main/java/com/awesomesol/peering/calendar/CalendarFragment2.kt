@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
@@ -55,6 +56,12 @@ class CalendarFragment2(index: Int) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_calendar2, container, false)
         initView(view)
         initCalendar()
+
+        view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
+            val galleryFragment = PostFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, galleryFragment).commit()
+        }
         return view
     }
 
