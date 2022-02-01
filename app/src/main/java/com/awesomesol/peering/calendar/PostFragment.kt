@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,6 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -28,6 +30,7 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import nl.joery.animatedbottombar.AnimatedBottomBar
 import org.threeten.bp.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
@@ -115,14 +118,14 @@ class PostFragment : Fragment() {
         // 전체 숨김
         // behavior.state = BottomSheetBehavior.STATE_HIDDEN
         // peekHight 만큼
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-
-        inflater.inflate(R.layout.fragment_post_bottomsheet_photos, container).findViewById<ImageView>(
-            R.id.iv_bottomsheet_up
-        ).setOnClickListener {
-            // 전체 보여주기
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-        }
+//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
+//
+//        inflater.inflate(R.layout.fragment_post_bottomsheet_photos, container).findViewById<ImageView>(
+//            R.id.iv_bottomsheet_up
+//        ).setOnClickListener {
+//            // 전체 보여주기
+//            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+//        }
 
         // 둥근 모서리
         cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
@@ -144,9 +147,63 @@ class PostFragment : Fragment() {
 
         setupIndicators(images.size)
 
+        //키보드 올라올때 바텀네비케이션 올라오는거 처리 부분
+        //setOnFocusChangeListener 로 바텀네비게시연 하이드
+        view.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            //r will be populated with the coordinates of your view that area still visible.
+            view.getWindowVisibleDisplayFrame(r)
+            val heightDiff: Int = view.rootView.height - (r.bottom - r.top)
+            if (heightDiff > 500) {
+                // if more than 100 pixels, its probably a keyboard...
+                activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.GONE
+            }
+            else{
+                activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.VISIBLE
+            }
+        }
+        view.setOnFocusChangeListener { view, b ->
+            //Variable 'b' represent whether this view has focus.
+            //If b is true, that means "This view is having focus"
+            if(b) activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.GONE
+            else activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.VISIBLE
+            Log.d(TAG, "setOnFocusChangeListener:${b}")
+        }
+
+        view.setOnFocusChangeListener { view, b ->
+            if(b) activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.GONE
+            else activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.VISIBLE
+            Log.d(TAG, "setOnFocusChangeListener:${b}")
+        }
+
+        view.setOnFocusChangeListener { view, b ->
+            if(b) activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.GONE
+            else activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.VISIBLE
+            Log.d(TAG, "setOnFocusChangeListener:${b}")
+        }
+
+        var tempFlag = true
+        view.viewTreeObserver.addOnGlobalLayoutListener {
+            val r = Rect()
+            //r will be populated with the coordinates of your view that area still visible.
+            view.getWindowVisibleDisplayFrame(r)
+            val heightDiff: Int = view.rootView.height - (r.bottom - r.top)
+            if (heightDiff > 500) {
+                // if more than 100 pixels, its probably a keyboard...
+                activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.GONE
+                tempFlag = false
+            }
+            else if(tempFlag == false){
+                activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.VISIBLE
+                tempFlag = true
+            }
+        }
+
 
         return view
     }
+
+
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
