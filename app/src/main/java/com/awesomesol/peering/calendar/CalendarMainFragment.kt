@@ -2,6 +2,7 @@ package com.awesomesol.peering.calendar
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -37,6 +38,7 @@ class CalendarMainFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+
     }
 
     override fun onCreateView(
@@ -79,14 +81,15 @@ class CalendarMainFragment : BaseFragment() {
             calendarViewPager.setCurrentItem(this.firstFragmentPosition, false)
         }
 
-
         iv_CalendarFragment2_leftarr.setOnClickListener {
             var current = calendarViewPager.currentItem
+            Log.d(TAG, "왼")
             calendarViewPager.setCurrentItem(current-1, false)
 
         }
         iv_CalendarFragment2_righttarr.setOnClickListener {
             var current = calendarViewPager.currentItem
+            Log.d(TAG, "오")
             calendarViewPager.setCurrentItem(current+1, false)
         }
 
