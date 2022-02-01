@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.13333333333333333" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable/background_edittext.xml" value="0.1953125" />
+        <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable/bg_feed_img.xml" value="0.175" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable/bg_feed_more_btn.xml" value="0.14907407407407408" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable/bg_main.xml" value="0.190625" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable/bg_white_top_round_layout.xml" value="0.14907407407407408" />
@@ -19,6 +20,7 @@
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/activity_splash.xml" value="0.16530797101449277" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item.xml" value="0.3333333333333333" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_calendar.xml" value="0.1" />
+        <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_calendar2.xml" value="0.17916666666666667" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_catdiary.xml" value="0.16893115942028986" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_character.xml" value="0.1" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_diary_read.xml" value="0.14666666666666667" />
@@ -28,7 +30,7 @@
       </map>
     </option>
   </component>
-  <component name="ProjectRootManager" version="2" languageLevel="JDK_1_8" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="1.8" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
   </component>
   <component name="ProjectType">
