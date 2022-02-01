@@ -1,15 +1,15 @@
 package com.awesomesol.peering.activity
 
+import android.content.Context
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.AttributeSet
 import android.util.Log
+import android.view.View
 import androidx.annotation.RequiresApi
 import com.awesomesol.peering.R
-import com.awesomesol.peering.calendar.CalendarFragment
-import com.awesomesol.peering.calendar.CalendarFragment2
 import com.awesomesol.peering.calendar.CalendarMainFragment
-import com.awesomesol.peering.calendar.PostFragment
 import com.awesomesol.peering.character.CharacterFragment
 import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment
@@ -20,6 +20,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
+import kotlinx.android.synthetic.main.fragment_post.*
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {

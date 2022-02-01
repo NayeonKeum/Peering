@@ -8,7 +8,6 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_feed.*
 
 class FeedFragment : Fragment() {
@@ -36,9 +35,6 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        // 파이어스토어 객체 얻기
-        // 얻은 FirebaseFirestore 객체로 컬렉션을 선택하고 문서를 추가하거나 가져오는 작업을 함
-        // val db : FirebaseFirestore = FirebaseFirestore.getInstance()
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_feed, container, false)

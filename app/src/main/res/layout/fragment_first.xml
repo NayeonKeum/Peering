@@ -26,6 +26,7 @@
         app:layout_constraintTop_toTopOf="@+id/iv_CalendarFragment_menu" />
 
     <View
+        android:id="@+id/view2"
         android:layout_width="0dp"
         android:layout_height="723dp"
         android:layout_alignParentLeft="true"
@@ -45,11 +46,31 @@
         android:layout_width="326dp"
         android:layout_height="match_parent"
         android:layout_marginStart="29dp"
-        android:layout_marginTop="111dp"
+        android:layout_marginTop="90dp"
         android:layout_marginEnd="29dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <ImageView
+        android:id="@+id/iv_CalendarFragment2_leftarr"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginStart="83dp"
+        android:layout_marginTop="25dp"
+        android:src="@drawable/cal_leftarrow"
+        app:layout_constraintStart_toStartOf="@+id/view2"
+        app:layout_constraintTop_toTopOf="@+id/view2" />
+
+    <ImageView
+        android:id="@+id/iv_CalendarFragment2_rightarr"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="84dp"
+        android:src="@drawable/cal_rightarrow"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_CalendarFragment2_leftarr"
+        app:layout_constraintEnd_toEndOf="@+id/view2"
+        app:layout_constraintTop_toTopOf="@+id/iv_CalendarFragment2_leftarr"
+        app:srcCompat="@drawable/cal_rightarrow" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,15 +2,18 @@ package com.awesomesol.peering.calendar
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import androidx.viewpager2.widget.ViewPager2
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
 import com.awesomesol.peering.common.BaseFragment
 import kotlinx.android.synthetic.main.fragment_first.view.*
+import org.threeten.bp.LocalDate
 
 class CalendarMainFragment : BaseFragment() {
 
@@ -18,6 +21,8 @@ class CalendarMainFragment : BaseFragment() {
     lateinit var mContext: Context
 
     lateinit var calendarViewPager: ViewPager2
+    private lateinit var iv_CalendarFragment2_leftarr:ImageView
+    private lateinit var iv_CalendarFragment2_righttarr:ImageView
 
     companion object {
         var instance: CalendarMainFragment? = null
@@ -33,6 +38,7 @@ class CalendarMainFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+
     }
 
     override fun onCreateView(
@@ -46,9 +52,17 @@ class CalendarMainFragment : BaseFragment() {
 
         view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
             val galleryFragment = PostFragment()
+            val formatter=org.threeten.bp.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            var date= LocalDate.now().format(formatter)
+            var bundle = Bundle()
+            bundle.putString("date", date)
+            galleryFragment.setArguments(bundle)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_screen_panel, galleryFragment).commit()
         }
+
+        iv_CalendarFragment2_leftarr=view.findViewById(R.id.iv_CalendarFragment2_leftarr)
+        iv_CalendarFragment2_righttarr=view.findViewById(R.id.iv_CalendarFragment2_rightarr)
 
 
         return view
@@ -66,6 +80,21 @@ class CalendarMainFragment : BaseFragment() {
         calendarPagerFragmentStateAdapter.apply {
             calendarViewPager.setCurrentItem(this.firstFragmentPosition, false)
         }
+
+        iv_CalendarFragment2_leftarr.setOnClickListener {
+            var current = calendarViewPager.currentItem
+            Log.d(TAG, "왼")
+            calendarViewPager.setCurrentItem(current-1, false)
+
+        }
+        iv_CalendarFragment2_righttarr.setOnClickListener {
+            var current = calendarViewPager.currentItem
+            Log.d(TAG, "오")
+            calendarViewPager.setCurrentItem(current+1, false)
+        }
+
+
+
     }
 
     override fun onDestroy() {
