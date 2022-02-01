@@ -35,6 +35,9 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        // 파이어스토어 객체 얻기
+        // 얻은 FirebaseFirestore 객체로 컬렉션을 선택하고 문서를 추가하거나 가져오는 작업을 함
+        // val db : FirebaseFirestore = FirebaseFirestore.getInstance()
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_feed, container, false)
@@ -58,7 +61,7 @@ class FeedFragment : Fragment() {
 
         moreBtnClick()
     }
-    // recyclerview 클릭 수정
+    // recyclerview 클릭 수정 필요
     fun moreBtnClick(){
         iv_FeedFragment_friends.setOnClickListener {
             val diaryreadFragment = DiaryReadFragment()
