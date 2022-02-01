@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<ScrollView xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".calendar.PostFragment"
@@ -155,14 +159,14 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_PostFragment"
-            android:layout_width="350dp"
-            android:layout_height="200dp"
-            app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toBottomOf="@+id/group_402"
+            android:layout_width="300dp"
+            android:layout_height="189dp"
+            android:layout_marginTop="26dp"
             android:background="@drawable/rounded_dialog"
             android:scaleType="centerCrop"
-            >
+            app:layout_constraintEnd_toEndOf="@+id/view"
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toBottomOf="@+id/group_402">
 
             <androidx.viewpager2.widget.ViewPager2
                 android:id="@+id/sliderViewPager"
@@ -186,13 +190,12 @@
                 android:id="@+id/layoutIndicators"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:gravity="center"
+                android:orientation="horizontal"
                 android:paddingBottom="8dp"
                 app:layout_constraintBottom_toBottomOf="@id/viewFadingEdge"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent" />
-
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
@@ -217,24 +220,22 @@
             app:layout_constraintStart_toStartOf="@+id/cl_PostFragment"
             app:layout_constraintTop_toBottomOf="@+id/cl_PostFragment" />
 
-
-
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <LinearLayout
         android:id="@+id/ll_PostFragment_bottomsheet"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="199dp"
         android:gravity="center"
-        android:maxHeight="300dp"
-        app:behavior_peekHeight="199dp"
-        app:behavior_hideable="true"
+        app:behavior_hideable="false"
         android:background="@drawable/rounded_dialog"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         >
+        <!--
+        android:maxHeight="300dp"
+        app:behavior_peekHeight="199dp"
+        -->
 
         <include
             android:id="@+id/bottomsheetview"
@@ -242,4 +243,8 @@
             />
 
     </LinearLayout>
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+
+</ScrollView>
