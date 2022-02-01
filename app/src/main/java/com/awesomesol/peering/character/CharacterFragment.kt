@@ -64,6 +64,7 @@ class CharacterFragment : Fragment() {
         viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)?.let {
             Glide.with(viewFrag)
                 .load(profileImagePath)
+                .circleCrop()
                 .into(it)
         }
 
