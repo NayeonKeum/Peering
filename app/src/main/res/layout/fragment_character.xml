@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".character.CharacterFragment"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".character.CharacterFragment">
+
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
+        android:layout_height="match_parent">
 
         <ImageView
             android:layout_width="match_parent"
@@ -19,25 +19,41 @@
             android:src="@drawable/gradation" />
 
 
+        <ImageView
+            android:id="@+id/iv_CharacterFragment_menu"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/menu"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="158dp"
+            android:layout_height="203dp"
+            android:layout_marginLeft="180dp"
+            android:layout_marginTop="93dp"
+            android:src="@drawable/bg_character_ghost" />
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="600dp"
-            android:layout_marginTop="100dp"
-            android:layout_marginHorizontal="10dp"
-            android:background="@drawable/background_topradius"
-            android:layout_alignParentBottom="true">
+            android:layout_alignParentBottom="true"
+            android:layout_marginHorizontal="12dp"
+            android:layout_marginBottom="-80dp"
+            android:background="@drawable/background_topradius">
 
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="30dp"
-                android:layout_marginTop="30dp"
-                >
+                android:layout_marginTop="30dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="30dp"
+                    android:layout_marginTop="20dp"
                     android:gravity="center"
                     android:orientation="vertical">
 
@@ -60,6 +76,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5dp"
                         android:text="nickname"
+                        android:textColor="#000000"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toTopOf="@+id/tv_CharacterFragment_email"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -71,6 +88,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="email"
+                        android:textColor="#5f5f5f"
                         android:textSize="12sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -84,7 +102,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="220dp"
+                    android:layout_marginTop="230dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -92,6 +110,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="팔로잉"
+                        android:textAlignment="center"
+                        android:textColor="#3E3E3E"
                         android:textSize="14sp" />
 
                     <TextView
@@ -100,6 +120,7 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="10"
+                        android:textColor="#3E3E3E"
                         android:textSize="14sp" />
 
                     <TextView
@@ -107,6 +128,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="팔로워"
+                        android:textAlignment="center"
+                        android:textColor="#3E3E3E"
                         android:textSize="14sp" />
 
                     <TextView
@@ -115,14 +138,15 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:text="1"
+                        android:textColor="#3E3E3E"
                         android:textSize="14sp" />
 
-                    <Button
+                    <ImageView
                         android:id="@+id/btn_CharacterFragment_setting"
                         android:layout_width="70dp"
-                        android:layout_height="wrap_content"
+                        android:layout_height="25dp"
                         android:layout_weight="1"
-                        android:text="setting" />
+                        android:src="@drawable/setting" />
 
                 </LinearLayout>
 
@@ -131,7 +155,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="25dp"
-                    android:layout_marginTop="270dp"
+                    android:layout_marginTop="260dp"
                     android:max="100"
                     android:progress="50" />
 
@@ -141,7 +165,7 @@
                     android:layout_marginTop="310dp"
                     android:orientation="horizontal">
 
-                    <ImageView
+                    <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/iv_CharacterFragment_smallBadgeImg"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
@@ -155,10 +179,11 @@
                     android:orientation="horizontal">
 
                     <ImageView
-                        android:id="@+id/imageView2"
+                        android:id="@+id/iv_CharacterFragment_BigBadgeImg"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
-                        android:src="@drawable/badge" />
+                        android:src="@drawable/badge_radius"
+                        android:background="@drawable/background_badge_radius"/>
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -173,10 +198,10 @@
                             android:id="@+id/tv_CharacterFragment_wow"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginBottom="5dp"
                             android:layout_weight="1"
                             android:text="우와!"
-                            android:textSize="16sp"
-                            android:layout_marginBottom="5dp"/>
+                            android:textSize="16sp" />
 
                         <LinearLayout
                             android:layout_width="match_parent"
@@ -196,6 +221,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="10"
+                                android:textAlignment="textEnd"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -203,6 +229,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="일"
+                                android:textAlignment="textEnd"
                                 android:textSize="12sp" />
                         </LinearLayout>
 
@@ -224,6 +251,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="10"
+                                android:textAlignment="textEnd"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -253,6 +281,7 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:text="10"
+                                android:textAlignment="textEnd"
                                 android:textSize="12sp" />
 
                             <TextView
@@ -266,15 +295,9 @@
                     </LinearLayout>
                 </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="480dp"
-                    android:text="yena_777님과 함께 쓰는 일기"
-                    android:textSize="16sp" />
-
             </RelativeLayout>
         </LinearLayout>
+
 
     </RelativeLayout>
 </LinearLayout>

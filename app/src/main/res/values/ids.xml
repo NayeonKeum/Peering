@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="tv_CharacterFragment_followingNum" type="id" />
+    <item name="tv_CharacterFragment_followerNum" type="id" />
+    <item name="btn_CharacterFragment_setting" type="id" />
+    <item name="progressBar_CharacterFragment" type="id" />
+    <item name="iv_CharacterFragment_smallBadgeImg" type="id" />
+    <item name="imageView2" type="id" />
+    <item name="tv_CharacterFragment_wow" type="id" />
+    <item name="tv_CharacterFragment_dDay" type="id" />
+    <item name="tv_CharacterFragment_diaryCnt" type="id" />
+    <item name="tv_CharacterFragment_diaryLeftCnt" type="id" />
+</resources>
