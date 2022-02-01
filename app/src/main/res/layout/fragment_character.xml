@@ -317,7 +317,7 @@
             android:layout_marginLeft="126dp"
             android:layout_marginTop="220dp"
             android:background="@drawable/background_profile_radius"
-            app:layout_constraintBottom_toTopOf="@+id/tv_CharacterFragment_nickname"
+
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
