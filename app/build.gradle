@@ -101,4 +101,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
+
+    // api 23 이전에도 날짜 사용하려고
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 }

@@ -31,6 +31,8 @@ class CalendarFragment2(index: Int) : Fragment() {
     lateinit var calendar_view: RecyclerView
     lateinit var calendarAdapter: Calendar2Adapter
 
+    //lateinit var dateGalleryData: DateGalleryData
+
     companion object {
         var instance: CalendarFragment2? = null
     }
@@ -89,7 +91,7 @@ class CalendarFragment2(index: Int) : Fragment() {
         // 말일까지 해당 날짜
         // 마지막 날짜 뒤로는 ""으로 처리하여
         // CalendarAdapter로 List를 넘김
-        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate)
+        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate)//dateGalleryData)
         calendar_view.adapter = calendarAdapter
         calendar_view.layoutManager = GridLayoutManager(mContext, 7, GridLayoutManager.VERTICAL, false)
         calendar_view.setHasFixedSize(true)
