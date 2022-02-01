@@ -316,17 +316,13 @@
             android:layout_height="120dp"
             android:layout_marginLeft="126dp"
             android:layout_marginTop="220dp"
+            tools:src="@drawable/empty_profile"
             android:background="@drawable/background_profile_radius"
-            app:layout_constraintBottom_toTopOf="@+id/tv_CharacterFragment_nickname"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.939"
-            tools:src="@tools:sample/avatars"
-            />
-
-
+            app:layout_constraintVertical_bias="0.939" />
 
     </RelativeLayout>
 </LinearLayout>
