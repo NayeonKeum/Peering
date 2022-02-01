@@ -55,7 +55,6 @@ class MakeCalendar (date: Date) {
 
     private fun makeNextHead() {
         var date = 1
-
         for (i in 1..nextHead) dateList.add(date++)
     }
 }

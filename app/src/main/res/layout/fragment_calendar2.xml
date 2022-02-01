@@ -14,11 +14,13 @@
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:text="2020년 01월"
-        android:textSize="25sp"
+        android:textSize="20dp"
         android:textStyle="bold"
         android:gravity="center_vertical|start"
-        android:layout_marginStart="20dp"
-        style="@style/TextViewStyle"/>
+        style="@style/TextViewStyle"
+        android:textAlignment="center"
+        tools:ignore="RtlCompat"
+        android:layout_marginBottom="10dp"/>
 
     <View
         android:id="@+id/div"
@@ -26,7 +28,7 @@
         android:layout_height="1dp"
         style="@style/LineView"/>
 
-    <LinearLayout
+<!--    <LinearLayout
         android:id="@+id/calendar_header"
         android:layout_width="match_parent"
         android:layout_height="30dp"
@@ -75,16 +77,18 @@
             android:text="SAT"
             style="@style/TextViewStyle"/>
 
-    </LinearLayout>
+    </LinearLayout>-->
+
     <LinearLayout
         android:id="@+id/calendar_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/calendar_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:spanCount="7"
+            app:spanCount="4"
             android:adjustViewBounds="true"
             app:layout_constrainedHeight="true"
             tools:listitem="@layout/list_item_calendar"/>

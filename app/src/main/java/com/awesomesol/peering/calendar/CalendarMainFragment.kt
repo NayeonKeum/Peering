@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import androidx.viewpager2.widget.ViewPager2
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
@@ -19,6 +20,8 @@ class CalendarMainFragment : BaseFragment() {
     lateinit var mContext: Context
 
     lateinit var calendarViewPager: ViewPager2
+    private lateinit var iv_CalendarFragment2_leftarr:ImageView
+    private lateinit var iv_CalendarFragment2_righttarr:ImageView
 
     companion object {
         var instance: CalendarMainFragment? = null
@@ -56,6 +59,9 @@ class CalendarMainFragment : BaseFragment() {
                 .replace(R.id.main_screen_panel, galleryFragment).commit()
         }
 
+        iv_CalendarFragment2_leftarr=view.findViewById(R.id.iv_CalendarFragment2_leftarr)
+        iv_CalendarFragment2_righttarr=view.findViewById(R.id.iv_CalendarFragment2_rightarr)
+
 
         return view
     }
@@ -72,6 +78,20 @@ class CalendarMainFragment : BaseFragment() {
         calendarPagerFragmentStateAdapter.apply {
             calendarViewPager.setCurrentItem(this.firstFragmentPosition, false)
         }
+
+
+        iv_CalendarFragment2_leftarr.setOnClickListener {
+            var current = calendarViewPager.currentItem
+            calendarViewPager.setCurrentItem(current-1, false)
+
+        }
+        iv_CalendarFragment2_righttarr.setOnClickListener {
+            var current = calendarViewPager.currentItem
+            calendarViewPager.setCurrentItem(current+1, false)
+        }
+
+
+
     }
 
     override fun onDestroy() {
