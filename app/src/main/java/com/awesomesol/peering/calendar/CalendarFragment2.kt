@@ -82,6 +82,7 @@ class CalendarFragment2(index: Int) : Fragment() {
             Locale.KOREA
         ).format(date.time)
         calendar_year_month_text.setText(datetime)
+
     }
 
     fun initCalendar() {
