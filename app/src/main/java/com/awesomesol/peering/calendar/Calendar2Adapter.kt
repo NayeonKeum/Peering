@@ -69,7 +69,6 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
         if (itemClick != null) {
             holder?.itemView?.setOnClickListener { v ->
                 itemClick?.onClick(v, position)
-
             }
         }
     }
@@ -141,6 +140,10 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
                 finally {
                     Log.d(TAG, "${dateString} 이 날 사진 없음")
                 }
+
+            }
+
+            itemView.setOnClickListener{
 
             }
         }

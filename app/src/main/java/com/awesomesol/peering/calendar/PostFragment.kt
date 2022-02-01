@@ -15,7 +15,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
@@ -26,6 +28,7 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import org.threeten.bp.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -50,10 +53,20 @@ class PostFragment : Fragment() {
 
     private var images:ArrayList<String> = arrayListOf()
 
+    private lateinit var callback:OnBackPressedCallback
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //권한 체크
         checkPermission()
+
+        var bundle = arguments;  //번들 받기. getArguments() 메소드로 받음.
+        if (bundle != null){
+            // 눌렀을 때 제대로 들어오면!
+            // targetDate = bundle.getString("targetDate").toString(); //Name 받기.
+            Log.d(TAG, "넘어온 번들: ${bundle.getString("date")}")
+        }
+
     }
 
     override fun onCreateView(
@@ -62,6 +75,9 @@ class PostFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         val view=inflater.inflate(R.layout.fragment_post, container, false)
+
+        // view.findViewById<TextView>(R.id.tv_PostFragment_date).text=targetDate
+
 
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(
             R.id.rv_PostFragment
@@ -132,6 +148,19 @@ class PostFragment : Fragment() {
         return view
     }
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "백프레스 눌름")
+                val calendarFragment = CalendarMainFragment()
+                activity?.supportFragmentManager?.beginTransaction()
+                    ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
+
     override fun onResume() {
         super.onResume()
         LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false)
@@ -167,7 +196,7 @@ class PostFragment : Fragment() {
         }
 
         fun setView(parentView: View){
-            this.parentView=parentView
+            this.parentView = parentView
             sliderViewPager = parentView.findViewById(R.id.sliderViewPager)
             layoutIndicator = parentView.findViewById(R.id.layoutIndicators)
             cl_PostFragment = parentView.findViewById(R.id.cl_PostFragment)
@@ -175,7 +204,6 @@ class PostFragment : Fragment() {
 
         // Usually involves inflating a layout from XML and returning the holder
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GalleryRVAdapter.ViewHolder {
-
             // Inflate the custom layout
             var view = LayoutInflater.from(parent.context).inflate(
                 R.layout.fragment_post_rv_item,
@@ -464,4 +492,8 @@ class PostFragment : Fragment() {
 
     }
 
+    override fun onDetach(){
+        super.onDetach()
+        callback.remove()
+    }
 }

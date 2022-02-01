@@ -107,11 +107,13 @@ class CalendarFragment2(index: Int) : Fragment() {
                 val day = calendarAdapter.dataList[position].toString()
                 val date = "${calendar_year_month_text.text}${day}일"
                 Log.d(TAG, "$date")
-                // val mainTab = mActivity.main_bottom_menu
-                // mainTab.setScrollPosition(1, 0f, true)
-                // val mainViewPager = mActivity.main_pager
-                //  mainViewPager.currentItem = 1
-                // RoutineDateLiveData.getInstance().getLiveProgress().value = date
+                val galleryFragment = PostFragment()
+                var bundle = Bundle()
+                bundle.putString("date", date)
+                galleryFragment.setArguments(bundle)
+                parentFragmentManager.beginTransaction()
+                    .replace(R.id.main_screen_panel, galleryFragment).commit()
+
             }
         }
     }
