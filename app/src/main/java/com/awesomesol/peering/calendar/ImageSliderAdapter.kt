@@ -46,5 +46,6 @@ class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>) :
     init {
         this.context = context
         this.sliderImage = sliderImage
+        notifyDataSetChanged()
     }
 }

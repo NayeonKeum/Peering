@@ -11,6 +11,7 @@ import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
 import com.awesomesol.peering.common.BaseFragment
 import kotlinx.android.synthetic.main.fragment_first.view.*
+import org.threeten.bp.LocalDate
 
 class CalendarMainFragment : BaseFragment() {
 
@@ -46,6 +47,11 @@ class CalendarMainFragment : BaseFragment() {
 
         view?.findViewById<Button>(R.id.btn_CalendarFragment_writePost)?.setOnClickListener {
             val galleryFragment = PostFragment()
+            val formatter=org.threeten.bp.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
+            var date= LocalDate.now().format(formatter)
+            var bundle = Bundle()
+            bundle.putString("date", date)
+            galleryFragment.setArguments(bundle)
             parentFragmentManager.beginTransaction()
                 .replace(R.id.main_screen_panel, galleryFragment).commit()
         }
