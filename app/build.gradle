@@ -73,6 +73,8 @@ dependencies {
     annotationProcessor 'com.github.bumptech.glide:compiler:4.12.0'
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+    // ViewPager2
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:29.0.3')
@@ -99,4 +101,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'androidx.recyclerview:recyclerview-selection:1.0.0'
+
+    // api 23 이전에도 날짜 사용하려고
+    implementation 'com.jakewharton.threetenabp:threetenabp:1.2.1'
 }
