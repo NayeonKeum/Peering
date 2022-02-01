@@ -46,14 +46,6 @@ class PostFragment : Fragment() {
     private var sliderViewPager: ViewPager2? = null
     private var layoutIndicator: LinearLayout? = null
 
-//    private val images = arrayOf(
-//        "https://cdn.pixabay.com/photo/2019/12/26/10/44/horse-4720178_1280.jpg",
-//        "https://cdn.pixabay.com/photo/2020/11/04/15/29/coffee-beans-5712780_1280.jpg",
-//        "https://cdn.pixabay.com/photo/2020/03/08/21/41/landscape-4913841_1280.jpg",
-//        "https://cdn.pixabay.com/photo/2020/09/02/18/03/girl-5539094_1280.jpg",
-//        "https://cdn.pixabay.com/photo/2014/03/03/16/15/mosque-279015_1280.jpg"
-//    )
-
     private var images:ArrayList<String> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,6 +77,7 @@ class PostFragment : Fragment() {
 
         Log.d(TAG, "targetDate에 있는 사진 개수: " + calendarImages.get(targetDate)?.size)
         val datasize: Int? =calendarImages.get(targetDate)?.size
+        Log.d(TAG+"뭐들었니", calendarImages.toString())
 
         for (i : Int in 0..(datasize!!-1)){
             calendarImages.get(targetDate)?.get(i)?.toUri()?.let { GalleryData(it, 0) }?.let {
