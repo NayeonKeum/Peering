@@ -17,8 +17,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_calendar2.view.*
-import org.threeten.bp.LocalDate
-import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 class CalendarFragment2(index: Int) : Fragment() {
@@ -43,8 +41,7 @@ class CalendarFragment2(index: Int) : Fragment() {
     var nickname:String=""
     var profileImagePath:String=""
 
-    var calName:String=""
-
+    var cid:String=""
 
 
     companion object {
@@ -63,6 +60,7 @@ class CalendarFragment2(index: Int) : Fragment() {
         super.onCreate(savedInstanceState)
         instance = this
 
+
         UserApiClient.instance.me { user, error ->
             uid = user?.id.toString()
             nickname = user?.kakaoAccount?.profile?.nickname.toString()
@@ -74,9 +72,9 @@ class CalendarFragment2(index: Int) : Fragment() {
                     for (document in documents) {
                         //Log.d(TAG, "${document.id} => ${document.data}")
                         val hh= document.data["calendarID"] as HashMap<String, String>
-                        calName= hh["myCalendar"].toString()
+                        cid= hh["myCalendar"].toString()
 
-                        fs.collection("calendars").document(calName).get()
+                        fs.collection("calendars").document(cid).get()
                             .addOnSuccessListener {
                                 dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<GalleryData>>
                                 // Log.d(TAG, "dateList4 $dateGalleryData")
@@ -165,6 +163,8 @@ class CalendarFragment2(index: Int) : Fragment() {
                 val galleryFragment = PostFragment()
                 var bundle = Bundle()
                 bundle.putString("date", date)
+                bundle.putString("dateym", dateym)
+                bundle.putString("cid", cid)
                 bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
                 galleryFragment.setArguments(bundle)
                 parentFragmentManager.beginTransaction()

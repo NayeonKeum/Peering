@@ -21,6 +21,9 @@ import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 import kotlin.collections.ArrayList
@@ -36,13 +39,20 @@ class PostFragment : Fragment() {
     private lateinit var bottomSheetBehavior:BottomSheetBehavior<View>
 
 
+    var fs=Firebase.firestore
+
     // 슬라이더
     private var sliderViewPager: ViewPager2? = null
     private var layoutIndicator: LinearLayout? = null
     private lateinit var cl_PostFragment: ConstraintLayout
+    private lateinit var writePost:ImageView
 
     private var images:ArrayList<String> = arrayListOf()
     private var curDate:String=""
+    private var dateym:String=""
+    private var cid:String=""
+
+    private var uid:String=""
 
     private lateinit var callback:OnBackPressedCallback
 
@@ -57,6 +67,8 @@ class PostFragment : Fragment() {
             // targetDate = bundle.getString("targetDate").toString(); //Name 받기.
             Log.d(TAG, "넘어온 번들: ${bundle.getString("date")}")
             curDate= bundle.getString("date").toString()
+            dateym=bundle.getString("dateym").toString()
+            cid=bundle.getString("cid").toString()
             try{
                 Log.d(TAG, "넘어온 번들: ${bundle.getSerializable("dateGalleryData")}")
                 dateGalleryData = bundle.getSerializable("dateGalleryData") as ArrayList<HashMap<String, Any>>
@@ -67,6 +79,8 @@ class PostFragment : Fragment() {
 
 
         }
+        UserApiClient.instance.me { user, error ->
+            uid = user?.id.toString()}
     }
 
     override fun onCreateView(
@@ -193,6 +207,34 @@ class PostFragment : Fragment() {
                 activity?.findViewById<AnimatedBottomBar>(R.id.bottom_navigation)?.visibility = View.VISIBLE
                 tempFlag = true
             }
+        }
+
+
+        writePost=view.findViewById(R.id.iv_PostFragment_writePost)
+
+        writePost.setOnClickListener {
+            lateinit var hh: HashMap<String, ArrayList<GalleryData>>
+
+            fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+                .addOnSuccessListener { documents->
+                    for (document in documents) {
+                        if (document.data["cid"].toString().equals(cid)){
+                            hh= document.data["dataList4"] as HashMap<String, ArrayList<GalleryData>>
+                        }
+                    }
+                    hh[dateym]=galleryRVAdapter.dateGalleryData as ArrayList<GalleryData>
+                    fs.collection("calendars").document(cid).update("dataList4", hh)
+                        .addOnSuccessListener { Log.d(TAG, "성공") }
+                        .addOnFailureListener{ Log.d(TAG, "실패")}
+
+
+                }
+                .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+
+            val calendarFragment = CalendarMainFragment()
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, calendarFragment).commit()
+
         }
 
         return view

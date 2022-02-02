@@ -43,15 +43,13 @@ class MainActivity : AppCompatActivity() {
     lateinit var profileImagePath:String
     var mfriendList: HashMap<String, Int> = hashMapOf()
 
+    lateinit var myCalID:String
+    lateinit var myCalName:String
+
 
     val TAG="메인"
     val fs= Firebase.firestore
 
-
-    private var dataList4: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
-    private var targetDate="2022-01-29"
-    private var dataList = mutableListOf<GalleryData>()
-    private var images: ArrayList<String> = arrayListOf()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -70,8 +68,21 @@ class MainActivity : AppCompatActivity() {
             nickname = user?.kakaoAccount?.profile?.nickname.toString()
             profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
             email = user?.kakaoAccount?.email.toString()
-        }
 
+//            fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+//                .addOnSuccessListener {documents ->
+//                    for (document in documents) {
+//                        if (document.data["cname"].toString().equals("내 캘린더")){
+//                            myCalID=document.data["cid"].toString()
+//                        }
+//                    }
+//                    Log.d(TAG, "내 캘 찾음")
+//
+//                }
+//                .addOnFailureListener{
+//                    Log.d(TAG, "엥 시무룩")
+//                }
+        }
 
 
 
