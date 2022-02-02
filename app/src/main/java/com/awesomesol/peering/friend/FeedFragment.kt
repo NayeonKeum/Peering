@@ -16,8 +16,8 @@ import kotlinx.android.synthetic.main.fragment_feed.*
 
 class FeedFragment : Fragment() {
     val TAG="피드"
-    // 파이어스토어 객체 얻기
-    // 얻은 FirebaseFirestore 객체로 컬렉션을 선택하고 문서를 추가하거나 가져오는 작업을 함
+
+    // 파이어스토어 객체 얻기, 얻은 FirebaseFirestore 객체로 컬렉션을 선택하고 문서를 추가하거나 가져오는 작업을 함
     val db = FirebaseFirestore.getInstance()   // Firestore 인스턴스 선언
     val feedDataList = arrayListOf<FeedModel>()   // 리스트 아이템 배열
     val adapter = FeedRVAdapter(feedDataList)     // 리사이클러 뷰 어댑터
@@ -99,6 +99,7 @@ class FeedFragment : Fragment() {
 
         rv.layoutManager = LinearLayoutManager(requireContext())
 
+        // adapter에서 item을 클릭할 경우 FeedFragment으로 넘어가는 코드
         adapter.itemClick = object : FeedRVAdapter.ItemClick{
             override fun onClick(view: View, position: Int) {
                 val diaryreadFragment = DiaryReadFragment()
@@ -106,9 +107,9 @@ class FeedFragment : Fragment() {
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, diaryreadFragment).commit()
             }
-
         }
         rv.adapter = adapter
+
         getFBFeedData()
         return view
     }
@@ -118,7 +119,8 @@ class FeedFragment : Fragment() {
     }
 
     // todo : 임의로 대입한 값이 아닌 실제로 작성한 값이 들어갈 수 있도록 하자..!!!
-    private fun getFBFeedData(){
+    // recyclerview multi 찾아서 mainImg 데이터 전달받도록 수정하기 -> viewholder 여러 개
+   private fun getFBFeedData(){
         db.collection("feeds")    // 작업할 컬렉션
             .get()                   // 문서 가져오기
             .addOnSuccessListener { result ->
