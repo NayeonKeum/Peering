@@ -21,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, val date: Date)://, val dateGalleryData: DateGalleryData) :
+class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, val date: Date)://, val dateGalleryData: HashMap<String, ArrayList<GalleryData>>) :
     RecyclerView.Adapter<Calendar2Adapter.CalendarItemHolder>() {
 
     private val TAG = "캘 어댑터"

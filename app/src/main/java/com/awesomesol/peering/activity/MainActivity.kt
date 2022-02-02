@@ -1,26 +1,33 @@
 package com.awesomesol.peering.activity
 
-import android.content.Context
+import android.Manifest
+import android.content.ContentUris
+import android.content.pm.PackageManager
+import android.database.Cursor
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.AttributeSet
+import android.provider.MediaStore
+import android.text.format.DateFormat
 import android.util.Log
-import android.view.View
+import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.CalendarInfo
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.awesomesol.peering.calendar.GalleryData
+import com.awesomesol.peering.catDiary.catDiaryFragment
 import com.awesomesol.peering.character.CharacterFragment
+import com.awesomesol.peering.character.UserInfo
 import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment
-import com.awesomesol.peering.catDiary.catDiaryFragment
-import nl.joery.animatedbottombar.AnimatedBottomBar
-import com.awesomesol.peering.character.UserInfo
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
-import kotlinx.android.synthetic.main.fragment_post.*
+import nl.joery.animatedbottombar.AnimatedBottomBar
+import java.util.*
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
@@ -34,11 +41,17 @@ class MainActivity : AppCompatActivity() {
     lateinit var email:String
     lateinit var nickname:String
     lateinit var profileImagePath:String
-    var friendList: HashMap<String, Int> = hashMapOf()
+    var mfriendList: HashMap<String, Int> = hashMapOf()
 
 
     val TAG="메인"
     val fs= Firebase.firestore
+
+
+    private var dataList4: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
+    private var targetDate="2022-01-29"
+    private var dataList = mutableListOf<GalleryData>()
+    private var images: ArrayList<String> = arrayListOf()
 
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -52,35 +65,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
-        UserApiClient.instance.me { user, error ->
-            uid = user?.id.toString()
-            nickname = user?.kakaoAccount?.profile?.nickname.toString()
-            profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
-            email = user?.kakaoAccount?.email.toString()
-            // 카카오톡 친구 목록 가져오기 (기본)
-            TalkApiClient.instance.friends { friends, error ->
-                if (error != null) {
-                    Log.e(TAG, "카카오톡 친구 목록 가져오기 실패", error)
-                }
-                else if (friends != null) {
-                    Log.i(TAG, "카카오톡 친구 목록 가져오기 성공 \n${friends.elements.joinToString("\n")}")
-                    Log.d(TAG, friends.toString())
-
-                    for (i in 0 until friends.totalCount){
-                        friendList.put(friends.elements[0].id.toString(), 0) // 이거 일단 다 0으로 넣음
-                    }
-                    // 친구의 UUID 로 메시지 보내기 가능
-
-                    val user= UserInfo(uid, nickname, profileImagePath, email, friendList)
-
-                    fs.collection("users").document(uid).set(user)
-                            .addOnSuccessListener { Log.d(TAG, "fs 에 유저 정보 저장 쨘") }
-                            .addOnFailureListener{e-> Log.d(TAG, "에러 났음 쨘", e)}
-
-                }
-            }
-
-        }
 
 
 
@@ -166,30 +150,30 @@ class MainActivity : AppCompatActivity() {
 
         // Bottom Navigation
         binding.bottomNavigation.setOnTabSelectListener(object :
-                AnimatedBottomBar.OnTabSelectListener {
+            AnimatedBottomBar.OnTabSelectListener {
             override fun onTabSelected(
-                    lastIndex: Int,
-                    lastTab: AnimatedBottomBar.Tab?,
-                    newIndex: Int,
-                    newTab: AnimatedBottomBar.Tab
+                lastIndex: Int,
+                lastTab: AnimatedBottomBar.Tab?,
+                newIndex: Int,
+                newTab: AnimatedBottomBar.Tab
             ) {
                 when (newIndex) {
                     0 -> {
                         val calendarFragment = CalendarMainFragment()
                         //val calendarFragment = PostFragment()
                         supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_screen_panel, calendarFragment).commit()
+                            .replace(R.id.main_screen_panel, calendarFragment).commit()
                     }
                     1 -> {
                         val friendFragment = catDiaryFragment()
                         supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_screen_panel, friendFragment).commit()
+                            .replace(R.id.main_screen_panel, friendFragment).commit()
                     }
 
                     2 -> {
                         val feedFragment = FeedFragment()
                         supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_screen_panel, feedFragment).commit()
+                            .replace(R.id.main_screen_panel, feedFragment).commit()
                     }
                     3 -> {
                         val characterFragment = CharacterFragment()
@@ -198,9 +182,9 @@ class MainActivity : AppCompatActivity() {
                         userBundle.putString("email", email)
                         userBundle.putString("nickname", nickname)
                         userBundle.putString("profileImagePath", profileImagePath)
-                        characterFragment.arguments =userBundle
+                        characterFragment.arguments = userBundle
                         supportFragmentManager.beginTransaction()
-                                .replace(R.id.main_screen_panel, characterFragment).commit()
+                            .replace(R.id.main_screen_panel, characterFragment).commit()
                     }
                 }
             }
@@ -220,5 +204,6 @@ class MainActivity : AppCompatActivity() {
         mBinding = null
         super.onDestroy()
     }
+
 
 }
