@@ -330,7 +330,9 @@ class PostFragment : Fragment() {
             // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
             holder.iv.setOnClickListener {
 
-                if(dateGalleryData[position]["used"]?.equals(0) == true){
+                val ln:Long=0
+
+                if(dateGalleryData[position]["used"]?.equals(ln) == true){
                     // 사용 안 한 거
                     // 더하는 액션 하고
                     val ln:Long=1
