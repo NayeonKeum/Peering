@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ghostMonthShadow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        app:layout_constraintStart_toStartOf="@+id/ghostMonthFill"
+        app:layout_constraintTop_toTopOf="@+id/ghostMonthFill"
+        app:srcCompat="@drawable/ghost_o_shadow" />
+
+    <ImageView
+        android:id="@+id/ghostMonthFill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ghost_o_fill" />
+
+    <TextView
+        android:id="@+id/textMonth"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="01"
+        android:textColor="@color/dark_blue"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/ghostMonthFill"
+        app:layout_constraintEnd_toEndOf="@+id/ghostMonthFill"
+        app:layout_constraintStart_toStartOf="@+id/ghostMonthFill"
+        app:layout_constraintTop_toTopOf="@+id/ghostMonthFill" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

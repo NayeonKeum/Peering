@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <View
+        android:id="@+id/v_catDiaryFragment_category_container"
+        android:layout_width="300dp"
+        android:layout_height="36dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:background="#00000000"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/iv_catDiaryFragment_ghost"
+        android:layout_width="16dp"
+        android:layout_height="18.29dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="3dp"
+        android:background="#00000000"
+        android:src="@drawable/cat_sub"
+        app:layout_constraintBottom_toBottomOf="@+id/v_catDiaryFragment_category_container"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/v_catDiaryFragment_category_container" />
+
+    <TextView
+        android:id="@+id/tv_catDiaryFragment_catSub"
+        android:layout_width="81dp"
+        android:layout_height="17dp"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="10dp"
+        android:gravity="top"
+        android:text="일상"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_catDiaryFragment_ghost"
+        app:layout_constraintStart_toEndOf="@+id/iv_catDiaryFragment_ghost"
+        app:layout_constraintTop_toTopOf="@+id/iv_catDiaryFragment_ghost" />
+
+    <View
+        android:id="@+id/horizon_category"
+        android:layout_width="300dp"
+        android:layout_height="1dp"
+        android:background="@color/theme_green"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/v_catDiaryFragment_category_container" />
+
+    <ImageView
+        android:id="@+id/imageView5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
+        app:layout_constraintBottom_toBottomOf="@+id/v_catDiaryFragment_category_container"
+        app:layout_constraintEnd_toEndOf="@+id/v_catDiaryFragment_category_container"
+        app:layout_constraintTop_toTopOf="@+id/v_catDiaryFragment_category_container"
+        app:srcCompat="@drawable/cat_more" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
