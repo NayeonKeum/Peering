@@ -5,6 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,6 +59,11 @@ class catDiaryFragment : Fragment() {
         items3.add("인생은 뭘까")
         items3.add("하하")
         items3.add("글자를길게써봅시다")
+
+        if (items3.size != 0) {
+            val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
+            groupDefault.isVisible = false
+        }
 
         // rv의 adapter는 여기에서 만든 Adapter이다~
         rv.adapter = MonthListRVAdapter(items)

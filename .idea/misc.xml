@@ -16,12 +16,12 @@
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/activity_splash.xml" value="0.264" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/catdiary_category_rv_item.xml" value="0.264" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/catdiary_month_list_rv_item.xml" value="0.2504528985507246" />
-        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/catdiary_sharediary_null.xml" value="0.2504528985507246" />
-        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/catdiary_sharediary_rv_item.xml" value="1.0" />
+        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/catdiary_sharediary_null.xml" value="0.2" />
+        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/catdiary_sharediary_rv_item.xml" value="0.264" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/feed_rv_item.xml" value="0.264" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_calendar.xml" value="0.4" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_calendar2.xml" value="0.2504528985507246" />
-        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_catdiary.xml" value="0.264" />
+        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_catdiary.xml" value="0.2" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_character.xml" value="0.152" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_diary_read.xml" value="0.2504528985507246" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_feed.xml" value="0.176" />
@@ -29,6 +29,7 @@
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_post.xml" value="0.2504528985507246" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_post_bottomsheet_photos.xml" value="0.2504528985507246" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/fragment_post_rv_item.xml" value="0.2504528985507246" />
+        <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/list_item_calendar.xml" value="0.264" />
         <entry key="..\:/Dev/teamtask/peering/Peering/app/src/main/res/layout/month_list_rv_item.xml" value="0.72" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/drawable/background_edittext.xml" value="0.1953125" />
         <entry key="..\:/Users/82107/AndroidStudioProjects/Peering/app/src/main/res/layout/activity_feed_write.xml" value="0.22" />
