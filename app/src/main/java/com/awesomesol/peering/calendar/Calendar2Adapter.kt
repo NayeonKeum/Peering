@@ -20,16 +20,18 @@ import org.threeten.bp.LocalDate
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.reflect.typeOf
 
-class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, val date: Date)://, val dateGalleryData: HashMap<String, ArrayList<GalleryData>>) :
+class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, val date: Date, val dateGalleryData: HashMap<String, ArrayList<GalleryData>>) :
     RecyclerView.Adapter<Calendar2Adapter.CalendarItemHolder>() {
 
     private val TAG = "캘 어댑터"
-    var dataList7: ArrayList<Int> = arrayListOf()
-    var dataList4: ArrayList<Int> = arrayListOf()
-    val dateGalleryData:HashMap<String, ArrayList<GalleryData>> = hashMapOf("2022-01-29" to arrayListOf(GalleryData("content://media/external/images/media/100", 1),GalleryData("content://media/external/images/media/100", 1)),
-                                                    "2022-01-22" to arrayListOf(GalleryData("content://media/external/images/media/77", 1),GalleryData("content://media/external/images/media/78", 1),GalleryData("content://media/external/images/media/79", 1))
-                                                    )
+    // var dataList7: ArrayList<Int> = arrayListOf()
+    var datelist: ArrayList<Int> = arrayListOf()
+//    val dateGalleryData:HashMap<String, ArrayList<GalleryData>> = hashMapOf("2022-01-29" to arrayListOf(GalleryData("content://media/external/images/media/100", 1),GalleryData("content://media/external/images/media/100", 1)),
+//                                                    "2022-01-22" to arrayListOf(GalleryData("content://media/external/images/media/77", 1),GalleryData("content://media/external/images/media/78", 1),GalleryData("content://media/external/images/media/79", 1))
+//                                                    )
    // {2022-01-29=[content://media/external/images/media/100, content://media/external/images/media/101, content://media/external/images/media/102, content://media/external/images/media/103, content://media/external/images/media/104],
         // 2021-11-11=[content://media/external/images/media/32],
         // 2022-01-26=[content://media/external/images/media/82, content://media/external/images/media/83, content://media/external/images/media/84, content://media/external/images/media/92, content://media/external/images/media/85, content://media/external/images/media/86, content://media/external/images/media/91, content://media/external/images/media/87, content://media/external/images/media/88, content://media/external/images/media/90, content://media/external/images/media/89],
@@ -49,7 +51,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
         calInstance.time = date
         var currentMaxDate = calInstance.getActualMaximum(Calendar.DAY_OF_MONTH)
         for (i in 1..currentMaxDate){
-            dataList4.add(i)
+            datelist.add(i)
         }
         AndroidThreeTen.init(context);
 
@@ -72,7 +74,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
         // val h = calendarLayout.height / 6
         // holder.itemView.layoutParams.height = h
 
-        holder?.bind(dataList4[position], position, context)
+        holder?.bind(datelist[position], position, context)
         if (itemClick != null) {
             holder?.itemView?.setOnClickListener { v ->
                 itemClick?.onClick(v, position)
@@ -86,7 +88,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
         return CalendarItemHolder(view)
     }
 
-    override fun getItemCount(): Int = dataList4.size
+    override fun getItemCount(): Int = datelist.size
 
     inner class CalendarItemHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
 
@@ -109,10 +111,10 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
             val formatter=org.threeten.bp.format.DateTimeFormatter.ofPattern("yyyy-MM-dd")
             var dateToday=LocalDate.now().format(formatter)
 
-            dateString += if (dataList4[position]<10){
-                "-0${dataList4[position]}"
+            dateString += if (datelist[position]<10){
+                "-0${datelist[position]}"
             } else{
-                "-${dataList4[position]}"
+                "-${datelist[position]}"
             }
 
             itemCalendarDateText.setText(data.toString())
@@ -127,26 +129,47 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
 //                itemCalendarDateText.setTextAppearance(R.style.LightColorTextViewStyle)
 //            } else{
             val date = LocalDate.parse(dateString, org.threeten.bp.format.DateTimeFormatter.ISO_DATE)
-            Log.d(TAG, "dayofweek 형식: "+date.dayOfWeek)
             if (date.dayOfWeek==DayOfWeek.SATURDAY){
                 itemCalendarDateText.setTextAppearance(R.style.SatTextViewStyle)
-                Log.d(TAG, "${dateString}오늘은 토요일")
             }
             if (date.dayOfWeek==DayOfWeek.SUNDAY){
                 itemCalendarDateText.setTextAppearance(R.style.SunTextViewStyle)
-                Log.d(TAG, "${dateString}오늘은 일요일")
             }
 
 
             iv_CalendarFragment2_img.setImageResource(R.drawable.character)
             // itemView.setBackgroundColor(R.color.theme_yellow)
 
+
             try{
-                iv_CalendarFragment2_img.setImageURI(dateGalleryData.get(dateString)?.get(0)?.imageUri!!.toUri())
+                val hh= dateGalleryData[dateString] as ArrayList<HashMap<String, Any>>
+                if (hh != null) {
+                    for (data in hh){
+                        Log.d(TAG, "data[\"used\"] ${data["used"]?.javaClass}")
+                        val lnum:Long=1
+                        if (data["used"]!!.equals(lnum)){
+                            val uri=data["imageUri"] as String
+                            Log.d(TAG, "이미지스트링 ${uri}")
+                            iv_CalendarFragment2_img.setImageURI(uri.toUri())
+                            break
+                        }
+                        // 전부 다 0이면! 여기서 지정
+                        /*
+                                * 제일 처음걸로 기본 지정
+                                * 배경 색 변경
+                                * */
+                    }
+                }else{
+                    Log.d(TAG, "data가 눌이여")
+                }
+                
             }
             catch(e :NullPointerException){
                 Log.d(TAG, "${dateString} 이 날 사진 없음")
             }
+//            catch(e :ClassCastException){
+//                Log.d(TAG, "${dateString} 이 날도 사진 없음")
+//            }
             finally {
 
             }

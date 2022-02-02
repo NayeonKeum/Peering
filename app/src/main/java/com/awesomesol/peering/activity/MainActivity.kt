@@ -65,6 +65,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+        UserApiClient.instance.me { user, error ->
+            uid = user?.id.toString()
+            nickname = user?.kakaoAccount?.profile?.nickname.toString()
+            profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
+            email = user?.kakaoAccount?.email.toString()
+        }
+
 
 
 
