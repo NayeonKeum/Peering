@@ -152,7 +152,7 @@ class LoginActivity : AppCompatActivity(){
                 }
             }
             else if (token != null) {
-                Toast.makeText(this, "로그인에 성공하였습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "회원가입에 성공하였습니다.", Toast.LENGTH_SHORT).show()
 
                 UserApiClient.instance.me { user, error ->
                     uid = user?.id.toString()
@@ -421,46 +421,46 @@ class LoginActivity : AppCompatActivity(){
             e.printStackTrace()
         }
     }
-
-    // 내 gallery 연동
-    private fun checkPermission() {
-        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
-        } else {
-            // 갤러리 연동 분기점
-            initView()
-        }
-    }
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            200 -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initView()
-                } else {
-                    Toast.makeText(this, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
-                }
-            }
-        }
-    }
-
-    private fun initView() {
-        try {
-            val cursor = getImageData()
-            getImages(cursor)
-
-        } catch (e: SecurityException) {
-            Toast.makeText(this, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "스토리지에 접근 권한을 허가해주세요")
-            // finish()
-        }
-    }
-
+//
+//    // 내 gallery 연동
+//    private fun checkPermission() {
+//        if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
+//        } else {
+//            // 갤러리 연동 분기점
+//            initView()
+//        }
+//    }
+//    override fun onRequestPermissionsResult(
+//        requestCode: Int,
+//        permissions: Array<out String>,
+//        grantResults: IntArray
+//    ) {
+//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+//        when (requestCode) {
+//            200 -> {
+//                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    initView()
+//                } else {
+//                    Toast.makeText(this, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
+//                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
+//                }
+//            }
+//        }
+//    }
+//
+//    private fun initView() {
+//        try {
+//            val cursor = getImageData()
+//            getImages(cursor)
+//
+//        } catch (e: SecurityException) {
+//            Toast.makeText(this, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
+//            Log.d(TAG, "스토리지에 접근 권한을 허가해주세요")
+//            // finish()
+//        }
+//    }
+//
     private fun getImageData(): Cursor {
 
         val resolver = contentResolver
@@ -483,61 +483,61 @@ class LoginActivity : AppCompatActivity(){
     }
 
 
-    private fun getImages(cursor: Cursor){
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                // 날짜별 이미지 리스트 초기화
-
-                //1. 각 컬럼의 열 인덱스를 취득한다.
-                val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
-                val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
-                val dateTakenColNum =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
-
-                //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
-                val id = cursor.getLong(idColNum) // 0
-                val title = cursor.getString(titleColNum) // 1
-                val dateTaken = cursor.getLong(dateTakenColNum) // 2
-//                val imageUri =
-//                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-
-                var uri= ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-                //3. 데이터를 View로 설정
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = dateTaken
-                val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
-                // Log.d(TAG, date)
-                // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
-                if (date in dataList4.keys){
-                    // 날짜가 이미 있다면
-                    dataList4.get(date)?.add(GalleryData(uri.toString(), 0))
-                }
-                else{
-                    // 날짜가 없음!
-                    dataList4.put(date, arrayListOf())
-                    dataList4.get(date)?.add(GalleryData(uri.toString(), 1))
-
-                }
-
-//                textView.text = "촬용일시: $text"
-//                imageView.setImageURI(imageUri)
-
-//                Log.d(TAG, "DATE: "+date)
-//                Log.d(TAG, "ID: "+id)
-//                Log.d(TAG, "TITLE: "+title)
-//                Log.d(TAG, "URI: "+uri)
-            }
-            cursor.close()
-            Log.d(TAG + " 뭐 들었니", dataList4.toString())
-
-        }
-        // view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get(targetDate)?.get(0)?.toUri())
-
-    }
+//    private fun getImages(cursor: Cursor){
+//        if (cursor != null) {
+//            while (cursor.moveToNext()) {
+//                // 날짜별 이미지 리스트 초기화
+//
+//                //1. 각 컬럼의 열 인덱스를 취득한다.
+//                val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
+//                val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
+//                val dateTakenColNum =
+//                    cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
+//
+//                //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
+//                val id = cursor.getLong(idColNum) // 0
+//                val title = cursor.getString(titleColNum) // 1
+//                val dateTaken = cursor.getLong(dateTakenColNum) // 2
+////                val imageUri =
+////                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
+//
+//                var uri= ContentUris.withAppendedId(
+//                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+//                    id
+//                )
+//
+//                //3. 데이터를 View로 설정
+//                val calendar = Calendar.getInstance()
+//                calendar.timeInMillis = dateTaken
+//                val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
+//                // Log.d(TAG, date)
+//                // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
+//                if (date in dataList4.keys){
+//                    // 날짜가 이미 있다면
+//                    dataList4.get(date)?.add(GalleryData(uri.toString(), 0))
+//                }
+//                else{
+//                    // 날짜가 없음!
+//                    dataList4.put(date, arrayListOf())
+//                    dataList4.get(date)?.add(GalleryData(uri.toString(), 1))
+//
+//                }
+//
+////                textView.text = "촬용일시: $text"
+////                imageView.setImageURI(imageUri)
+//
+////                Log.d(TAG, "DATE: "+date)
+////                Log.d(TAG, "ID: "+id)
+////                Log.d(TAG, "TITLE: "+title)
+////                Log.d(TAG, "URI: "+uri)
+//            }
+//            cursor.close()
+//            Log.d(TAG + " 뭐 들었니", dataList4.toString())
+//
+//        }
+//        // view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get(targetDate)?.get(0)?.toUri())
+//
+//    }
 
 
 }

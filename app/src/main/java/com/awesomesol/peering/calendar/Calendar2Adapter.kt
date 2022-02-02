@@ -145,11 +145,9 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
                 val hh= dateGalleryData[dateString] as ArrayList<HashMap<String, Any>>
                 if (hh != null) {
                     for (data in hh){
-                        Log.d(TAG, "data[\"used\"] ${data["used"]?.javaClass}")
                         val lnum:Long=1
                         if (data["used"]!!.equals(lnum)){
                             val uri=data["imageUri"] as String
-                            Log.d(TAG, "이미지스트링 ${uri}")
                             iv_CalendarFragment2_img.setImageURI(uri.toUri())
                             break
                         }
@@ -167,9 +165,6 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
             catch(e :NullPointerException){
                 Log.d(TAG, "${dateString} 이 날 사진 없음")
             }
-//            catch(e :ClassCastException){
-//                Log.d(TAG, "${dateString} 이 날도 사진 없음")
-//            }
             finally {
 
             }

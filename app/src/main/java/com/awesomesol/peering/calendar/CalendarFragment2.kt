@@ -17,6 +17,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_calendar2.view.*
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 import java.text.SimpleDateFormat
 import java.util.*
 class CalendarFragment2(index: Int) : Fragment() {
@@ -152,11 +154,18 @@ class CalendarFragment2(index: Int) : Fragment() {
 //                    return
 //                }
                 val day = calendarAdapter.datelist[position].toString()
-                val date = "${calendar_year_month_text.text}${day}일"
-                Log.d(TAG, "$date")
+                val date = "${calendar_year_month_text.text} ${day}일"
+                var dateym: String = SimpleDateFormat("yyyy-MM", Locale.KOREA).format(currentDate.time)
+                if (day.length<2){
+                    dateym+= "-0$day"
+                }else{
+                    dateym+= "-$day"
+                }
+
                 val galleryFragment = PostFragment()
                 var bundle = Bundle()
                 bundle.putString("date", date)
+                bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
                 galleryFragment.setArguments(bundle)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, galleryFragment).commit()
