@@ -147,6 +147,8 @@ class PostFragment : Fragment() {
         layoutIndicator = view.findViewById(R.id.layoutIndicators)
 
         sliderViewPager!!.offscreenPageLimit = 1
+
+
         sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), images)
 
         sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -324,27 +326,37 @@ class PostFragment : Fragment() {
             val imgu:String=data.get("imageUri").toString()
             holder.iv.setImageURI(imgu.toUri())
 
+
             // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
             holder.iv.setOnClickListener {
+
                 if(dateGalleryData[position]["used"]?.equals(0) == true){
                     // 사용 안 한 거
-                        // 더하는 액션 하고
-                    dateGalleryData[position]["used"]=1 // 이거 서버에 전달해야햠
+                    // 더하는 액션 하고
+                    val ln:Long=1
+                    dateGalleryData[position]["used"]=ln
                     holder.addminus.setImageResource(R.drawable.gallery_minus)
                 }
                 else{
                     // 사용 한 거
-                        // 빼는 액션하고
-                    dateGalleryData[position]["used"]=0 // 이거 서버에 전달해야햠
+                    // 빼는 액션하고
+                    val ln:Long=0
+                    dateGalleryData[position]["used"]=ln
                     holder.addminus.setImageResource(R.drawable.gallery_add)
                 }
 
                 useImages= arrayListOf()
                 for (i:Int in dateGalleryData.indices){
-                    if(dateGalleryData[i]["used"]?.equals(1) == true){
+                    Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
+                    val ln:Long=1
+                    if(dateGalleryData[i]["used"]?.equals(ln) == true){
                         useImages.add(dateGalleryData[i]["imageUri"].toString())
                     }
                 }
+                Log.d("뷰페이저 인디1", dateGalleryData.toString())
+                Log.d("뷰페이저 인디2", useImages.toString())
+
+                // 초기화
                 layoutIndicator!!.removeAllViews()
 
                 // 둥근 모서리
