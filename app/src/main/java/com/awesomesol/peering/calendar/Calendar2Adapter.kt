@@ -2,7 +2,9 @@ package com.awesomesol.peering.calendar
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Typeface
+import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,6 +12,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
@@ -95,6 +98,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
         var itemCalendarDateText: TextView = itemView!!.item_calendar_date_text
         //var itemCalendarDotView: View = itemView!!.item_calendar_dot_view
         var iv_CalendarFragment2_img: ImageView = itemView!!.iv_CalendarFragment2_img
+        var iv_CalendarFragment2_character:ImageView=itemView!!.iv_CalendarFragment2_character
 
         @SuppressLint("ResourceAsColor")
         fun bind(data: Int, position: Int, context: Context) {
@@ -137,9 +141,11 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
             }
 
 
-            iv_CalendarFragment2_img.setImageResource(R.drawable.character)
             // itemView.setBackgroundColor(R.color.theme_yellow)
-
+            val rand=Random().nextInt(100)
+            if (rand%2==0){
+                iv_CalendarFragment2_character.setImageResource(R.drawable.character_blue)
+            }
 
             try{
                 val hh= dateGalleryData[dateString] as ArrayList<HashMap<String, Any>>
@@ -149,6 +155,8 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
                         if (data["used"]!!.equals(lnum)){
                             val uri=data["imageUri"] as String
                             iv_CalendarFragment2_img.setImageURI(uri.toUri())
+                            itemView.findViewById<ConstraintLayout>(R.id.cl_CalendarFragment2).setBackgroundColor(Color.parseColor("#FFB6B9"))
+                            iv_CalendarFragment2_character.visibility=View.GONE
                             break
                         }
                         // 전부 다 0이면! 여기서 지정
@@ -164,6 +172,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
             }
             catch(e :NullPointerException){
                 Log.d(TAG, "${dateString} 이 날 사진 없음")
+
             }
             finally {
 
