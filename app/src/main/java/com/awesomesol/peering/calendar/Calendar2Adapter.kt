@@ -159,6 +159,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
                             iv_CalendarFragment2_character.visibility=View.GONE
                             break
                         }
+                        // 깃헙 뭔가 이상해 그러지마 제발
                         // 전부 다 0이면! 여기서 지정
                         /*
                                 * 제일 처음걸로 기본 지정
