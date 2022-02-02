@@ -27,8 +27,8 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
     private val TAG = "캘 어댑터"
     var dataList7: ArrayList<Int> = arrayListOf()
     var dataList4: ArrayList<Int> = arrayListOf()
-    val dateGalleryData:HashMap<String, ArrayList<GalleryData>> = hashMapOf("2022-01-29" to arrayListOf(GalleryData("content://media/external/images/media/100".toUri(), 1),GalleryData("content://media/external/images/media/100".toUri(), 1)),
-                                                    "2022-01-22" to arrayListOf(GalleryData("content://media/external/images/media/77".toUri(), 1),GalleryData("content://media/external/images/media/78".toUri(), 1),GalleryData("content://media/external/images/media/79".toUri(), 1))
+    val dateGalleryData:HashMap<String, ArrayList<GalleryData>> = hashMapOf("2022-01-29" to arrayListOf(GalleryData("content://media/external/images/media/100", 1),GalleryData("content://media/external/images/media/100", 1)),
+                                                    "2022-01-22" to arrayListOf(GalleryData("content://media/external/images/media/77", 1),GalleryData("content://media/external/images/media/78", 1),GalleryData("content://media/external/images/media/79", 1))
                                                     )
    // {2022-01-29=[content://media/external/images/media/100, content://media/external/images/media/101, content://media/external/images/media/102, content://media/external/images/media/103, content://media/external/images/media/104],
         // 2021-11-11=[content://media/external/images/media/32],
@@ -142,10 +142,13 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
             // itemView.setBackgroundColor(R.color.theme_yellow)
 
             try{
-                iv_CalendarFragment2_img.setImageURI(dateGalleryData.get(dateString)?.get(0)?.imageUri)
+                iv_CalendarFragment2_img.setImageURI(dateGalleryData.get(dateString)?.get(0)?.imageUri!!.toUri())
+            }
+            catch(e :NullPointerException){
+                Log.d(TAG, "${dateString} 이 날 사진 없음")
             }
             finally {
-                Log.d(TAG, "${dateString} 이 날 사진 없음")
+
             }
 
 //            }

@@ -100,8 +100,8 @@ class PostFragment : Fragment() {
         val datasize: Int? =calendarImages.get(targetDate)?.size
         Log.d(TAG+"뭐들었니", calendarImages.toString())
 
-        for (i : Int in 0..(datasize!!-1)){
-            calendarImages.get(targetDate)?.get(i)?.toUri()?.let { GalleryData(it, 0) }?.let {
+        for (i : Int in 0 until datasize!!){
+            calendarImages.get(targetDate)?.get(i)?.let { GalleryData(it, 0) }?.let {
                 dataList.add(it)
                 // 초기엔 뭐가 없으니까 일단!!
                 images.add(it.imageUri.toString())
@@ -284,7 +284,7 @@ class PostFragment : Fragment() {
             }
 
             // Set item views based on your views and data model
-            holder.iv.setImageURI(data.imageUri)
+            holder.iv.setImageURI(data.imageUri.toUri())
 
             // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
             holder.iv.setOnClickListener {
