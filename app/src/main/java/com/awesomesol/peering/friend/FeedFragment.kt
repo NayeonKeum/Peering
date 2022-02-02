@@ -97,17 +97,24 @@ class FeedFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_feed, container, false)
         val rv = view.findViewById<RecyclerView>(R.id.rv_FeedFragment)
 
-        rv.adapter = adapter
         rv.layoutManager = LinearLayoutManager(requireContext())
 
+        adapter.itemClick = object : FeedRVAdapter.ItemClick{
+            override fun onClick(view: View, position: Int) {
+                val diaryreadFragment = DiaryReadFragment()
+
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_screen_panel, diaryreadFragment).commit()
+            }
+
+        }
+        rv.adapter = adapter
         getFBFeedData()
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        moreBtnClick()
     }
 
     // todo : 임의로 대입한 값이 아닌 실제로 작성한 값이 들어갈 수 있도록 하자..!!!
@@ -128,15 +135,4 @@ class FeedFragment : Fragment() {
                 Log.w(TAG, "Error getting documents: ", exception)
             }
     }
-    // recyclerview 클릭 수정 필요
-    fun moreBtnClick(){
-        iv_FeedFragment_friends.setOnClickListener {
-            val diaryreadFragment = DiaryReadFragment()
-
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main_screen_panel, diaryreadFragment).commitNow()
-        }
-    }
-
-
 }
