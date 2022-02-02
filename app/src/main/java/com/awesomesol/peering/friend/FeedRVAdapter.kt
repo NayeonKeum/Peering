@@ -18,6 +18,7 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Fee
 
     override fun onBindViewHolder(holder: FeedRVAdapter.Viewholder, position: Int) {
         holder.bindItems(items[position])
+
     }
 
     override fun getItemCount(): Int {
@@ -27,6 +28,16 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Fee
 
         // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item : FeedModel){
+
+            // recyclerview click할 경우 DiaryReadFragment로 넘어가게 하기 위한 코드
+            itemView.setOnClickListener {
+                val diaryreadFragment = DiaryReadFragment()
+
+                /* feedfragment에서 전달해줘야 함
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_screen_panel, diaryreadFragment).commitNow()*/
+            }
+
             val name = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_nickname)
             name.text = item.nickname
             val content = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_content)
