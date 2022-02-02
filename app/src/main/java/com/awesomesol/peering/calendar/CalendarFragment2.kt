@@ -13,12 +13,15 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_calendar2.view.*
 import java.text.SimpleDateFormat
 import java.util.*
 class CalendarFragment2(index: Int) : Fragment() {
 
-    private val TAG = javaClass.simpleName
+    private val TAG = "캘프"
     lateinit var mContext: Context
     lateinit var mActivity: MainActivity
 
@@ -29,8 +32,17 @@ class CalendarFragment2(index: Int) : Fragment() {
     lateinit var calendar_layout: LinearLayout
     lateinit var calendar_view: RecyclerView
     lateinit var calendarAdapter: Calendar2Adapter
+    var dateGalleryData: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
 
-    //lateinit var dateGalleryData: DateGalleryData
+    val fs=Firebase.firestore
+
+    var uid:String=""
+    var email:String=""
+    var nickname:String=""
+    var profileImagePath:String=""
+
+    var cid:String=""
+
 
     companion object {
         var instance: CalendarFragment2? = null
@@ -47,6 +59,39 @@ class CalendarFragment2(index: Int) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+
+
+        UserApiClient.instance.me { user, error ->
+            uid = user?.id.toString()
+            nickname = user?.kakaoAccount?.profile?.nickname.toString()
+            profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
+            email = user?.kakaoAccount?.email.toString()
+
+            fs.collection("users").whereEqualTo("uid", uid).get()
+                .addOnSuccessListener { documents ->
+                    for (document in documents) {
+                        //Log.d(TAG, "${document.id} => ${document.data}")
+                        val hh= document.data["calendarID"] as HashMap<String, String>
+                        cid= hh["myCalendar"].toString()
+
+                        fs.collection("calendars").document(cid).get()
+                            .addOnSuccessListener {
+                                dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<GalleryData>>
+                                // Log.d(TAG, "dateList4 $dateGalleryData")
+                                initCalendar()
+                            }
+                            .addOnFailureListener{
+                                Log.d(TAG, "datalist4 remains null")
+                            }
+
+                    }
+                }
+                .addOnFailureListener { exception ->
+                    Log.w(TAG, "Error getting documents: ", exception)
+                }
+        }
+
+
     }
 
     override fun onCreateView(
@@ -56,7 +101,8 @@ class CalendarFragment2(index: Int) : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_calendar2, container, false)
         initView(view)
-        initCalendar()
+        //initCalendar()
+
 
         return view
     }
@@ -91,7 +137,8 @@ class CalendarFragment2(index: Int) : Fragment() {
         // 말일까지 해당 날짜
         // 마지막 날짜 뒤로는 ""으로 처리하여
         // CalendarAdapter로 List를 넘김
-        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate)//dateGalleryData)
+        Log.d(TAG, "dateGalleryData $dateGalleryData")
+        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData)
         calendar_view.adapter = calendarAdapter
         calendar_view.layoutManager = GridLayoutManager(mContext, 4, GridLayoutManager.VERTICAL, false)
         calendar_view.setHasFixedSize(true)
@@ -104,12 +151,21 @@ class CalendarFragment2(index: Int) : Fragment() {
 //                if (position < firstDateIndex || position > lastDateIndex) {
 //                    return
 //                }
-                val day = calendarAdapter.dataList4[position].toString()
-                val date = "${calendar_year_month_text.text}${day}일"
-                Log.d(TAG, "$date")
+                val day = calendarAdapter.datelist[position].toString()
+                val date = "${calendar_year_month_text.text} ${day}일"
+                var dateym: String = SimpleDateFormat("yyyy-MM", Locale.KOREA).format(currentDate.time)
+                if (day.length<2){
+                    dateym+= "-0$day"
+                }else{
+                    dateym+= "-$day"
+                }
+
                 val galleryFragment = PostFragment()
                 var bundle = Bundle()
                 bundle.putString("date", date)
+                bundle.putString("dateym", dateym)
+                bundle.putString("cid", cid)
+                bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
                 galleryFragment.setArguments(bundle)
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, galleryFragment).commit()
@@ -122,4 +178,6 @@ class CalendarFragment2(index: Int) : Fragment() {
         super.onDestroy()
         instance = null
     }
+
+
 }
