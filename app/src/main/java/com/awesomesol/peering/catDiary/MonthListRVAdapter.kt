@@ -3,6 +3,7 @@ package com.awesomesol.peering.catDiary
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 
@@ -12,7 +13,7 @@ class MonthListRVAdapter(val items: ArrayList<String>) : RecyclerView.Adapter<Mo
         parent: ViewGroup,
         viewType: Int
     ): MonthListRVAdapter.Viewholder {
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.month_list_rv_item, parent, false)
+        val v = LayoutInflater.from(parent.context).inflate(R.layout.catdiary_month_list_rv_item, parent, false)
         return Viewholder(v)
     }
 
@@ -27,7 +28,8 @@ class MonthListRVAdapter(val items: ArrayList<String>) : RecyclerView.Adapter<Mo
     // month_list_rv_item.xml에 하나하나씩 리턴 넣어주는 역할. 아이템의 내용물 넣어주기
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bindItems(item: String) {
-
+            val month = itemView.findViewById<TextView>(R.id.textMonth)
+            month.text = item
         }
     }
 }

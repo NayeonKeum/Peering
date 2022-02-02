@@ -29,18 +29,27 @@ class catDiaryFragment : Fragment() {
 
         // RecyclerView 생성
         val rv = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_monthList)
+        val rv2 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_category)
 
         // ContentRVAdapter의 인자인 items 만들어주기
         val items = ArrayList<String>()
-        items.add("a")
-        items.add("b")
-        items.add("c")
+        items.add("01")
+        items.add("02")
+        items.add("03")
+        items.add("04")
+        val items2 = ArrayList<String>()
+        items2.add("카테고고고리1")
+        items2.add("카테고아리2")
+        items2.add("카테고안리2")
+        items2.add("카테고안리3")
 
         // rv의 adapter는 여기에서 만든 Adapter이다~
         rv.adapter = MonthListRVAdapter(items)
+        rv2.adapter = CategoryRVAdapter(items2)
 
         rv.layoutManager = LinearLayoutManager(requireContext())
 //        rv.layoutManager = GridLayoutManager(this, 6)
+        rv2.layoutManager = LinearLayoutManager(requireContext())
 
         return view
     }
