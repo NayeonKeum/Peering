@@ -14,7 +14,7 @@ import com.bumptech.glide.request.target.Target
 
 class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>) :
     RecyclerView.Adapter<ImageSliderAdapter.MyViewHolder>() {
-    private val context: Context = context
+    private val context: Context
     private var sliderImage: ArrayList<String> = arrayListOf()
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view: View = LayoutInflater.from(parent.context)
@@ -44,6 +44,7 @@ class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>) :
     }
 
     init {
+        this.context = context
         this.sliderImage = sliderImage
         notifyDataSetChanged()
     }
