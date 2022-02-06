@@ -208,7 +208,7 @@ class CalendarFragment2(index: Int) : Fragment() {
                                             bundle.putString("dateym", dateym)
                                             bundle.putString("cid", cid)
                                             bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
-                                            galleryFragment.setArguments(bundle)
+                                            galleryFragment.arguments = bundle
                                             parentFragmentManager.beginTransaction()
                                                     .replace(R.id.main_screen_panel, galleryFragment).commit()
 
