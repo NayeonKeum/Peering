@@ -20,6 +20,8 @@ class DiaryReadFragment : Fragment() {
 
     // 파이어스토어 객체 얻기, 얻은 FirebaseFirestore 객체로 컬렉션을 선택하고 문서를 추가하거나 가져오는 작업을 함
     val db = FirebaseFirestore.getInstance()   // Firestore 인스턴스 선언
+    private var uid:String=""
+    private var title:String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,14 +38,17 @@ class DiaryReadFragment : Fragment() {
         getFBPostData()
         return view
     }
+    // 아직 확실하지 않음..!!
     private fun getFBPostData(){
         lateinit var postData: HashMap<String, ArrayList<PostInfo>>
-        db.collection("posts").get()
+        db.collection("posts").whereArrayContainsAny("uid", arrayListOf(uid)).get()
             .addOnSuccessListener { result ->
                 for (document in result) {    // 가져온 문서들은 result에 들어감
-                    // val item = PostInfo(document["pid"] as String, document["uid"] as String, document["title"] as String, document["calDate"] as String, document["contentText"] as String, " ")
-                    // postData.add(item)
+
                     Log.d(TAG, "${document.id} => ${document.data}")
+                    if (document.data["title"].toString().equals(title)){
+                        postData = document.data["category"] as HashMap<String, ArrayList<PostInfo>>
+                    }
                 }
             }
             .addOnFailureListener { exception ->
