@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -11,86 +11,67 @@
 
     <TextView
         android:id="@+id/calendar_year_month_text"
+        style="@style/TextViewStyle"
         android:layout_width="match_parent"
         android:layout_height="60dp"
+        android:gravity="center_vertical|start"
         android:text="2020년 01월"
+        android:textAlignment="center"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:gravity="center_vertical|start"
-        style="@style/TextViewStyle"
-        android:textAlignment="center"
-        tools:ignore="RtlCompat"
-        android:layout_marginBottom="10dp"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="RtlCompat" />
 
     <View
         android:id="@+id/div"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        style="@style/LineView"/>
+        style="@style/LineView"
+        app:layout_constraintTop_toBottomOf="@id/calendar_year_month_text"/>
 
-<!--    <LinearLayout
-        android:id="@+id/calendar_header"
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="SUN"
-            style="@style/TextViewStyle"/>
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="MON"
-            style="@style/TextViewStyle"/>
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="TUE"
-            style="@style/TextViewStyle"/>
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="WED"
-            style="@style/TextViewStyle"/>
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="THU"
-            style="@style/TextViewStyle"/>
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="FRI"
-            style="@style/TextViewStyle"/>
-        <TextView android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_horizontal"
-            android:text="SAT"
-            style="@style/TextViewStyle"/>
 
-    </LinearLayout>-->
+    <ProgressBar
+        android:id="@+id/pBar_CalendarFragment2"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/calendar_layout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/div">
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/calendar_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:spanCount="4"
             android:adjustViewBounds="true"
             app:layout_constrainedHeight="true"
-            tools:listitem="@layout/list_item_calendar"/>
+            app:spanCount="4"
+            tools:listitem="@layout/list_item_calendar" />
     </LinearLayout>
-</LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fbtn_CalendarFragment2_refreshGal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="16dp"
+        android:backgroundTint="@color/theme_blue"
+        android:elevation="2dp"
+        android:src="@drawable/upload"
+        app:fabSize="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

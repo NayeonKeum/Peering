@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Typeface
-import android.provider.ContactsContract
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,9 +23,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.reflect.typeOf
 
-class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, val date: Date, val dateGalleryData: HashMap<String, ArrayList<GalleryData>>) :
+class Calendar2Adapter(val context: Context, val calendarLayout: LinearLayout, val date: Date, val dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>>) :
     RecyclerView.Adapter<Calendar2Adapter.CalendarItemHolder>() {
 
     private val TAG = "캘 어댑터"
@@ -64,7 +62,6 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
     }
 
 
-
     interface ItemClick {
         fun onClick(view: View, position: Int)
     }
@@ -96,7 +93,7 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
     inner class CalendarItemHolder(itemView: View?) : RecyclerView.ViewHolder(itemView!!) {
 
         var itemCalendarDateText: TextView = itemView!!.item_calendar_date_text
-        //var itemCalendarDotView: View = itemView!!.item_calendar_dot_view
+        // var itemCalendarDotView: View = itemView!!.item_calendar_dot_view
         var iv_CalendarFragment2_img: ImageView = itemView!!.iv_CalendarFragment2_img
         var iv_CalendarFragment2_character:ImageView=itemView!!.iv_CalendarFragment2_character
 
@@ -106,7 +103,6 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
 //            val firstDateIndex = furangCalendar.prevTail
 //            val lastDateIndex = dataList2.size - furangCalendar.nextHead - 1
 //            Log.d(TAG, "$firstDateIndex, $lastDateIndex")
-
 
             // 오늘 날짜 처리
             // 현재 페이지의 연월일
@@ -123,10 +119,6 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
 
             itemCalendarDateText.setText(data.toString())
 
-            //var dateInt = dateString.toInt()
-            if (dateToday.equals(dateString)) {
-                itemCalendarDateText.setTypeface(itemCalendarDateText.typeface, Typeface.BOLD)
-            }
 
             // 현재 월의 1일 이전, 현재 월의 마지막일 이후 값의 텍스트를 회색처리
 //            if (position < firstDateIndex || position > lastDateIndex) {
@@ -138,6 +130,10 @@ class Calendar2Adapter (val context: Context, val calendarLayout: LinearLayout, 
             }
             if (date.dayOfWeek==DayOfWeek.SUNDAY){
                 itemCalendarDateText.setTextAppearance(R.style.SunTextViewStyle)
+            }
+            //var dateInt = dateString.toInt()
+            if (dateToday.equals(dateString)) {
+                itemCalendarDateText.setTypeface(itemCalendarDateText.typeface, Typeface.BOLD)
             }
 
 
