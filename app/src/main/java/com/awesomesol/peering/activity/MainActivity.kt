@@ -1,33 +1,19 @@
 package com.awesomesol.peering.activity
 
-import android.Manifest
-import android.content.ContentUris
-import android.content.pm.PackageManager
-import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.text.format.DateFormat
-import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.awesomesol.peering.R
-import com.awesomesol.peering.calendar.CalendarInfo
-import com.awesomesol.peering.calendar.CalendarMainFragment
-import com.awesomesol.peering.calendar.GalleryData
+import com.awesomesol.peering.friend.FriendCalMainFragment
 import com.awesomesol.peering.catDiary.catDiaryFragment
 import com.awesomesol.peering.character.CharacterFragment
-import com.awesomesol.peering.character.UserInfo
 import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment
-import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import java.util.*
 import kotlin.collections.HashMap
 
 class MainActivity : AppCompatActivity() {
@@ -62,27 +48,6 @@ class MainActivity : AppCompatActivity() {
         mBinding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-
-        UserApiClient.instance.me { user, error ->
-            uid = user?.id.toString()
-            nickname = user?.kakaoAccount?.profile?.nickname.toString()
-            profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
-            email = user?.kakaoAccount?.email.toString()
-
-//            fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
-//                .addOnSuccessListener {documents ->
-//                    for (document in documents) {
-//                        if (document.data["cname"].toString().equals("내 캘린더")){
-//                            myCalID=document.data["cid"].toString()
-//                        }
-//                    }
-//                    Log.d(TAG, "내 캘 찾음")
-//
-//                }
-//                .addOnFailureListener{
-//                    Log.d(TAG, "엥 시무룩")
-//                }
-        }
 
 
 
@@ -164,8 +129,20 @@ class MainActivity : AppCompatActivity() {
 //                Log.w(TAG, "Error getting documents: ", exception)
 //            }
 //
+        kakaoDataCallback{
+            val calendarFragment= FriendCalMainFragment()
+            //val calendarFragment = CalendarMainFragment()
+            //val calendarFragment = PostFragment()
 
-
+            val userBundle = Bundle()
+            userBundle.putString("id", uid)
+            userBundle.putString("email", email)
+            userBundle.putString("nickname", nickname)
+            userBundle.putString("profileImagePath", profileImagePath)
+            calendarFragment.arguments = userBundle
+            supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
+                .commit()
+        }
         // Bottom Navigation
         binding.bottomNavigation.setOnTabSelectListener(object :
             AnimatedBottomBar.OnTabSelectListener {
@@ -177,8 +154,17 @@ class MainActivity : AppCompatActivity() {
             ) {
                 when (newIndex) {
                     0 -> {
-                        val calendarFragment = CalendarMainFragment()
+                        val calendarFragment= FriendCalMainFragment()
+                        //val calendarFragment = CalendarMainFragment()
                         //val calendarFragment = PostFragment()
+
+                        val userBundle = Bundle()
+                        userBundle.putString("id", uid)
+                        userBundle.putString("email", email)
+                        userBundle.putString("nickname", nickname)
+                        userBundle.putString("profileImagePath", profileImagePath)
+                        calendarFragment.arguments = userBundle
+
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.main_screen_panel, calendarFragment).commit()
                     }
@@ -209,12 +195,18 @@ class MainActivity : AppCompatActivity() {
         })
 
 
-        val calendarFragment = CalendarMainFragment()
-        //val calendarFragment = PostFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
-                .commit()
-
     }
+
+    fun kakaoDataCallback(callback:(String)->Unit){
+        UserApiClient.instance.me { user, _ ->
+            uid = user?.id.toString()
+            nickname = user?.kakaoAccount?.profile?.nickname.toString()
+            profileImagePath = user?.kakaoAccount?.profile?.profileImageUrl.toString()
+            email = user?.kakaoAccount?.email.toString()
+            callback(email)
+        }
+    }
+
 
     // 액티비티가 파괴될 때..
     override fun onDestroy() {
