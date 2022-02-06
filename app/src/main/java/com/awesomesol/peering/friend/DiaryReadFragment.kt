@@ -38,7 +38,7 @@ class DiaryReadFragment : Fragment() {
         getFBPostData()
         return view
     }
-    // 아직 확실하지 않음..!!
+    // 아직 확실하지 않음..!! -> 다시 한 번 확인 필요
     private fun getFBPostData(){
         lateinit var postData: HashMap<String, ArrayList<PostInfo>>
         db.collection("posts").whereArrayContainsAny("uid", arrayListOf(uid)).get()
