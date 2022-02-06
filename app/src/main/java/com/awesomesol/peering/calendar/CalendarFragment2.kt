@@ -58,9 +58,6 @@ class CalendarFragment2(index: Int) : Fragment() {
 
     var cid:String=""
 
-    private var pBar_CalendarFragment2: ProgressBar? = null
-
-
     companion object {
         var instance: CalendarFragment2? = null
     }

@@ -51,10 +51,15 @@ class FriendCalMainFragment : Fragment() {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            id = it.getString("id").toString()
-            email = it.getString("email").toString()
-            nickname = it.getString("nickname").toString()
-            profileImagePath = it.getString("profileImagePath").toString()
+//            id = it.getString("id").toString()
+//            email = it.getString("email").toString()
+//            nickname = it.getString("nickname").toString()
+//            profileImagePath = it.getString("profileImagePath").toString()
+            // 이건 정보 번들 받아야함
+            id = "2083908982"
+            nickname = "조예진"
+            profileImagePath = "https://k.kakaocdn.net/dn/mUtRb/btrfA0ZhbQv/NaV1L1V7eNjkOxQKRSpK00/img_640x640.jpg"
+            email ="cyj2825@naver.com"
             //나중에 데이터 제대로 연결해야함
             progressNow = "70"
             followingNum = "140"
@@ -64,16 +69,7 @@ class FriendCalMainFragment : Fragment() {
             diaryLeftCnt="2"
         }
 
-        Log.e("카카오 캐릭", id)
-        Log.e("카카오 캐릭", email)
-        Log.e("카카오 캐릭", nickname)
-        Log.e("카카오 캐릭", profileImagePath)
-
-
-
         instance = this
-
-
 
     }
 
