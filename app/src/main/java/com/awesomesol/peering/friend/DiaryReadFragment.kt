@@ -14,6 +14,9 @@ import com.google.firebase.ktx.Firebase
 class DiaryReadFragment : Fragment() {
     val TAG="readDiary"
 
+    // 파이어스토어 객체 얻기, 얻은 FirebaseFirestore 객체로 컬렉션을 선택하고 문서를 추가하거나 가져오는 작업을 함
+    val db = FirebaseFirestore.getInstance()   // Firestore 인스턴스 선언
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
