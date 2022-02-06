@@ -129,57 +129,36 @@
                 app:layout_constraintStart_toStartOf="@+id/tv_DiaryReadFragment_date"
                 app:layout_constraintTop_toBottomOf="@id/tv_DiaryReadFragment_category"/>
 
-            <LinearLayout
-                android:id="@+id/layout3_DiaryReadFragment"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginLeft="26dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_DiaryReadFragment"
+                android:layout_width="300dp"
+                android:layout_height="189dp"
+                android:layout_marginTop="26dp"
+                android:background="@drawable/rounded_dialog"
+                android:scaleType="centerCrop"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout2_DiaryReadFragment">
+                app:layout_constraintTop_toBottomOf="@+id/layout2_DiaryReadFragment">
 
-                <ImageView
-                    android:id="@+id/iv_DiaryReadFragment_content1"
-                    android:src="@drawable/feed_main_img"
-                    android:layout_width="147dp"
-                    android:layout_height="189dp" />
+                <androidx.viewpager2.widget.ViewPager2
+                    android:id="@+id/sliderViewPager_DiaryReadFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-                <TextView
-                    android:id="@+id/tv_DiaryReadFragment_content1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginLeft="22dp"
-                    android:layout_marginRight="18dp"
-                    android:text="오늘도 코딩을 한다. 코딩을 하면 시간이 너무 빨리 간다. 이제 그만 자고 싶다. 너무 피곤하다. 내일 아침에 일찍 일어나야 한다는 것이 너무 슬프다." />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
+            <androidx.appcompat.widget.AppCompatEditText
+                android:id="@+id/et_DiaryReadFragment"
+                android:layout_width="300dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="18dp"
-                android:layout_marginLeft="26dp"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/layout3_DiaryReadFragment">
-
-                <ImageView
-                    android:id="@+id/iv_DiaryReadFragment_content2"
-                    android:src="@drawable/feed_main_img"
-                    android:layout_width="316dp"
-                    android:layout_height="188dp" />
-
-                <TextView
-                    android:id="@+id/tv_DiaryReadFragment_content2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp"
-                    android:layout_marginRight="18dp"
-                    android:text="오늘도 코딩을 한다. 매일매일 코딩하는 것은 재밌기도 하고 머리 아프기도 하다. 하하하하하하핳 조금만 더 힘을 내서 열심히 해보자!" />
-
-            </LinearLayout>
-
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="@+id/cl_DiaryReadFragment"
+                app:layout_constraintStart_toStartOf="@+id/cl_DiaryReadFragment"
+                app:layout_constraintTop_toBottomOf="@+id/cl_DiaryReadFragment" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 

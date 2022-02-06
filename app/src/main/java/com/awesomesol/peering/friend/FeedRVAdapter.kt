@@ -5,8 +5,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.awesomesol.peering.activity.MainActivity
 import com.bumptech.glide.Glide
 
 class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<FeedRVAdapter.Viewholder>() {
@@ -16,10 +18,24 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Fee
         return Viewholder(v)
     }
 
+    // Item 클릭을 위한 추가
+    interface ItemClick{
+        fun onClick(view: View, position: Int)
+    }
+    var itemClick: ItemClick? = null
+
+    // onCreateViewHolder에서 가져와서 view에 실제 데이터 연결
     override fun onBindViewHolder(holder: FeedRVAdapter.Viewholder, position: Int) {
+        // Item클릭을 위한 추가
+        if(itemClick != null){
+            holder?.itemView?.setOnClickListener { v ->
+                itemClick?.onClick(v, position)
+            }
+        }
         holder.bindItems(items[position])
     }
 
+    // item의 총 갯수
     override fun getItemCount(): Int {
         return items.size
     }
