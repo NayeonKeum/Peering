@@ -1,6 +1,7 @@
 package com.awesomesol.peering.calendar
 
 import android.content.Context
+import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
@@ -20,9 +21,13 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.google.protobuf.StringValue
 import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
@@ -58,6 +63,7 @@ class PostFragment : Fragment() {
 
     private lateinit var dateGalleryData: ArrayList<HashMap<String, Any>>
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -72,15 +78,18 @@ class PostFragment : Fragment() {
             try{
                 Log.d(TAG, "넘어온 번들: ${bundle.getSerializable("dateGalleryData")}")
                 dateGalleryData = bundle.getSerializable("dateGalleryData") as ArrayList<HashMap<String, Any>>
-                Log.d(TAG, "넘어온 번들 갤데화: ${dateGalleryData}")
+                Log.d(TAG, "넘어온 번들 갤데화: $dateGalleryData")
             } catch(e:NullPointerException){
                 dateGalleryData= arrayListOf()
             }
-
-
         }
-        UserApiClient.instance.me { user, error ->
-            uid = user?.id.toString()}
+
+    }
+    private fun userCallback(callback:(String)->Unit){
+        UserApiClient.instance.me { user, _ ->
+            uid = user?.id.toString()
+            callback(uid)
+        }
     }
 
     override fun onCreateView(
@@ -99,36 +108,37 @@ class PostFragment : Fragment() {
         Log.d(TAG, rv.toString())
         //rv.layoutManager=GridLayoutManager(context, 3)
         rv.layoutManager=LinearLayoutManager(context).also{it.orientation=LinearLayoutManager.HORIZONTAL}
-        galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
-        //galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
 
-        galleryRVAdapter.setView(view)
-        //parentFragmentManager
-        rv.adapter=galleryRVAdapter
+        userCallback { uid->
+            galleryRVAdapter= context?.let { GalleryRVAdapter(it, uid, cid) }!!
+
+            galleryRVAdapter.setView(view)
+            //parentFragmentManager
+            rv.adapter=galleryRVAdapter
 
 
-        Log.d(TAG, "targetDate에 있는 사진 개수: " + dateGalleryData.size)
-        val datasize: Int? =dateGalleryData.size
-        Log.d(TAG+"뭐들었니", dateGalleryData.toString())
+            Log.d(TAG, "targetDate에 있는 사진 개수: " + dateGalleryData.size)
+            val datasize: Int? =dateGalleryData.size
+            Log.d(TAG+"뭐들었니", dateGalleryData.toString())
 
-        for (i : Int in 0 until datasize!!){
-            Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
-            val ln:Long=1
-            if (dateGalleryData[i]["used"]?.equals(ln) == true){
-                images.add(dateGalleryData[i]["imageUri"] as String)
+            for (i : Int in 0 until datasize!!){
+                Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
+                val ln:Long=1
+                if (dateGalleryData[i]["used"]?.equals(ln) == true){
+                    images.add(dateGalleryData[i]["imageUri"] as String)
+                }
             }
-        }
+
+            galleryRVAdapter.setDataList(dateGalleryData)
 
 
-        galleryRVAdapter.setDataList(dateGalleryData)
+            // 바텀 쉿 부착!
+            bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)!!
+            bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
 
-        // 바텀 쉿 부착!
-        bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)!!
-        bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
-
-        // 전체 숨김
-        // behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        // peekHight 만큼
+            // 전체 숨김
+            // behavior.state = BottomSheetBehavior.STATE_HIDDEN
+            // peekHight 만큼
 //        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 //
 //        inflater.inflate(R.layout.fragment_post_bottomsheet_photos, container).findViewById<ImageView>(
@@ -138,26 +148,28 @@ class PostFragment : Fragment() {
 //            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 //        }
 
-        // 둥근 모서리
-        cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
-        cl_PostFragment.clipToOutline=true
+            // 둥근 모서리
+            cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
+            cl_PostFragment.clipToOutline=true
 
-        // 초기에 해주는 거!
-        sliderViewPager = view.findViewById(R.id.sliderViewPager)
-        layoutIndicator = view.findViewById(R.id.layoutIndicators)
+            // 초기에 해주는 거!
+            sliderViewPager = view.findViewById(R.id.sliderViewPager)
+            layoutIndicator = view.findViewById(R.id.layoutIndicators)
 
-        sliderViewPager!!.offscreenPageLimit = 1
+            sliderViewPager!!.offscreenPageLimit = 1
 
 
-        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), images)
+            sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), images, uid, cid)
 
-        sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                setCurrentIndicator(position)
-            }
-        })
-        setupIndicators(images.size)
+            sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    setCurrentIndicator(position)
+                }
+            })
+            setupIndicators(images.size)
+        }
+
 
         //키보드 올라올때 바텀네비케이션 올라오는거 처리 부분
         //setOnFocusChangeListener 로 바텀네비게시연 하이드
@@ -260,12 +272,12 @@ class PostFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false)
-        sliderViewPager!!.refreshDrawableState()
+        // sliderViewPager!!.refreshDrawableState()
 
     }
 
     // 바텀시트에 리사이클러뷰 어댑터
-    class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
+    class GalleryRVAdapter(var context: Context, uid:String, cid:String):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
 
         var dateGalleryData = ArrayList<HashMap<String, Any>>()
         var useImages:ArrayList<String> = arrayListOf()
@@ -276,6 +288,14 @@ class PostFragment : Fragment() {
         lateinit var sliderViewPager:ViewPager2
         lateinit var cl_PostFragment:ConstraintLayout
         lateinit var layoutIndicator:LinearLayout
+
+        val storage= FirebaseStorage.getInstance()
+        private lateinit var storRef: StorageReference
+
+        var userID:String = uid
+        var calID:String = cid
+
+
 
         internal fun setDataList(dateGalleryData: ArrayList<HashMap<String, Any>>) {
             this.dateGalleryData = dateGalleryData
@@ -322,10 +342,16 @@ class PostFragment : Fragment() {
                 holder.addminus.setImageResource(R.drawable.gallery_minus)
             }
 
-            // Set item views based on your views and data model
-            val imgu:String=data.get("imageUri").toString()
-            holder.iv.setImageURI(imgu.toUri())
 
+            // Set item views based on your views and data model
+            val uri:String=data.get("imageUri").toString()
+            storRef=storage.reference.child(userID).child(calID)
+            storRef.child(uri).downloadUrl
+                .addOnSuccessListener { imageUri->
+                    Glide.with(context)
+                        .load(imageUri)
+                        .into(holder.iv)
+                }
 
             // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
             holder.iv.setOnClickListener {
@@ -364,7 +390,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, useImages)
+                sliderViewPager!!.adapter = ImageSliderAdapter(context, useImages, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
