@@ -192,14 +192,13 @@ class CalendarFragment2(index: Int) : Fragment() {
 
                                         }
                                     }
-
-                                    view.findViewById<ProgressBar>(R.id.pBar_CalendarFragment2).visibility=View.INVISIBLE
+                                    
                                 }
                                 .addOnFailureListener { exception ->
                                     Log.d(TAG, exception.toString())
                                 }
-                        // val intent = Intent(context, MainActivity::class.java)
-                        // startActivity(intent)
+                        view.findViewById<ProgressBar>(R.id.pBar_CalendarFragment2).visibility=View.INVISIBLE
+                        Toast.makeText(context, "업데이트 완료", Toast.LENGTH_SHORT).show()
                     }
 
                 }
