@@ -47,7 +47,7 @@ class LoginActivity : AppCompatActivity(){
     lateinit var profileImagePath:String
     var mfriendList: HashMap<String, Int> = hashMapOf()
 
-    private var dataList4: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
+    private var dataList4: HashMap<String, ArrayList<HashMap<String, Any>>> = hashMapOf()
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -176,7 +176,7 @@ class LoginActivity : AppCompatActivity(){
                             // 유저 데이터가 null 일 때(초기 방문) 갤러리에 있는 데이터들 전부 파베에 저장!
 
                             setLogin(object : LoginListener {
-                                override fun loginClear(notices: HashMap<String, ArrayList<GalleryData>>) {
+                                override fun loginClear(notices: HashMap<String, ArrayList<HashMap<String, Any>>>) {
                                     Log.d(TAG, "loginClear(dataList4)")
                                     fs.collection("users").whereEqualTo("uid", uid).get()
                                         .addOnSuccessListener { documents ->
@@ -366,12 +366,18 @@ class LoginActivity : AppCompatActivity(){
                         // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
                         if (date in dataList4.keys){
                             // 날짜가 이미 있다면
-                            dataList4.get(date)?.add(GalleryData(uri.toString(), 0))
+                            var hmap:HashMap<String, Any> = hashMapOf()
+                            hmap["imageUri"]=uri.toString()
+                            hmap["used"]=0
+                            dataList4[date]?.add(hmap)
                         }
                         else{
                             // 날짜가 없음!
+                            var hmap:HashMap<String, Any> = hashMapOf()
+                            hmap["imageUri"]=uri.toString()
+                            hmap["used"]=1
                             dataList4.put(date, arrayListOf())
-                            dataList4.get(date)?.add(GalleryData(uri.toString(), 1))
+                            dataList4[date]?.add(hmap)
 
                         }
 
@@ -401,7 +407,7 @@ class LoginActivity : AppCompatActivity(){
     }
 
     interface LoginListener {
-        fun loginClear(notices: HashMap<String, ArrayList<GalleryData>>)
+        fun loginClear(notices: HashMap<String, ArrayList<HashMap<String, Any>>>)
     }
 
     //해시 키 값 구하기
