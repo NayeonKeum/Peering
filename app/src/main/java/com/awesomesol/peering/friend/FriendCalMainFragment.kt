@@ -56,10 +56,10 @@ class FriendCalMainFragment : Fragment() {
 //            nickname = it.getString("nickname").toString()
 //            profileImagePath = it.getString("profileImagePath").toString()
             // 이건 정보 번들 받아야함
-            id = "2083908982"
-            nickname = "조예진"
-            profileImagePath = "https://k.kakaocdn.net/dn/mUtRb/btrfA0ZhbQv/NaV1L1V7eNjkOxQKRSpK00/img_640x640.jpg"
-            email ="cyj2825@naver.com"
+            id = "2077226967"
+            nickname = "예시) 금나연"
+            profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+            email ="ryann3@naver.com"
             //나중에 데이터 제대로 연결해야함
             progressNow = "70"
             followingNum = "140"
@@ -79,7 +79,7 @@ class FriendCalMainFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         var viewFrag=inflater.inflate(R.layout.fragment_friend_cal_main, container, false)
-        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.text="나 아님\n$nickname"
+        viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.text=nickname
         viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_email)?.text=email
 
         viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)?.let {

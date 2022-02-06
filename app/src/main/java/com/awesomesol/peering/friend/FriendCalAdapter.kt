@@ -15,6 +15,8 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.list_item_calendar.view.*
 import org.threeten.bp.DayOfWeek
@@ -24,13 +26,24 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class FriendCalAdapter(val context: Context, val calendarLayout: LinearLayout, val date: Date, val dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>>) :
+class FriendCalAdapter(
+    val context: Context,
+    val calendarLayout: LinearLayout,
+    val date: Date,
+    val dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>>,
+    val uid: String,
+    val cid: String
+    ) :
     RecyclerView.Adapter<FriendCalAdapter.CalendarItemHolder>() {
 
-    private val TAG = "캘 어댑터"
+    private val TAG = "친구 캘 어댑터"
     var datelist: ArrayList<Int> = arrayListOf()
 
     val calInstance = Calendar.getInstance()
+
+    val storage= FirebaseStorage.getInstance()
+    val storRef=storage.reference.child(uid).child(cid)
+
 
     init {
         calInstance.time = date
@@ -90,7 +103,7 @@ class FriendCalAdapter(val context: Context, val calendarLayout: LinearLayout, v
                 "-${datelist[position]}"
             }
 
-            itemCalendarDateText.setText(data.toString())
+            itemCalendarDateText.text = data.toString()
 
 
             val date = LocalDate.parse(dateString, org.threeten.bp.format.DateTimeFormatter.ISO_DATE)
@@ -116,12 +129,22 @@ class FriendCalAdapter(val context: Context, val calendarLayout: LinearLayout, v
                 if (hh != null) {
                     for (data in hh){
                         val lnum:Long=1
-                        if (data["used"]!!.equals(lnum)){
+                        if (data["used"]!! == lnum){
                             val uri=data["imageUri"] as String
-                            iv_CalendarFragment2_img.setImageURI(uri.toUri())
-                            itemView.findViewById<ConstraintLayout>(R.id.cl_CalendarFragment2).setBackgroundColor(
-                                Color.parseColor("#FFB6B9"))
-                            iv_CalendarFragment2_character.visibility= View.GONE
+                            storRef.child(uri).downloadUrl
+                                .addOnSuccessListener { imageUri->
+
+                                    Glide.with(context)
+                                        .load(imageUri)
+                                        .into(iv_CalendarFragment2_img);
+
+                                    itemView.findViewById<ConstraintLayout>(R.id.cl_CalendarFragment2).setBackgroundColor(
+                                        Color.parseColor(
+                                            "#FFB6B9"
+                                        )
+                                    )
+                                    iv_CalendarFragment2_character.visibility=View.GONE
+                                }
                             break
                         }
                         // 깃헙 뭔가 이상해 그러지마 제발

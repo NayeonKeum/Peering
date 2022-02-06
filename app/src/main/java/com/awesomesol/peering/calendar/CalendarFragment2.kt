@@ -93,18 +93,12 @@ class CalendarFragment2(index: Int) : Fragment() {
                         fs.collection("calendars").document(cid).get()
                             .addOnSuccessListener {
                                 dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<HashMap<String, Any>>>
-
-                                // 여기에 스토리지 겟 콜백
-//                                getStorageCallback(){
-//                                    Log.d(TAG, "dateGalleryData(callback): $dateGalleryData")
-//                                    initCalendar()
-//                                }
                                 initCalendar()
-
 
                             }
                             .addOnFailureListener{
                                 Log.d(TAG, "datalist4 remains null")
+
                             }
 
                     }
@@ -114,24 +108,7 @@ class CalendarFragment2(index: Int) : Fragment() {
                 }
         }
 
-
     }
-
-//    private fun getStorageCallback(callback:()->Unit){
-//        //  ArrayList<HashMap<String, Any>>
-//        for (data in dateGalleryData.values.toList() as ArrayList<ArrayList<HashMap<String, Any>>>){
-//            for (datedata in data){
-//                val fileName= datedata["imageUri"] as String
-//                storage.reference.child(uid).child(cid).child(fileName).downloadUrl
-//                    .addOnSuccessListener { imageUri->
-//                        datedata["imageUri"]=imageUri
-//                        Log.d(TAG, "imageUri $imageUri")
-//                    }
-//            }
-//        }
-//        callback()
-//
-//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

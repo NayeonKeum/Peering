@@ -25,6 +25,7 @@ import com.awesomesol.peering.calendar.*
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_calendar2.view.*
 import java.text.SimpleDateFormat
@@ -50,6 +51,7 @@ class FriendCalFragment(index: Int) : Fragment() {
     private var dataList_fromGaL: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
 
     val fs= Firebase.firestore
+    val storage= FirebaseStorage.getInstance()
 
     var uid:String=""
     var email:String=""
@@ -78,10 +80,10 @@ class FriendCalFragment(index: Int) : Fragment() {
         instance = this
 
         // 이건 정보 번들 받아야함
-        uid = "2083908982"
-        nickname = "조예진"
-        profileImagePath = "https://k.kakaocdn.net/dn/mUtRb/btrfA0ZhbQv/NaV1L1V7eNjkOxQKRSpK00/img_640x640.jpg"
-        email ="cyj2825@naver.com"
+        uid = "2077226967"
+        nickname = "예시) 금나연"
+        profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+        email ="ryann3@naver.com"
 
         fs.collection("users").whereEqualTo("uid", uid).get()
             .addOnSuccessListener { documents ->
@@ -93,7 +95,7 @@ class FriendCalFragment(index: Int) : Fragment() {
                     fs.collection("calendars").document(cid).get()
                         .addOnSuccessListener {
                             dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<HashMap<String, Any>>>
-                            // Log.d(TAG, "dateList4 $dateGalleryData")
+
                             initCalendar()
                         }
                         .addOnFailureListener{
