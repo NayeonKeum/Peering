@@ -5,6 +5,7 @@ import android.os.Bundle
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.CalendarMainFragment
 import com.awesomesol.peering.friend.FriendCalMainFragment
 import com.awesomesol.peering.catDiary.catDiaryFragment
 import com.awesomesol.peering.character.CharacterFragment
@@ -129,20 +130,7 @@ class MainActivity : AppCompatActivity() {
 //                Log.w(TAG, "Error getting documents: ", exception)
 //            }
 //
-        kakaoDataCallback{
-            val calendarFragment= FriendCalMainFragment()
-            //val calendarFragment = CalendarMainFragment()
-            //val calendarFragment = PostFragment()
 
-            val userBundle = Bundle()
-            userBundle.putString("id", uid)
-            userBundle.putString("email", email)
-            userBundle.putString("nickname", nickname)
-            userBundle.putString("profileImagePath", profileImagePath)
-            calendarFragment.arguments = userBundle
-            supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
-                .commit()
-        }
         // Bottom Navigation
         binding.bottomNavigation.setOnTabSelectListener(object :
             AnimatedBottomBar.OnTabSelectListener {
@@ -154,8 +142,8 @@ class MainActivity : AppCompatActivity() {
             ) {
                 when (newIndex) {
                     0 -> {
-                        val calendarFragment= FriendCalMainFragment()
-                        //val calendarFragment = CalendarMainFragment()
+                        //val calendarFragment= FriendCalMainFragment()
+                        val calendarFragment = CalendarMainFragment()
                         //val calendarFragment = PostFragment()
 
                         val userBundle = Bundle()
@@ -193,6 +181,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         })
+        kakaoDataCallback{
+            //val calendarFragment= FriendCalMainFragment()
+            val calendarFragment = CalendarMainFragment()
+            //val calendarFragment = PostFragment()
+
+            val userBundle = Bundle()
+            userBundle.putString("id", uid)
+            userBundle.putString("email", email)
+            userBundle.putString("nickname", nickname)
+            userBundle.putString("profileImagePath", profileImagePath)
+            calendarFragment.arguments = userBundle
+            supportFragmentManager.beginTransaction().replace(R.id.main_screen_panel, calendarFragment)
+                .commit()
+        }
 
 
     }

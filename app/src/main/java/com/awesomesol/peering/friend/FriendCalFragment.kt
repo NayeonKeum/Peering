@@ -140,7 +140,7 @@ class FriendCalFragment(index: Int) : Fragment() {
 
     fun initCalendar() {
         Log.d(TAG, "dateGalleryData $dateGalleryData")
-        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData)
+        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData, uid, cid)
         calendar_view.adapter = calendarAdapter
         calendar_view.layoutManager =
             GridLayoutManager(mContext, 4, GridLayoutManager.VERTICAL, false)

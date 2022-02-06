@@ -1,7 +1,10 @@
 package com.awesomesol.peering.calendar
 
 import android.annotation.SuppressLint
+import android.content.ContentResolver
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.Color
 import android.graphics.Typeface
 import android.util.Log
@@ -12,19 +15,26 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
 import com.jakewharton.threetenabp.AndroidThreeTen
 import kotlinx.android.synthetic.main.list_item_calendar.view.*
 import org.threeten.bp.DayOfWeek
 import org.threeten.bp.LocalDate
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
-class Calendar2Adapter(val context: Context, val calendarLayout: LinearLayout, val date: Date, val dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>>) :
+
+class Calendar2Adapter(
+    val context: Context,
+    val calendarLayout: LinearLayout,
+    val date: Date,
+    val dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>>,
+    val uid: String,
+    val cid: String
+) :
     RecyclerView.Adapter<Calendar2Adapter.CalendarItemHolder>() {
 
     private val TAG = "캘 어댑터"
@@ -47,6 +57,11 @@ class Calendar2Adapter(val context: Context, val calendarLayout: LinearLayout, v
 
     // FurangCalendar을 이용하여 날짜 리스트 세팅
     // var furangCalendar: MakeCalendar = MakeCalendar(date)
+
+
+    val storage=FirebaseStorage.getInstance()
+    val storRef=storage.reference.child(uid).child(cid)
+
 
     init {
         calInstance.time = date
@@ -124,7 +139,10 @@ class Calendar2Adapter(val context: Context, val calendarLayout: LinearLayout, v
 //            if (position < firstDateIndex || position > lastDateIndex) {
 //                itemCalendarDateText.setTextAppearance(R.style.LightColorTextViewStyle)
 //            } else{
-            val date = LocalDate.parse(dateString, org.threeten.bp.format.DateTimeFormatter.ISO_DATE)
+            val date = LocalDate.parse(
+                dateString,
+                org.threeten.bp.format.DateTimeFormatter.ISO_DATE
+            )
             if (date.dayOfWeek==DayOfWeek.SATURDAY){
                 itemCalendarDateText.setTextAppearance(R.style.SatTextViewStyle)
             }
@@ -148,14 +166,25 @@ class Calendar2Adapter(val context: Context, val calendarLayout: LinearLayout, v
                 if (hh != null) {
                     for (data in hh){
                         val lnum:Long=1
-                        if (data["used"]!!.equals(lnum)){
+                        if (data["used"]!! == lnum){
                             val uri=data["imageUri"] as String
-                            iv_CalendarFragment2_img.setImageURI(uri.toUri())
-                            itemView.findViewById<ConstraintLayout>(R.id.cl_CalendarFragment2).setBackgroundColor(Color.parseColor("#FFB6B9"))
-                            iv_CalendarFragment2_character.visibility=View.GONE
+                            storRef.child(uri).downloadUrl
+                                .addOnSuccessListener { imageUri->
+
+                                    Glide.with(context)
+                                        .load(imageUri)
+                                        .into(iv_CalendarFragment2_img);
+
+                                    itemView.findViewById<ConstraintLayout>(R.id.cl_CalendarFragment2).setBackgroundColor(
+                                        Color.parseColor(
+                                            "#FFB6B9"
+                                        )
+                                    )
+                                    iv_CalendarFragment2_character.visibility=View.GONE
+                                }
                             break
+
                         }
-                        // 깃헙 뭔가 이상해 그러지마 제발
                         // 전부 다 0이면! 여기서 지정
                         /*
                                 * 제일 처음걸로 기본 지정
@@ -167,7 +196,7 @@ class Calendar2Adapter(val context: Context, val calendarLayout: LinearLayout, v
                 }
                 
             }
-            catch(e :NullPointerException){
+            catch (e: NullPointerException){
                 Log.d(TAG, "${dateString} 이 날 사진 없음")
 
             }

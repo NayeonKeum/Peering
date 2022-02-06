@@ -24,6 +24,7 @@ import com.awesomesol.peering.activity.MainActivity
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_calendar2.view.*
 import java.text.SimpleDateFormat
@@ -50,6 +51,7 @@ class CalendarFragment2(index: Int) : Fragment() {
     private var dataList_fromGaL: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
 
     val fs=Firebase.firestore
+    val storage=FirebaseStorage.getInstance()
 
     var uid:String=""
     var email:String=""
@@ -91,8 +93,15 @@ class CalendarFragment2(index: Int) : Fragment() {
                         fs.collection("calendars").document(cid).get()
                             .addOnSuccessListener {
                                 dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<HashMap<String, Any>>>
-                                // Log.d(TAG, "dateList4 $dateGalleryData")
+
+                                // 여기에 스토리지 겟 콜백
+//                                getStorageCallback(){
+//                                    Log.d(TAG, "dateGalleryData(callback): $dateGalleryData")
+//                                    initCalendar()
+//                                }
                                 initCalendar()
+
+
                             }
                             .addOnFailureListener{
                                 Log.d(TAG, "datalist4 remains null")
@@ -107,6 +116,22 @@ class CalendarFragment2(index: Int) : Fragment() {
 
 
     }
+
+//    private fun getStorageCallback(callback:()->Unit){
+//        //  ArrayList<HashMap<String, Any>>
+//        for (data in dateGalleryData.values.toList() as ArrayList<ArrayList<HashMap<String, Any>>>){
+//            for (datedata in data){
+//                val fileName= datedata["imageUri"] as String
+//                storage.reference.child(uid).child(cid).child(fileName).downloadUrl
+//                    .addOnSuccessListener { imageUri->
+//                        datedata["imageUri"]=imageUri
+//                        Log.d(TAG, "imageUri $imageUri")
+//                    }
+//            }
+//        }
+//        callback()
+//
+//    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -161,7 +186,7 @@ class CalendarFragment2(index: Int) : Fragment() {
                                             .addOnFailureListener { e -> Log.d(TAG, "캘 저장 에러 났음 쨘", e) }
 
                                     // 새로 어댑트,,
-                                    calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData)
+                                    calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData, uid, cid)
                                     calendar_view.adapter = calendarAdapter
                                     calendar_view.layoutManager = GridLayoutManager(mContext, 4, GridLayoutManager.VERTICAL, false)
                                     calendar_view.setHasFixedSize(true)
@@ -233,7 +258,7 @@ class CalendarFragment2(index: Int) : Fragment() {
     fun initCalendar() {
 
         Log.d(TAG, "dateGalleryData $dateGalleryData")
-        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData)
+        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData, uid, cid)
         calendar_view.adapter = calendarAdapter
         calendar_view.layoutManager = GridLayoutManager(mContext, 4, GridLayoutManager.VERTICAL, false)
         calendar_view.setHasFixedSize(true)
