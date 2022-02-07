@@ -50,45 +50,55 @@ class FeedFragment : Fragment() {
 
         val feed1 = hashMapOf(
             "mainImg" to "a",
+            "date" to "2022-02-07",
             "profileImg" to "b",
-            "nickname" to "Lee",
-            "content" to "반가워!!!! 이게 잘 되어야 할텐데....제발ㄹ...."
+            "uid" to "Lee",
+            "content" to "안녕~!! 반가워 ㅎㅎ",
+            "type" to 4
         )
 
         feeds.document("Feed_one").set(feed1)
 
         val feed2 = hashMapOf(
             "mainImg" to "c",
+            "date" to "2022-02-06",
             "profileImg" to "d",
-            "nickname" to "Kim",
-            "content" to "hihihihihihiihihihi 안녕 반가워~!!~!!~!!~!!"
+            "uid" to "Kim",
+            "content" to "hihihihihihiihihihi 안녕 반가워~!!~!!~!!",
+            "type" to 3
         )
 
         feeds.document("Feed_two").set(feed2)
 
         val feed3 = hashMapOf(
             "mainImg" to "e",
+            "date" to "2022-02-07",
             "profileImg" to "f",
-            "nickname" to "Cho",
-            "content" to "이건 세 번째 리사이클러뷰 item에 들어갈 내용이다~~!!!!! 일단 오케이오케이...!!!!!"
+            "uid" to "Cho",
+            "content" to "여러 개의 리사이클러뷰 item을 firebase에 넣고 있는 중~!!",
+            "type" to 2
         )
 
         feeds.document("Feed_three").set(feed3)
 
         val feed4 = hashMapOf(
             "mainImg" to "g",
+            "date" to "2022-02-08",
             "profileImg" to "h",
-            "nickname" to "Park",
-            "content" to "더이상 무슨 말을 해야 할 지 모르겠다 이걸로 끄으으으으으으ㅡㅌ"
+            "uid" to "Park",
+            "content" to "더이상 무슨 말을 해야 할 지 모르겠다 이걸로 끝할까..?",
+            "type" to 1
         )
 
         feeds.document("Feed_four").set(feed4)
 
         val feed5 = hashMapOf(
             "mainImg" to "g",
+            "date" to "2022-02-09",
             "profileImg" to "h",
-            "nickname" to "Yang",
-            "content" to "끝인 줄 알았지만 일단 몇 개 더 추가할 것이다!"
+            "uid" to "Yang",
+            "content" to "hihi 안녕 반가워~!!",
+            "type" to 1
         )
 
         feeds.document("Feed_five").set(feed5)*/
@@ -127,7 +137,7 @@ class FeedFragment : Fragment() {
                 // 성공할 경우
                 feedDataList.clear()
                 for (document in result){    // 가져온 문서들은 result에 들어감
-                    val item = FeedModel(document["mainImg"] as String, document["profileImg"] as String, document["nickname"] as String, document["content"] as String)
+                    val item = FeedModel(document["mainImg"] as String, document["date"] as String, document["profileImg"] as String, document["uid"] as String, document["content"] as String)
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
                 }

@@ -43,8 +43,10 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Fee
 
         // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item : FeedModel){
+            val date = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_date)
+            date.text = item.date
             val name = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_nickname)
-            name.text = item.nickname
+            name.text = item.uid
             val content = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_content)
             content.text = item.content
             val ivprofile = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem_profileImg)
