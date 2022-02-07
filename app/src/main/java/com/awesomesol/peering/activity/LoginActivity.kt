@@ -30,6 +30,8 @@ import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
@@ -459,6 +461,15 @@ class LoginActivity : AppCompatActivity(){
                         val calendar = Calendar.getInstance()
                         calendar.timeInMillis = dateTaken
                         val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
+
+                        // 일단 2021.10.1이전 것들은 다 안 넣음
+                        val targetDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
+                        val standardDate = LocalDate.of(2021,10,1)
+
+                        if (targetDate.isBefore(standardDate)){
+                            continue
+                        }
+
                         // Log.d(TAG, date)
                         // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
                         if (date in dataList4.keys){
@@ -473,9 +484,10 @@ class LoginActivity : AppCompatActivity(){
                             // 날짜가 없음!
                             var hmap:HashMap<String, Any> = hashMapOf()
                             hmap["imageUri"]=uri.toString()
-                            val ln:Long=1
+                            // 2는 대표사진
+                            val ln:Long=2
                             hmap["used"]=ln
-                            dataList4.put(date, arrayListOf())
+                            dataList4[date] = arrayListOf()
                             dataList4[date]?.add(hmap)
 
                         }
