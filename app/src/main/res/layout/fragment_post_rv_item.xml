@@ -28,6 +28,17 @@
             android:src="@drawable/gallery_minus"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_PostFragment_addtitle"
+            android:layout_width="63dp"
+            android:layout_height="23dp"
+            android:src="@drawable/titlephototrans"
+            app:layout_constraintBottom_toBottomOf="@+id/img_PostFragment_rv_itemimg"
+            app:layout_constraintEnd_toEndOf="@+id/img_PostFragment_rv_itemimg"
+            app:layout_constraintStart_toStartOf="@+id/img_PostFragment_rv_itemimg"
+            app:layout_constraintTop_toTopOf="@+id/img_PostFragment_rv_itemimg" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

@@ -165,7 +165,7 @@ class Calendar2Adapter(
                 val hh= dateGalleryData[dateString] as ArrayList<HashMap<String, Any>>
                 if (hh != null) {
                     for (data in hh){
-                        val lnum:Long=1
+                        val lnum:Long=2
                         if (data["used"]!! == lnum){
                             val uri=data["imageUri"] as String
                             storRef.child(uri).downloadUrl
