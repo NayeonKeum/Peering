@@ -57,6 +57,7 @@ class LoginActivity : AppCompatActivity(){
     var mfriendList: HashMap<String, Int> = hashMapOf()
 
     private lateinit var dataList4: HashMap<String, ArrayList<HashMap<String, Any>>>
+    private lateinit var contentList:HashMap<String, String>
 
 
 
@@ -227,6 +228,9 @@ class LoginActivity : AppCompatActivity(){
                                         val dateList: MutableSet<String> = dataList4.keys
                                         var i=0
                                         for (date in dateList){
+                                            // content 초기화
+                                            contentList[date]=""
+                                            // 그외
                                             val imgsOfDate:ArrayList<HashMap<String, Any>>? = dataList4[date]
                                             if (imgsOfDate != null) {
                                                 for (img in imgsOfDate){
@@ -247,6 +251,8 @@ class LoginActivity : AppCompatActivity(){
 //                                                                imgsOfDate[idx]["imageUri"]=fileName
 //                                                                Log.d(TAG, "imgsOfDate[idx][\"imageUri\"]222 ${imgsOfDate[idx]["imageUri"]}")
                                                             }
+                                                            .addOnFailureListener{
+                                                            }
 
                                                     i+=1
                                                 }
@@ -258,7 +264,7 @@ class LoginActivity : AppCompatActivity(){
 
                                         // fs 저장
                                         val calData=
-                                                CalendarInfo(arrayListOf(uid), calID, "내 캘린더", dataList4)
+                                                CalendarInfo(arrayListOf(uid), calID, "내 캘린더", dataList4, contentList)
                                         fs.collection("calendars").document(calID).set(calData)
                                                 .addOnSuccessListener {
                                                     Log.d(TAG, "캘린더 저장 성공")
@@ -329,6 +335,9 @@ class LoginActivity : AppCompatActivity(){
                                         val dateList: MutableSet<String> = dataList4.keys
                                         var i=0
                                         for (date in dateList){
+                                            // content 초기화
+                                            contentList[date]=""
+                                            // 그외
                                             val imgsOfDate:ArrayList<HashMap<String, Any>>? = dataList4[date]
                                             if (imgsOfDate != null) {
                                                 for (img in imgsOfDate){
@@ -349,6 +358,8 @@ class LoginActivity : AppCompatActivity(){
 //                                                                imgsOfDate[idx]["imageUri"]=fileName
 //                                                                Log.d(TAG, "imgsOfDate[idx][\"imageUri\"]222 ${imgsOfDate[idx]["imageUri"]}")
                                                             }
+                                                            .addOnFailureListener{
+                                                            }
 
                                                     i+=1
                                                 }
@@ -359,7 +370,7 @@ class LoginActivity : AppCompatActivity(){
 
                                         // fs 저장
                                         val calData=
-                                                CalendarInfo(arrayListOf(uid), calID, "내 캘린더", dataList4)
+                                                CalendarInfo(arrayListOf(uid), calID, "내 캘린더", dataList4, contentList)
                                         fs.collection("calendars").document(calID).set(calData)
                                                 .addOnSuccessListener {
                                                     Log.d(TAG, "캘린더 저장 성공")
@@ -436,6 +447,7 @@ class LoginActivity : AppCompatActivity(){
                 //getImages(cursor)
                 if (cursor != null) {
                     dataList4= hashMapOf()
+                    contentList=hashMapOf()
                     while (cursor.moveToNext()) {
                         // 날짜별 이미지 리스트 초기화
 

@@ -8,5 +8,6 @@ data class CalendarInfo(
         var uidList:ArrayList<String>,
         var cid:String,
         var cname:String,
-        var dataList4: HashMap<String, ArrayList<HashMap<String, Any>>>
+        var dataList4: HashMap<String, ArrayList<HashMap<String, Any>>>,
+        var contentList:HashMap<String, String>
 )

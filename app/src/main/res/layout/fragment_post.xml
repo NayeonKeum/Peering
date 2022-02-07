@@ -220,15 +220,18 @@
 <!--            app:layout_constraintEnd_toEndOf="@+id/view"-->
 <!--            app:layout_constraintStart_toStartOf="@+id/view"-->
 <!--            app:layout_constraintTop_toBottomOf="@+id/group_402" />-->
-
-        <androidx.appcompat.widget.AppCompatEditText
-            android:id="@+id/et_PostFragment"
-            android:layout_width="300dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            app:layout_constraintEnd_toEndOf="@+id/cl_PostFragment"
-            app:layout_constraintStart_toStartOf="@+id/cl_PostFragment"
-            app:layout_constraintTop_toBottomOf="@+id/cl_PostFragment" />
+    <ScrollView
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toEndOf="@+id/cl_PostFragment"
+        app:layout_constraintStart_toStartOf="@+id/cl_PostFragment"
+        app:layout_constraintTop_toBottomOf="@+id/cl_PostFragment">
+    <TextView
+        android:id="@+id/tv_PostFragment_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    </ScrollView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
