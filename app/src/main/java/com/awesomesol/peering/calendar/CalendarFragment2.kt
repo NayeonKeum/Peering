@@ -190,6 +190,9 @@ class CalendarFragment2(index: Int) : Fragment() {
                                             bundle.putString("cid", cid)
                                             bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
                                             bundle.putString("content", contentList[dateym])
+                                            bundle.putString("uid", uid)
+                                            bundle.putString("nickname", nickname)
+                                            bundle.putString("profileImagePath", profileImagePath)
                                             galleryFragment.arguments = bundle
                                             parentFragmentManager.beginTransaction()
                                                     .replace(R.id.main_screen_panel, galleryFragment).commit()
@@ -269,6 +272,9 @@ class CalendarFragment2(index: Int) : Fragment() {
                 bundle.putString("cid", cid)
                 bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
                 bundle.putString("content", contentList[dateym])
+                bundle.putString("uid", uid)
+                bundle.putString("nickname", nickname)
+                bundle.putString("profileImagePath", profileImagePath)
                 galleryFragment.arguments = bundle
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, galleryFragment).commit()

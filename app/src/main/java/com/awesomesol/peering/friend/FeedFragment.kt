@@ -1,14 +1,17 @@
 package com.awesomesol.peering.friend
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.CalendarMainFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -21,6 +24,8 @@ class FeedFragment : Fragment() {
     val db = FirebaseFirestore.getInstance()   // Firestore 인스턴스 선언
     val feedDataList = arrayListOf<FeedModel>()   // 리스트 아이템 배열
     val adapter = FeedRVAdapter(feedDataList)     // 리사이클러 뷰 어댑터
+
+    private lateinit var callback:OnBackPressedCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,6 +43,18 @@ class FeedFragment : Fragment() {
 //        }
 
 
+    }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "백프레스 눌름")
+                val calendarFragment = CalendarMainFragment()
+                activity?.supportFragmentManager?.beginTransaction()
+                        ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
     }
 
     override fun onCreateView(
@@ -127,7 +144,14 @@ class FeedFragment : Fragment() {
                 // 성공할 경우
                 feedDataList.clear()
                 for (document in result){    // 가져온 문서들은 result에 들어감
-                    val item = FeedModel(document["mainImg"] as String, document["profileImg"] as String, document["nickname"] as String, document["content"] as String)
+                    val item = FeedModel(
+                            document["cid"] as String,
+                            document["uid"] as String,
+                            document["nickname"] as String,
+                            document["mainImg"] as String,
+                            document["profileImg"] as String,
+                            document["content"] as String)
+
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
                 }
