@@ -1,6 +1,7 @@
 package com.awesomesol.peering.calendar
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
@@ -101,7 +102,6 @@ class PostFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.tv_PostFragment_date).text=curDate
 
-
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(
             R.id.rv_PostFragment
         )
@@ -121,11 +121,17 @@ class PostFragment : Fragment() {
             val datasize: Int? =dateGalleryData.size
             Log.d(TAG+"뭐들었니", dateGalleryData.toString())
 
+            val titleimgs:ArrayList<String> = arrayListOf()
             for (i : Int in 0 until datasize!!){
                 Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
-                val ln:Long=1
-                if (dateGalleryData[i]["used"]?.equals(ln) == true){
+                val ln1:Long=1
+                val ln2:Long=2
+                // 대표사진(2) 거나 게시 사진(1)이면
+                if (dateGalleryData[i]["used"]?.equals(ln1) == true){
                     images.add(dateGalleryData[i]["imageUri"] as String)
+                }
+                else if (dateGalleryData[i]["used"]?.equals(ln2) == true){
+                    titleimgs.add(dateGalleryData[i]["imageUri"] as String)
                 }
             }
 
@@ -133,7 +139,7 @@ class PostFragment : Fragment() {
 
 
             // 바텀 쉿 부착!
-            bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)!!
+            bottomView= view?.findViewById(R.id.ll_PostFragment_bottomsheet)!!
             bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
 
             // 전체 숨김
@@ -158,8 +164,11 @@ class PostFragment : Fragment() {
 
             sliderViewPager!!.offscreenPageLimit = 1
 
+            var allImgs:ArrayList<String> = arrayListOf()
+            allImgs.addAll(titleimgs)
+            allImgs.addAll(images)
 
-            sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), images, uid, cid)
+            sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
 
             sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                 override fun onPageSelected(position: Int) {
@@ -167,7 +176,7 @@ class PostFragment : Fragment() {
                     setCurrentIndicator(position)
                 }
             })
-            setupIndicators(images.size)
+            setupIndicators(allImgs.size)
         }
 
 
@@ -224,6 +233,8 @@ class PostFragment : Fragment() {
         }
 
 
+        
+        // 파베 업뎃
         writePost=view.findViewById(R.id.iv_PostFragment_writePost)
 
         writePost.setOnClickListener {
@@ -281,6 +292,7 @@ class PostFragment : Fragment() {
 
         var dateGalleryData = ArrayList<HashMap<String, Any>>()
         var useImages:ArrayList<String> = arrayListOf()
+        var titleImg:ArrayList<String> = arrayListOf()
         //val TAG="갤러리 어댑터"
 
         lateinit var parentView: View
@@ -305,9 +317,11 @@ class PostFragment : Fragment() {
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var iv: ImageView
             var addminus:ImageView
+            var addtitle:ImageView
             init {
                 iv = itemView.findViewById(R.id.img_PostFragment_rv_itemimg)
                 addminus=itemView.findViewById(R.id.iv_PostFragment_addminusbtn)
+                addtitle=itemView.findViewById(R.id.iv_PostFragment_addtitle)
             }
         }
 
@@ -334,12 +348,20 @@ class PostFragment : Fragment() {
 
             // Get the data model based on position
             var data = dateGalleryData[position]
-            val lnum:Long=0
-            if(dateGalleryData[position]["used"]?.equals(lnum) == true){
+            val ln0:Long=0
+            val ln1:Long=1
+            val ln2:Long=2
+            if(dateGalleryData[position]["used"]?.equals(ln0) == true){
                 holder.addminus.setImageResource(R.drawable.gallery_add)
+                holder.addtitle.setImageResource(R.drawable.titlephototrans)
             }
-            else{
+            else if(dateGalleryData[position]["used"]?.equals(ln1) == true){
                 holder.addminus.setImageResource(R.drawable.gallery_minus)
+                holder.addtitle.setImageResource(R.drawable.titlephototrans)
+            }
+            else if(dateGalleryData[position]["used"]?.equals(ln2) == true){
+                holder.addminus.setImageResource(R.drawable.gallery_minus)
+                holder.addtitle.setImageResource(R.drawable.titlephoto)
             }
 
 
@@ -353,11 +375,78 @@ class PostFragment : Fragment() {
                         .into(holder.iv)
                 }
 
+            // [대표 사진]을 눌렀을 때
+            holder.addtitle.setOnClickListener {
+                val ln0:Long=0
+                val ln1:Long=1
+                val ln2:Long=2
+                if (dateGalleryData[position]["used"]?.equals(ln0)==true){
+                    // 아예 추가 안 됨
+
+
+                    // 현재 대표사진인 친구 0으로 바꾸고
+                    removeFromTitle(dateGalleryData)
+
+                    dateGalleryData[position]["used"]=ln2
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephoto)
+
+
+                } else if (dateGalleryData[position]["used"]?.equals(ln1)==true){
+                    // 대표사진 아님
+                    val ln:Long=2
+
+                    // 현재 대표사진인 친구 0으로 바꾸고
+                    removeFromTitle(dateGalleryData)
+
+                    dateGalleryData[position]["used"]=ln2
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephoto)
+
+                }
+
+                notifyDataSetChanged()
+
+                useImages= arrayListOf()
+                titleImg= arrayListOf()
+                for (i:Int in dateGalleryData.indices){
+                    Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
+                    val ln1:Long=1
+                    val ln2:Long=2
+                    if(dateGalleryData[i]["used"]?.equals(ln1) == true){
+                        useImages.add(dateGalleryData[i]["imageUri"].toString())
+                    }else if(dateGalleryData[i]["used"]?.equals(ln2) == true){
+                        titleImg.add(dateGalleryData[i]["imageUri"].toString())
+                    }
+
+                }
+                Log.d("뷰페이저 인디1-t", dateGalleryData.toString())
+                var allImg:ArrayList<String> = arrayListOf()
+                allImg.addAll(titleImg)
+                allImg.addAll(useImages)
+                Log.d("뷰페이저 인디2-t", allImg.toString())
+
+                // 초기화
+                layoutIndicator!!.removeAllViews()
+
+                // 둥근 모서리
+                cl_PostFragment.clipToOutline=true
+
+                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        setCurrentIndicator(position)
+                    }
+                })
+                setupIndicators(allImg.size)
+
+            }
+
             // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
             holder.iv.setOnClickListener {
 
                 val ln:Long=0
-
                 if(dateGalleryData[position]["used"]?.equals(ln) == true){
                     // 사용 안 한 거
                     // 더하는 액션 하고
@@ -366,23 +455,35 @@ class PostFragment : Fragment() {
                     holder.addminus.setImageResource(R.drawable.gallery_minus)
                 }
                 else{
-                    // 사용 한 거
+                    // 사용 한 거(1, 2)
                     // 빼는 액션하고
                     val ln:Long=0
                     dateGalleryData[position]["used"]=ln
                     holder.addminus.setImageResource(R.drawable.gallery_add)
                 }
 
+                notifyDataSetChanged()
+
+                titleImg= arrayListOf()
                 useImages= arrayListOf()
                 for (i:Int in dateGalleryData.indices){
                     Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
-                    val ln:Long=1
-                    if(dateGalleryData[i]["used"]?.equals(ln) == true){
+                    val ln1:Long=1
+                    val ln2:Long=2
+                    if(dateGalleryData[i]["used"]?.equals(ln1) == true || dateGalleryData[i]["used"]?.equals(ln2) == true){
                         useImages.add(dateGalleryData[i]["imageUri"].toString())
+                    } else if(dateGalleryData[i]["used"]?.equals(ln2) == true){
+                        titleImg.add(dateGalleryData[i]["imageUri"].toString())
                     }
                 }
+
                 Log.d("뷰페이저 인디1", dateGalleryData.toString())
-                Log.d("뷰페이저 인디2", useImages.toString())
+
+                var allImg:ArrayList<String> = arrayListOf()
+                allImg.addAll(titleImg)
+                allImg.addAll(useImages)
+
+                Log.d("뷰페이저 인디2", allImg.toString())
 
                 // 초기화
                 layoutIndicator!!.removeAllViews()
@@ -390,14 +491,14 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, useImages, userID, calID)
+                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
                         setCurrentIndicator(position)
                     }
                 })
-                setupIndicators(useImages.size)
+                setupIndicators(allImg.size)
 
             }
         }
@@ -406,6 +507,18 @@ class PostFragment : Fragment() {
         }
         //  total count of items in the list
         override fun getItemCount() = dateGalleryData.size
+
+
+        // 현재 대표사진인거 0(미사용)으로 바까주기
+        fun removeFromTitle(dateGalleryData:ArrayList<HashMap<String, Any>>){
+            for (data in dateGalleryData){
+                val ln2:Long=2
+                if (data["used"]?.equals(ln2)==true){
+                    val ln0:Long=0
+                    data["used"]=ln0
+                }
+            }
+        }
 
 
         // 중복으로 들어가긴 하는데

@@ -484,9 +484,10 @@ class LoginActivity : AppCompatActivity(){
                             // 날짜가 없음!
                             var hmap:HashMap<String, Any> = hashMapOf()
                             hmap["imageUri"]=uri.toString()
-                            val ln:Long=1
+                            // 2는 대표사진
+                            val ln:Long=2
                             hmap["used"]=ln
-                            dataList4.put(date, arrayListOf())
+                            dataList4[date] = arrayListOf()
                             dataList4[date]?.add(hmap)
 
                         }
