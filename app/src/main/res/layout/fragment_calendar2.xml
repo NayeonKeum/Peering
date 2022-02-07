@@ -43,23 +43,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/calendar_layout"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/div">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/calendar_view"
+        <LinearLayout
+            android:id="@+id/calendar_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            app:layout_constrainedHeight="true"
-            app:spanCount="4"
-            tools:listitem="@layout/list_item_calendar" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            >
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/calendar_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                app:layout_constrainedHeight="true"
+                app:spanCount="4"
+                tools:listitem="@layout/list_item_calendar" />
+        </LinearLayout>
+    </ScrollView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fbtn_CalendarFragment2_refreshGal"
