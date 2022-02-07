@@ -46,6 +46,8 @@ class CalendarFragment2(index: Int) : Fragment() {
     lateinit var calendar_view: RecyclerView
     lateinit var calendarAdapter: Calendar2Adapter
     var dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>> = hashMapOf()
+    var contentList:HashMap<String, String> = hashMapOf()
+    var feedList:HashMap<String, String> = hashMapOf()
     lateinit var fbtn:FloatingActionButton
 
     private var dataList_fromGaL: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
@@ -93,6 +95,8 @@ class CalendarFragment2(index: Int) : Fragment() {
                         fs.collection("calendars").document(cid).get()
                             .addOnSuccessListener {
                                 dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<HashMap<String, Any>>>
+                                contentList=it.data?.get("contentList") as HashMap<String, String>
+                                feedList=it.data?.get("feedList") as HashMap<String, String>
                                 initCalendar()
 
                             }
@@ -137,12 +141,15 @@ class CalendarFragment2(index: Int) : Fragment() {
                         fs.collection("users").whereEqualTo("uid", uid).get()
                                 .addOnSuccessListener { documents ->
 
+
                                     // 없는 것들 넣기
                                     for (dateKey in notices.keys){
                                         if (dateGalleryData.containsKey(dateKey)){
                                             continue
                                         } else{
                                             // 키 없음
+                                            contentList[dateKey]=""
+                                            feedList[dateKey]=""
                                             val datalist:ArrayList<HashMap<String, Any>> = arrayListOf()
                                             for (data in notices[dateKey]!!){
                                                 val hmap:HashMap<String, Any> =hashMapOf()
@@ -157,7 +164,7 @@ class CalendarFragment2(index: Int) : Fragment() {
                                     Log.d(TAG, "캘 업뎃: $dateGalleryData")
 
                                     // 내 캘린더 업데이트
-                                    val calData = CalendarInfo(arrayListOf(uid), cid, "내 캘린더", dateGalleryData)
+                                    val calData = CalendarInfo(arrayListOf(uid), cid, "내 캘린더", dateGalleryData, contentList, feedList)
                                     fs.collection("calendars").document(cid).set(calData)
                                             .addOnSuccessListener { Log.d(TAG, "캘린더 저장 성공") }
                                             .addOnFailureListener { e -> Log.d(TAG, "캘 저장 에러 났음 쨘", e) }
@@ -185,6 +192,11 @@ class CalendarFragment2(index: Int) : Fragment() {
                                             bundle.putString("dateym", dateym)
                                             bundle.putString("cid", cid)
                                             bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
+                                            bundle.putSerializable("feedList", feedList)
+                                            bundle.putString("content", contentList[dateym])
+                                            bundle.putString("uid", uid)
+                                            bundle.putString("nickname", nickname)
+                                            bundle.putString("profileImagePath", profileImagePath)
                                             galleryFragment.arguments = bundle
                                             parentFragmentManager.beginTransaction()
                                                     .replace(R.id.main_screen_panel, galleryFragment).commit()
@@ -263,7 +275,12 @@ class CalendarFragment2(index: Int) : Fragment() {
                 bundle.putString("dateym", dateym)
                 bundle.putString("cid", cid)
                 bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
-                galleryFragment.setArguments(bundle)
+                bundle.putSerializable("feedList", feedList)
+                bundle.putString("content", contentList[dateym])
+                bundle.putString("uid", uid)
+                bundle.putString("nickname", nickname)
+                bundle.putString("profileImagePath", profileImagePath)
+                galleryFragment.arguments = bundle
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, galleryFragment).commit()
 

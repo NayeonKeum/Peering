@@ -1,7 +1,9 @@
 package com.awesomesol.peering.calendar
 
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
-import android.content.res.Resources
+import android.content.DialogInterface
 import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
@@ -9,30 +11,31 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
+import com.awesomesol.peering.friend.FeedModel
 import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.google.protobuf.StringValue
 import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class PostFragment : Fragment() {
@@ -46,24 +49,30 @@ class PostFragment : Fragment() {
 
 
     var fs=Firebase.firestore
+    val storage=FirebaseStorage.getInstance()
+    lateinit var storRef:StorageReference
+
 
     // 슬라이더
     private var sliderViewPager: ViewPager2? = null
     private var layoutIndicator: LinearLayout? = null
     private lateinit var cl_PostFragment: ConstraintLayout
     private lateinit var writePost:ImageView
+    lateinit var tv_PostFragment_content:TextView
 
     private var images:ArrayList<String> = arrayListOf()
     private var curDate:String=""
     private var dateym:String=""
     private var cid:String=""
-
     private var uid:String=""
+    private var nickname:String=""
+    private var profileImagePath=""
+
 
     private lateinit var callback:OnBackPressedCallback
 
     private lateinit var dateGalleryData: ArrayList<HashMap<String, Any>>
-
+    private var content:String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +85,13 @@ class PostFragment : Fragment() {
             curDate= bundle.getString("date").toString()
             dateym=bundle.getString("dateym").toString()
             cid=bundle.getString("cid").toString()
+            content=bundle.getString("content").toString()
+            uid=bundle.getString("uid").toString()
+            nickname=bundle.getString("nickname").toString()
+            profileImagePath=bundle.getString("profileImagePath").toString()
+
+            storRef=storage.reference.child(uid).child(cid)
+
             try{
                 Log.d(TAG, "넘어온 번들: ${bundle.getSerializable("dateGalleryData")}")
                 dateGalleryData = bundle.getSerializable("dateGalleryData") as ArrayList<HashMap<String, Any>>
@@ -86,12 +102,6 @@ class PostFragment : Fragment() {
         }
 
     }
-    private fun userCallback(callback:(String)->Unit){
-        UserApiClient.instance.me { user, _ ->
-            uid = user?.id.toString()
-            callback(uid)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -101,6 +111,12 @@ class PostFragment : Fragment() {
         val view=inflater.inflate(R.layout.fragment_post, container, false)
 
         view.findViewById<TextView>(R.id.tv_PostFragment_date).text=curDate
+        tv_PostFragment_content=view.findViewById(R.id.tv_PostFragment_content)
+
+        if (content==null){
+            content=""
+        }
+        tv_PostFragment_content.text=content
 
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(
             R.id.rv_PostFragment
@@ -109,42 +125,41 @@ class PostFragment : Fragment() {
         //rv.layoutManager=GridLayoutManager(context, 3)
         rv.layoutManager=LinearLayoutManager(context).also{it.orientation=LinearLayoutManager.HORIZONTAL}
 
-        userCallback { uid->
-            galleryRVAdapter= context?.let { GalleryRVAdapter(it, uid, cid) }!!
+        galleryRVAdapter= context?.let { GalleryRVAdapter(it, uid, cid) }!!
 
-            galleryRVAdapter.setView(view)
-            //parentFragmentManager
-            rv.adapter=galleryRVAdapter
+        galleryRVAdapter.setView(view)
+        //parentFragmentManager
+        rv.adapter=galleryRVAdapter
 
 
-            Log.d(TAG, "targetDate에 있는 사진 개수: " + dateGalleryData.size)
-            val datasize: Int? =dateGalleryData.size
-            Log.d(TAG+"뭐들었니", dateGalleryData.toString())
+        Log.d(TAG, "targetDate에 있는 사진 개수: " + dateGalleryData.size)
+        val datasize: Int? =dateGalleryData.size
+        Log.d(TAG+"뭐들었니", dateGalleryData.toString())
 
-            val titleimgs:ArrayList<String> = arrayListOf()
-            for (i : Int in 0 until datasize!!){
-                Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
-                val ln1:Long=1
-                val ln2:Long=2
-                // 대표사진(2) 거나 게시 사진(1)이면
-                if (dateGalleryData[i]["used"]?.equals(ln1) == true){
-                    images.add(dateGalleryData[i]["imageUri"] as String)
-                }
-                else if (dateGalleryData[i]["used"]?.equals(ln2) == true){
-                    titleimgs.add(dateGalleryData[i]["imageUri"] as String)
-                }
+        val titleimgs:ArrayList<String> = arrayListOf()
+        for (i : Int in 0 until datasize!!){
+            Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
+            val ln1:Long=1
+            val ln2:Long=2
+            // 대표사진(2) 거나 게시 사진(1)이면
+            if (dateGalleryData[i]["used"]?.equals(ln1) == true){
+                images.add(dateGalleryData[i]["imageUri"] as String)
             }
+            else if (dateGalleryData[i]["used"]?.equals(ln2) == true){
+                titleimgs.add(dateGalleryData[i]["imageUri"] as String)
+            }
+        }
 
-            galleryRVAdapter.setDataList(dateGalleryData)
+        galleryRVAdapter.setDataList(dateGalleryData)
 
 
-            // 바텀 쉿 부착!
-            bottomView= view?.findViewById(R.id.ll_PostFragment_bottomsheet)!!
-            bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
+        // 바텀 쉿 부착!
+        bottomView= view?.findViewById(R.id.ll_PostFragment_bottomsheet)!!
+        bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
 
-            // 전체 숨김
-            // behavior.state = BottomSheetBehavior.STATE_HIDDEN
-            // peekHight 만큼
+        // 전체 숨김
+        // behavior.state = BottomSheetBehavior.STATE_HIDDEN
+        // peekHight 만큼
 //        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
 //
 //        inflater.inflate(R.layout.fragment_post_bottomsheet_photos, container).findViewById<ImageView>(
@@ -154,30 +169,29 @@ class PostFragment : Fragment() {
 //            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
 //        }
 
-            // 둥근 모서리
-            cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
-            cl_PostFragment.clipToOutline=true
+        // 둥근 모서리
+        cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
+        cl_PostFragment.clipToOutline=true
 
-            // 초기에 해주는 거!
-            sliderViewPager = view.findViewById(R.id.sliderViewPager)
-            layoutIndicator = view.findViewById(R.id.layoutIndicators)
+        // 초기에 해주는 거!
+        sliderViewPager = view.findViewById(R.id.sliderViewPager)
+        layoutIndicator = view.findViewById(R.id.layoutIndicators)
 
-            sliderViewPager!!.offscreenPageLimit = 1
+        sliderViewPager!!.offscreenPageLimit = 1
 
-            var allImgs:ArrayList<String> = arrayListOf()
-            allImgs.addAll(titleimgs)
-            allImgs.addAll(images)
+        var allImgs:ArrayList<String> = arrayListOf()
+        allImgs.addAll(titleimgs)
+        allImgs.addAll(images)
 
-            sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
+        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
 
-            sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-                override fun onPageSelected(position: Int) {
-                    super.onPageSelected(position)
-                    setCurrentIndicator(position)
-                }
-            })
-            setupIndicators(allImgs.size)
-        }
+        sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                setCurrentIndicator(position)
+            }
+        })
+        setupIndicators(allImgs.size)
 
 
         //키보드 올라올때 바텀네비케이션 올라오는거 처리 부분
@@ -232,33 +246,104 @@ class PostFragment : Fragment() {
             }
         }
 
-
         
         // 파베 업뎃
         writePost=view.findViewById(R.id.iv_PostFragment_writePost)
 
         writePost.setOnClickListener {
-            lateinit var hh: HashMap<String, ArrayList<GalleryData>>
 
-            fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
-                .addOnSuccessListener { documents->
-                    for (document in documents) {
-                        if (document.data["cid"].toString().equals(cid)){
-                            hh= document.data["dataList4"] as HashMap<String, ArrayList<GalleryData>>
+            var builder = AlertDialog.Builder(context)
+            builder.setTitle("내용을 입력하세요")
+            builder.setIcon(R.drawable.writepost)
+
+            var viewdialog = layoutInflater.inflate(R.layout.writepost_dialog, null)
+            viewdialog.background = resources.getDrawable(R.drawable.rounded_dialog)
+            builder.setView(viewdialog)
+
+
+            // p0에 해당 AlertDialog가 들어온다. findViewById를 통해 view를 가져와서 사용
+            var listener = DialogInterface.OnClickListener { p0, p1 ->
+                var alert = p0 as AlertDialog
+                var edit1: EditText? = alert.findViewById(R.id.et_PostFragment_dialog)
+
+                edit1?.hint=content
+
+                tv_PostFragment_content.text = "${edit1?.text}"
+                val ncontent= edit1?.text.toString()
+
+
+                lateinit var hh: HashMap<String, ArrayList<HashMap<String, Any>>>
+                lateinit var contList:HashMap<String, String>
+                lateinit var feedList:HashMap<String, String>
+
+                fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+                        .addOnSuccessListener { documents->
+                            for (document in documents) {
+                                if (document.data["cid"].toString().equals(cid)){
+                                    hh= document.data["dataList4"] as HashMap<String, ArrayList<HashMap<String, Any>>>
+                                    contList=document.data["contentList"] as HashMap<String, String>
+                                    feedList=document.data["feedList"] as HashMap<String, String>
+                                }
+                            }
+                            hh[dateym]=galleryRVAdapter.dateGalleryData
+                            contList[dateym]=ncontent
+
+                            fs.collection("calendars").document(cid).update("dataList4", hh)
+                                    .addOnSuccessListener { Log.d(TAG, "d성공") }
+                                    .addOnFailureListener{ Log.d(TAG, "d실패")}
+                            fs.collection("calendars").document(cid).update("contentList", contList)
+                                    .addOnSuccessListener { Log.d(TAG, "c성공") }
+                                    .addOnFailureListener{ Log.d(TAG, "c실패")}
+
+                            if (feedList[dateym].equals("")) {
+                                // 피드 처음 생김!
+                                val feedName = "Feed_" + Random().nextInt(100000)
+                                val hh = hh[dateym]
+                                if (hh != null) {
+                                    for (data in hh) {
+                                        val lnum: Long = 2
+                                        if (data["used"] as Long == lnum) {
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            fs.collection("feeds").document(feedName).set(feed)
+                                                    .addOnSuccessListener { Log.d(TAG, "f성공") }
+                                                    .addOnFailureListener { Log.d(TAG, "f실패") }
+                                            break
+                                        }
+                                    }
+                                }
+                                feedList[dateym] = feedName
+                                fs.collection("calendars").document(cid).update("feedList", feedList)
+                                        .addOnSuccessListener { Log.d(TAG, "c성공") }
+                                        .addOnFailureListener { Log.d(TAG, "c실패") }
+                            } else{
+                                // 피드 이름 feedList
+                                val hh = hh[dateym]
+                                if (hh != null) {
+                                    for (data in hh) {
+                                        val lnum: Long = 2
+                                        if (data["used"] as Long == lnum) {
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            feedList[dateym]?.let { it1 ->
+                                                fs.collection("feeds").document(it1).set(feed)
+                                                        .addOnSuccessListener { Log.d(TAG, "f성공") }
+                                                        .addOnFailureListener { Log.d(TAG, "f실패") }
+                                            }
+                                            break
+                                        }
+
+                                    }
+                                }
+
+                            }
                         }
-                    }
-                    hh[dateym]=galleryRVAdapter.dateGalleryData as ArrayList<GalleryData>
-                    fs.collection("calendars").document(cid).update("dataList4", hh)
-                        .addOnSuccessListener { Log.d(TAG, "성공") }
-                        .addOnFailureListener{ Log.d(TAG, "실패")}
+                        .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
 
+            }
 
-                }
-                .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+            builder.setPositiveButton("확인", listener)
+            builder.setNegativeButton("취소", null)
 
-            val calendarFragment = CalendarMainFragment()
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.main_screen_panel, calendarFragment).commit()
+            builder.show()
 
         }
 
