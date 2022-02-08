@@ -1,20 +1,15 @@
 package com.awesomesol.peering.calendar
 
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
-import android.graphics.Color
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
@@ -31,7 +26,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
-import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import java.util.*
 import kotlin.collections.ArrayList
@@ -59,6 +53,10 @@ class PostFragment : Fragment() {
     private lateinit var cl_PostFragment: ConstraintLayout
     private lateinit var writePost:ImageView
     lateinit var tv_PostFragment_content:TextView
+    lateinit var spn_PostFragment_publicScope:Spinner
+    lateinit var spn_PostFragment_category:Spinner
+
+
 
     private var images:ArrayList<String> = arrayListOf()
     private var curDate:String=""
@@ -67,6 +65,8 @@ class PostFragment : Fragment() {
     private var uid:String=""
     private var nickname:String=""
     private var profileImagePath=""
+
+    private var categories:HashMap<String, ArrayList<String>> = hashMapOf()
 
 
     private lateinit var callback:OnBackPressedCallback
@@ -112,11 +112,19 @@ class PostFragment : Fragment() {
 
         view.findViewById<TextView>(R.id.tv_PostFragment_date).text=curDate
         tv_PostFragment_content=view.findViewById(R.id.tv_PostFragment_content)
+//        tv_PostFragment_publicScope=view.findViewById(R.id.tv_PostFragment_publicScope)
+//        tv_PostFragment_category=view.findViewById(R.id.tv_PostFragment_category)
+        spn_PostFragment_publicScope=view.findViewById(R.id.spn_PostFragment_publicScope)
+        spn_PostFragment_category=view.findViewById(R.id.spn_PostFragment_category)
+
 
         if (content==null){
             content=""
         }
         tv_PostFragment_content.text=content
+
+
+
 
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(
             R.id.rv_PostFragment
@@ -138,7 +146,6 @@ class PostFragment : Fragment() {
 
         val titleimgs:ArrayList<String> = arrayListOf()
         for (i : Int in 0 until datasize!!){
-            Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
             val ln1:Long=1
             val ln2:Long=2
             // 대표사진(2) 거나 게시 사진(1)이면
@@ -246,7 +253,108 @@ class PostFragment : Fragment() {
             }
         }
 
-        
+
+
+        // 0: 나만 보기, 1: 친구 공개, 2: 전체 공개
+        var publicScope:Long=0
+
+        // 놀기/방탈출
+        // 놀기/연극, 뮤지컬
+        var category=""
+        // categories:HashMap<String, ArrayList<String>>={놀기=[방탈출, 연극, 뮤지컬], 여가=[스키], 일상=[]}
+
+        categories_and_feedname_Callback(){ s_c_hashmap->
+
+            publicScope=s_c_hashmap["publicScope"] as Long
+            category=s_c_hashmap["category"] as String
+
+
+            var catidx=0
+            var totalIdx=-1
+            val categoryStrList:ArrayList<String> = arrayListOf()
+            val keys=categories.keys
+            for (key in keys){
+                for (i in 0 until (categories[key]?.size!!)){
+                    totalIdx+=1
+                    categoryStrList.add("$key / ${categories[key]?.get(i)}")
+                    if (("$key / ${categories[key]?.get(i)}") == category){
+                        catidx+=totalIdx
+                        Log.d(TAG, "catidx $catidx")
+                    }
+                }
+            }
+            Log.d(TAG, "categories $categories")
+            Log.d(TAG, "categoryStrList $categoryStrList")
+
+
+            spn_PostFragment_publicScope.adapter=ArrayAdapter.createFromResource(requireContext(), R.array.dialog_scope, android.R.layout.simple_spinner_item)
+
+            spn_PostFragment_publicScope.setSelection(publicScope.toInt())
+
+            spn_PostFragment_category.adapter=ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryStrList)
+
+            spn_PostFragment_category.setSelection(catidx)
+
+            spn_PostFragment_publicScope.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    publicScope=0
+                    //tv_PostFragment_publicScope.text="나만 보기"
+                }
+                override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                ) {
+                    when (position) {
+                        // 나만 보기
+                        0 -> {
+                            publicScope=0
+                            //tv_PostFragment_publicScope.text="나만 보기"
+                        }
+                        // 친구 공개
+                        1 -> {
+                            publicScope=1
+                            //tv_PostFragment_publicScope.text="친구 공개"
+                        }
+                        // 전체 공개
+                        2 -> {
+                            publicScope=2
+                            //tv_PostFragment_publicScope.text="전체 공개"
+                        }
+                        //일치하는게 없는 경우
+                        else -> {
+                            publicScope=0
+                            //tv_PostFragment_publicScope.text="나만 보기"
+
+                        }
+                    }
+                }
+            }
+
+            spn_PostFragment_category.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                    category="없음"
+                    //tv_PostFragment_category.text=category
+                }
+                override fun onItemSelected(
+                        parent: AdapterView<*>?,
+                        view: View?,
+                        position: Int,
+                        id: Long
+                ) {
+                    category=categoryStrList[position]
+                    //tv_PostFragment_category.text=category
+                }
+            }
+
+            Log.d(TAG, "publicScope $publicScope, \n category $category")
+
+        }
+
+
+
+
         // 파베 업뎃
         writePost=view.findViewById(R.id.iv_PostFragment_writePost)
 
@@ -257,7 +365,7 @@ class PostFragment : Fragment() {
             builder.setIcon(R.drawable.writepost)
 
             var viewdialog = layoutInflater.inflate(R.layout.writepost_dialog, null)
-            viewdialog.background = resources.getDrawable(R.drawable.rounded_dialog)
+            //viewdialog.background = resources.getDrawable(R.drawable.rounded_dialog)
             builder.setView(viewdialog)
 
 
@@ -279,7 +387,7 @@ class PostFragment : Fragment() {
                 fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
                         .addOnSuccessListener { documents->
                             for (document in documents) {
-                                if (document.data["cid"].toString().equals(cid)){
+                                if (document.data["cid"].toString() == cid){
                                     hh= document.data["dataList4"] as HashMap<String, ArrayList<HashMap<String, Any>>>
                                     contList=document.data["contentList"] as HashMap<String, String>
                                     feedList=document.data["feedList"] as HashMap<String, String>
@@ -303,7 +411,7 @@ class PostFragment : Fragment() {
                                     for (data in hh) {
                                         val lnum: Long = 2
                                         if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
                                             fs.collection("feeds").document(feedName).set(feed)
                                                     .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                     .addOnFailureListener { Log.d(TAG, "f실패") }
@@ -316,13 +424,13 @@ class PostFragment : Fragment() {
                                         .addOnSuccessListener { Log.d(TAG, "c성공") }
                                         .addOnFailureListener { Log.d(TAG, "c실패") }
                             } else{
-                                // 피드 이름 feedList
+                                // 피드 이름 feedList에서 받아옴(수정됨)
                                 val hh = hh[dateym]
                                 if (hh != null) {
                                     for (data in hh) {
                                         val lnum: Long = 2
                                         if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
                                             feedList[dateym]?.let { it1 ->
                                                 fs.collection("feeds").document(it1).set(feed)
                                                         .addOnSuccessListener { Log.d(TAG, "f성공") }
@@ -347,9 +455,41 @@ class PostFragment : Fragment() {
 
         }
 
+
         return view
     }
 
+    fun categories_and_feedname_Callback(callback:(HashMap<String, Any>)->Unit){
+        // 카테고리 가져오기
+        fs.collection("categories").document(uid).get()
+                .addOnSuccessListener { documents ->
+                    val categories=documents.data as HashMap<String, ArrayList<String>>
+                    this.categories=categories
+                    lateinit var feedListcallback:HashMap<String, String>
+                    fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+                            .addOnSuccessListener { documents ->
+                                for (document in documents) {
+                                    if (document.data["cid"].toString() == cid) {
+                                        feedListcallback = document.data["feedList"] as HashMap<String, String>
+                                    }
+                                }
+
+                                val feedName = feedListcallback[dateym] as String
+                                //callback(feedName)
+
+                                fs.collection("feeds").document(feedName).get()
+                                        .addOnSuccessListener {
+                                            var hmap:HashMap<String, Any> = hashMapOf()
+                                            hmap["category"]=it.data?.get("category") as String
+                                            hmap["publicScope"]=it.data?.get("publicScope") as Long
+
+                                            callback(hmap)
+                                        }
+
+
+                            }
+                }
+    }
 
 
     override fun onAttach(context: Context) {
@@ -495,7 +635,6 @@ class PostFragment : Fragment() {
                 useImages= arrayListOf()
                 titleImg= arrayListOf()
                 for (i:Int in dateGalleryData.indices){
-                    Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
                     val ln1:Long=1
                     val ln2:Long=2
                     if(dateGalleryData[i]["used"]?.equals(ln1) == true){
@@ -552,7 +691,6 @@ class PostFragment : Fragment() {
                 titleImg= arrayListOf()
                 useImages= arrayListOf()
                 for (i:Int in dateGalleryData.indices){
-                    Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
                     val ln1:Long=1
                     val ln2:Long=2
                     if(dateGalleryData[i]["used"]?.equals(ln1) == true || dateGalleryData[i]["used"]?.equals(ln2) == true){
