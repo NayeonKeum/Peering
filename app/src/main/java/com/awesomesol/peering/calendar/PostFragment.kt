@@ -486,7 +486,6 @@ class PostFragment : Fragment() {
                                             callback(hmap)
                                         }
 
-
                             }
                 }
     }
