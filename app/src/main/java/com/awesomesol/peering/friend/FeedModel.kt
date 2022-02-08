@@ -7,4 +7,5 @@ data class FeedModel (
     var mainImg : String = "",
     var profileImg : String = "",
     var content : String = "",
+    val type : Int,
 )
