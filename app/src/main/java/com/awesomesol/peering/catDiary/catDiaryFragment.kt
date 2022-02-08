@@ -1,6 +1,7 @@
 package com.awesomesol.peering.catDiary
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,6 +12,8 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 
 class catDiaryFragment : Fragment() {
@@ -26,6 +29,46 @@ class catDiaryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        val db = Firebase.firestore
+        val groups = db.collection("groups")
+
+        val group1 = hashMapOf(
+            "groupName" to "그룹명",
+            "groupNum" to "6",
+            "groupImg" to "img",
+            "uid" to "uid",
+            "profileImg" to "profileImg"
+        )
+        groups.document("groupOne").set(group1)
+
+        val group2 = hashMapOf(
+            "groupName" to "그룹명2",
+            "groupNum" to "4",
+            "groupImg" to "img",
+            "uid" to "uid",
+            "profileImg" to "profileImg"
+        )
+        groups.document("groupTwo").set(group2)
+
+        db.collection("groups")
+            .add(group1)
+            .addOnSuccessListener {
+                Log.d(TAG, "성공!!")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
+        db.collection("groups")
+            .get()
+            .addOnSuccessListener {
+                Log.d(TAG, "받기 성공!!")
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
+            }
+
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_catdiary, container, false)
 
@@ -53,22 +96,17 @@ class catDiaryFragment : Fragment() {
         items2.add("카테고아리2")
         items2.add("카테고안리2")
         items2.add("카테고안리3")
-        val items3 = ArrayList<String>()
-        items3.add("솔룩스")
-        items3.add("어썸솔 팟팅")
-        items3.add("인생은 뭘까")
-        items3.add("하하")
-        items3.add("글자를길게써봅시다")
 
-        if (items3.size != 0) {
+        val groupDataList = arrayListOf<GroupInfo>()
+
+        if (groupDataList.size != 0) {
             val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
             groupDefault.isVisible = false
         }
 
-        // rv의 adapter는 여기에서 만든 Adapter이다~
         rv.adapter = MonthListRVAdapter(items)
         rv2.adapter = CategoryRVAdapter(items2)
-        rv3.adapter = ShareDiaryRVAdapter(items3)
+        rv3.adapter = ShareDiaryRVAdapter(groupDataList)
 
         rv.layoutManager = GridLayoutManager(context, 6)
         rv2.layoutManager = LinearLayoutManager(requireContext())
