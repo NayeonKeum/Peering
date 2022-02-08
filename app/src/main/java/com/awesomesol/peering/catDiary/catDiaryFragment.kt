@@ -20,6 +20,9 @@ class catDiaryFragment : Fragment() {
 
     val TAG="캣다"
 
+    val db = Firebase.firestore
+    val groupDataList = arrayListOf<GroupInfo>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -29,44 +32,35 @@ class catDiaryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val db = Firebase.firestore
-        val groups = db.collection("groups")
 
-        val group1 = hashMapOf(
-            "groupName" to "그룹명",
-            "groupNum" to "6",
-            "groupImg" to "img",
-            "uid" to "uid",
-            "profileImg" to "profileImg"
-        )
-        groups.document("groupOne").set(group1)
-
-        val group2 = hashMapOf(
-            "groupName" to "그룹명2",
-            "groupNum" to "4",
-            "groupImg" to "img",
-            "uid" to "uid",
-            "profileImg" to "profileImg"
-        )
-        groups.document("groupTwo").set(group2)
-
-        db.collection("groups")
-            .add(group1)
-            .addOnSuccessListener {
-                Log.d(TAG, "성공!!")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
-
-        db.collection("groups")
-            .get()
-            .addOnSuccessListener {
-                Log.d(TAG, "받기 성공!!")
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents.", exception)
-            }
+//        val groups = db.collection("groups")
+//
+//        val group1 = hashMapOf(
+//            "groupName" to "그룹명",
+//            "groupNum" to "6",
+//            "groupImg" to "img",
+//            "uid" to "uid",
+//            "profileImg" to "profileImg"
+//        )
+//        groups.document("groupOne").set(group1)
+//
+//        db.collection("groups")
+//            .add(group1)
+//            .addOnSuccessListener {
+//                Log.d(TAG, "성공!!")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w(TAG, "Error adding document", e)
+//            }
+//
+//        db.collection("groups")
+//            .get()
+//            .addOnSuccessListener {
+//                Log.d(TAG, "받기 성공!!")
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.w(TAG, "Error getting documents.", exception)
+//            }
 
 
         // Inflate the layout for this fragment
@@ -97,7 +91,6 @@ class catDiaryFragment : Fragment() {
         items2.add("카테고안리2")
         items2.add("카테고안리3")
 
-        val groupDataList = arrayListOf<GroupInfo>()
 
         if (groupDataList.size != 0) {
             val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
@@ -112,8 +105,31 @@ class catDiaryFragment : Fragment() {
         rv2.layoutManager = LinearLayoutManager(requireContext())
         rv3.layoutManager = GridLayoutManager(context, 4)
 
+        getFBGroupData()
         return view
     }
 
+    private fun getFBGroupData() {
+        db.collection("groups")
+            .get()
+            .addOnSuccessListener { result ->
+                groupDataList.clear()
+                for (document in result){    // 가져온 문서들은 result에 들어감
+                    val item = GroupInfo(
+                        document["groupName"] as String,
+                        document["groupNum"] as String,
+                        document["groupImg"] as String,
+                        document["uid"] as String,
+                        document["profileImg"] as String)
+                    groupDataList.add(item)
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                }
+                ShareDiaryRVAdapter(groupDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+    }
 
 }
