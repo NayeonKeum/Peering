@@ -1,13 +1,218 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/gradience_vertical"
     tools:context=".catDiary.catDiaryFragment">
 
-    <TextView
+    <ImageView
+        android:id="@+id/iv_catDiaryFragment_menu"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="14dp"
+        android:layout_marginTop="12dp"
+        android:src="@drawable/menu"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <ImageView
+        android:id="@+id/iv_catDiaryFragment_friends"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="28dp"
+        android:src="@drawable/feed_plus"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ScrollView
+        android:id="@+id/v_catDiaryFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="friend_fragment" />
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="80dp"
+        android:layout_marginRight="12dp"
+        android:background="@drawable/bg_white_top_round_layout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-</FrameLayout>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="360dp"
+            android:layout_height="630dp"
+            android:layout_marginStart="15dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginEnd="15dp"
+            app:layout_constraintEnd_toEndOf="@+id/v_catDiaryFragment"
+            app:layout_constraintHorizontal_bias="0.481"
+            app:layout_constraintStart_toStartOf="@+id/v_catDiaryFragment"
+            app:layout_constraintTop_toTopOf="@+id/v_catDiaryFragment">
+
+            <ImageView
+                android:id="@+id/iv_catDiaryFragment_leftarr"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="85dp"
+                android:layout_marginTop="15dp"
+                android:src="@drawable/cal_leftarrow"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/iv_catDiaryFragment_rightarr"
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="85dp"
+                android:src="@drawable/cal_rightarrow"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/cal_rightarrow" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_catDiaryFragment_monthList"
+                android:layout_width="330dp"
+                android:layout_height="96dp"
+                android:layout_marginTop="70dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/view3"
+                android:layout_width="match_parent"
+                android:layout_height="5dp"
+                android:layout_marginTop="25dp"
+                android:background="@color/theme_red"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_catDiaryFragment_monthList" />
+
+            <TextView
+                android:id="@+id/tv_catDiaryFragment_category"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:layout_marginEnd="20dp"
+                android:text="카테고리"
+                android:textColor="@color/dark_blue"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/view3" />
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:src="@drawable/gallery_add"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_catDiaryFragment_category"
+                app:layout_constraintStart_toEndOf="@+id/tv_catDiaryFragment_category"
+                app:layout_constraintTop_toTopOf="@+id/tv_catDiaryFragment_category" />
+
+            <View
+                android:id="@+id/horizon_category1"
+                android:layout_width="300dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="6dp"
+                android:background="@color/theme_green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_catDiaryFragment_category" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_catDiaryFragment_category"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/horizon_category1" />
+
+            <TextView
+                android:id="@+id/tv_catDiaryFragment_shareDiary"
+                android:layout_width="280dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="65dp"
+                android:layout_marginEnd="20dp"
+                android:text="같이 쓰는 일기"
+                android:textColor="@color/dark_blue"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/rv_catDiaryFragment_category" />
+
+            <ImageView
+                android:id="@+id/imageView4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="1dp"
+                android:src="@drawable/gallery_add"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_catDiaryFragment_shareDiary"
+                app:layout_constraintStart_toEndOf="@+id/tv_catDiaryFragment_shareDiary"
+                app:layout_constraintTop_toTopOf="@+id/tv_catDiaryFragment_shareDiary" />
+
+            <View
+                android:id="@+id/horizon_category2"
+                android:layout_width="300dp"
+                android:layout_height="1dp"
+                android:layout_marginTop="6dp"
+                android:background="@color/theme_green"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_catDiaryFragment_shareDiary" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_catDiaryFragment_shareDiary"
+                android:layout_width="300dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="15dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginEnd="15dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/horizon_category2" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                android:id="@+id/catDiaryFragment_default_container"
+                app:layout_constraintEnd_toEndOf="@+id/horizon_category2"
+                app:layout_constraintStart_toStartOf="@+id/horizon_category2"
+                app:layout_constraintTop_toBottomOf="@+id/horizon_category2">
+
+                <ImageView
+                    android:id="@+id/iv_catDiaryFragment_default"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/badge_radius" />
+
+                <TextView
+                    android:id="@+id/tv_catDiaryFragment_info"
+                    android:layout_width="170dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="15dp"
+                    android:text="공유 다이어리로 친구들과의 추억을 기록해 보세요! "
+                    app:layout_constraintBottom_toBottomOf="@+id/iv_catDiaryFragment_default"
+                    app:layout_constraintStart_toEndOf="@+id/iv_catDiaryFragment_default"
+                    app:layout_constraintTop_toTopOf="@+id/iv_catDiaryFragment_default" />
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cl_CalendarFragment2"
     android:layout_width="80dp"
-    android:layout_height="wrap_content"
+    android:layout_height="100dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/theme_red"
-    android:layout_margin="2dp">
+    android:background="@color/theme_yellow"
+    android:layout_margin="1dp">
 
     <TextView
         android:id="@+id/item_calendar_date_text"
@@ -17,9 +18,11 @@
         android:textSize="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:textFontWeight="400"/>
+        android:textFontWeight="600"/>
+
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/cardView"
         android:layout_width="74dp"
         android:layout_height="74dp"
         android:layout_marginStart="3dp"
@@ -38,6 +41,18 @@
             android:layout_height="match_parent"
             android:background="@drawable/rounded_calitem" />
 
+        <ImageView
+            android:id="@+id/iv_CalendarFragment2_character"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingLeft="17dp"
+            android:paddingRight="17dp"
+            android:src="@drawable/character"
+            android:visibility="visible"/>
+
     </androidx.cardview.widget.CardView>
+
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

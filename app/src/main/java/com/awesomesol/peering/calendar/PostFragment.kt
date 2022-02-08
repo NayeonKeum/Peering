@@ -1,73 +1,104 @@
 package com.awesomesol.peering.calendar
 
-import android.Manifest
-import android.content.ContentUris
+import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
-import android.content.pm.PackageManager
-import android.database.Cursor
+import android.content.DialogInterface
+import android.graphics.Color
 import android.graphics.Rect
-import android.net.Uri
 import android.os.Bundle
-import android.provider.MediaStore
-import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.ViewTreeObserver
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import androidx.viewpager2.widget.ViewPager2.OnPageChangeCallback
 import com.awesomesol.peering.R
+import com.awesomesol.peering.friend.FeedModel
+import com.bumptech.glide.Glide
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
-import org.threeten.bp.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
 
 
 class PostFragment : Fragment() {
 
 
     private val TAG="갤러리"
-    private var calendarImages:HashMap<String, ArrayList<String>> = hashMapOf()
     private lateinit var  galleryRVAdapter: GalleryRVAdapter
-    private var targetDate="2022-01-29"
-    private var dataList = mutableListOf<GalleryData>()
 
     private lateinit var bottomView:View
     private lateinit var bottomSheetBehavior:BottomSheetBehavior<View>
+
+
+    var fs=Firebase.firestore
+    val storage=FirebaseStorage.getInstance()
+    lateinit var storRef:StorageReference
 
 
     // 슬라이더
     private var sliderViewPager: ViewPager2? = null
     private var layoutIndicator: LinearLayout? = null
     private lateinit var cl_PostFragment: ConstraintLayout
+    private lateinit var writePost:ImageView
+    lateinit var tv_PostFragment_content:TextView
 
     private var images:ArrayList<String> = arrayListOf()
+    private var curDate:String=""
+    private var dateym:String=""
+    private var cid:String=""
+    private var uid:String=""
+    private var nickname:String=""
+    private var profileImagePath=""
+
 
     private lateinit var callback:OnBackPressedCallback
 
+    private lateinit var dateGalleryData: ArrayList<HashMap<String, Any>>
+    private var content:String=""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //권한 체크
-        checkPermission()
 
         var bundle = arguments;  //번들 받기. getArguments() 메소드로 받음.
         if (bundle != null){
             // 눌렀을 때 제대로 들어오면!
             // targetDate = bundle.getString("targetDate").toString(); //Name 받기.
             Log.d(TAG, "넘어온 번들: ${bundle.getString("date")}")
+            curDate= bundle.getString("date").toString()
+            dateym=bundle.getString("dateym").toString()
+            cid=bundle.getString("cid").toString()
+            content=bundle.getString("content").toString()
+            uid=bundle.getString("uid").toString()
+            nickname=bundle.getString("nickname").toString()
+            profileImagePath=bundle.getString("profileImagePath").toString()
+
+            storRef=storage.reference.child(uid).child(cid)
+
+            try{
+                Log.d(TAG, "넘어온 번들: ${bundle.getSerializable("dateGalleryData")}")
+                dateGalleryData = bundle.getSerializable("dateGalleryData") as ArrayList<HashMap<String, Any>>
+                Log.d(TAG, "넘어온 번들 갤데화: $dateGalleryData")
+            } catch(e:NullPointerException){
+                dateGalleryData= arrayListOf()
+            }
         }
 
     }
@@ -79,8 +110,13 @@ class PostFragment : Fragment() {
         // Inflate the layout for this fragment
         val view=inflater.inflate(R.layout.fragment_post, container, false)
 
-        // view.findViewById<TextView>(R.id.tv_PostFragment_date).text=targetDate
+        view.findViewById<TextView>(R.id.tv_PostFragment_date).text=curDate
+        tv_PostFragment_content=view.findViewById(R.id.tv_PostFragment_content)
 
+        if (content==null){
+            content=""
+        }
+        tv_PostFragment_content.text=content
 
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(
             R.id.rv_PostFragment
@@ -88,31 +124,37 @@ class PostFragment : Fragment() {
         Log.d(TAG, rv.toString())
         //rv.layoutManager=GridLayoutManager(context, 3)
         rv.layoutManager=LinearLayoutManager(context).also{it.orientation=LinearLayoutManager.HORIZONTAL}
-        galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
-        //galleryRVAdapter= context?.let { GalleryRVAdapter(it) }!!
+
+        galleryRVAdapter= context?.let { GalleryRVAdapter(it, uid, cid) }!!
 
         galleryRVAdapter.setView(view)
         //parentFragmentManager
         rv.adapter=galleryRVAdapter
 
 
-        Log.d(TAG, "targetDate에 있는 사진 개수: " + calendarImages.get(targetDate)?.size)
-        val datasize: Int? =calendarImages.get(targetDate)?.size
-        Log.d(TAG+"뭐들었니", calendarImages.toString())
+        Log.d(TAG, "targetDate에 있는 사진 개수: " + dateGalleryData.size)
+        val datasize: Int? =dateGalleryData.size
+        Log.d(TAG+"뭐들었니", dateGalleryData.toString())
 
-        for (i : Int in 0..(datasize!!-1)){
-            calendarImages.get(targetDate)?.get(i)?.toUri()?.let { GalleryData(it, 0) }?.let {
-                dataList.add(it)
-                // 초기엔 뭐가 없으니까 일단!!
-                images.add(it.imageUri.toString())
+        val titleimgs:ArrayList<String> = arrayListOf()
+        for (i : Int in 0 until datasize!!){
+            Log.d(TAG, "dateGalleryData[i][\"used\"]? ${dateGalleryData[i]["used"]?.javaClass}")
+            val ln1:Long=1
+            val ln2:Long=2
+            // 대표사진(2) 거나 게시 사진(1)이면
+            if (dateGalleryData[i]["used"]?.equals(ln1) == true){
+                images.add(dateGalleryData[i]["imageUri"] as String)
+            }
+            else if (dateGalleryData[i]["used"]?.equals(ln2) == true){
+                titleimgs.add(dateGalleryData[i]["imageUri"] as String)
             }
         }
-        Log.d(TAG, dataList.toString())
-        galleryRVAdapter.setDataList(dataList)
+
+        galleryRVAdapter.setDataList(dateGalleryData)
 
 
         // 바텀 쉿 부착!
-        bottomView= view?.findViewById<View>(R.id.ll_PostFragment_bottomsheet)!!
+        bottomView= view?.findViewById(R.id.ll_PostFragment_bottomsheet)!!
         bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
 
         // 전체 숨김
@@ -136,7 +178,12 @@ class PostFragment : Fragment() {
         layoutIndicator = view.findViewById(R.id.layoutIndicators)
 
         sliderViewPager!!.offscreenPageLimit = 1
-        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), images)
+
+        var allImgs:ArrayList<String> = arrayListOf()
+        allImgs.addAll(titleimgs)
+        allImgs.addAll(images)
+
+        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
 
         sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -144,8 +191,8 @@ class PostFragment : Fragment() {
                 setCurrentIndicator(position)
             }
         })
+        setupIndicators(allImgs.size)
 
-        setupIndicators(images.size)
 
         //키보드 올라올때 바텀네비케이션 올라오는거 처리 부분
         //setOnFocusChangeListener 로 바텀네비게시연 하이드
@@ -199,6 +246,106 @@ class PostFragment : Fragment() {
             }
         }
 
+        
+        // 파베 업뎃
+        writePost=view.findViewById(R.id.iv_PostFragment_writePost)
+
+        writePost.setOnClickListener {
+
+            var builder = AlertDialog.Builder(context)
+            builder.setTitle("내용을 입력하세요")
+            builder.setIcon(R.drawable.writepost)
+
+            var viewdialog = layoutInflater.inflate(R.layout.writepost_dialog, null)
+            viewdialog.background = resources.getDrawable(R.drawable.rounded_dialog)
+            builder.setView(viewdialog)
+
+
+            // p0에 해당 AlertDialog가 들어온다. findViewById를 통해 view를 가져와서 사용
+            var listener = DialogInterface.OnClickListener { p0, p1 ->
+                var alert = p0 as AlertDialog
+                var edit1: EditText? = alert.findViewById(R.id.et_PostFragment_dialog)
+
+                edit1?.hint=content
+
+                tv_PostFragment_content.text = "${edit1?.text}"
+                val ncontent= edit1?.text.toString()
+
+
+                lateinit var hh: HashMap<String, ArrayList<HashMap<String, Any>>>
+                lateinit var contList:HashMap<String, String>
+                lateinit var feedList:HashMap<String, String>
+
+                fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+                        .addOnSuccessListener { documents->
+                            for (document in documents) {
+                                if (document.data["cid"].toString().equals(cid)){
+                                    hh= document.data["dataList4"] as HashMap<String, ArrayList<HashMap<String, Any>>>
+                                    contList=document.data["contentList"] as HashMap<String, String>
+                                    feedList=document.data["feedList"] as HashMap<String, String>
+                                }
+                            }
+                            hh[dateym]=galleryRVAdapter.dateGalleryData
+                            contList[dateym]=ncontent
+
+                            fs.collection("calendars").document(cid).update("dataList4", hh)
+                                    .addOnSuccessListener { Log.d(TAG, "d성공") }
+                                    .addOnFailureListener{ Log.d(TAG, "d실패")}
+                            fs.collection("calendars").document(cid).update("contentList", contList)
+                                    .addOnSuccessListener { Log.d(TAG, "c성공") }
+                                    .addOnFailureListener{ Log.d(TAG, "c실패")}
+
+                            if (feedList[dateym].equals("")) {
+                                // 피드 처음 생김!
+                                val feedName = "Feed_" + Random().nextInt(100000)
+                                val hh = hh[dateym]
+                                if (hh != null) {
+                                    for (data in hh) {
+                                        val lnum: Long = 2
+                                        if (data["used"] as Long == lnum) {
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            fs.collection("feeds").document(feedName).set(feed)
+                                                    .addOnSuccessListener { Log.d(TAG, "f성공") }
+                                                    .addOnFailureListener { Log.d(TAG, "f실패") }
+                                            break
+                                        }
+                                    }
+                                }
+                                feedList[dateym] = feedName
+                                fs.collection("calendars").document(cid).update("feedList", feedList)
+                                        .addOnSuccessListener { Log.d(TAG, "c성공") }
+                                        .addOnFailureListener { Log.d(TAG, "c실패") }
+                            } else{
+                                // 피드 이름 feedList
+                                val hh = hh[dateym]
+                                if (hh != null) {
+                                    for (data in hh) {
+                                        val lnum: Long = 2
+                                        if (data["used"] as Long == lnum) {
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            feedList[dateym]?.let { it1 ->
+                                                fs.collection("feeds").document(it1).set(feed)
+                                                        .addOnSuccessListener { Log.d(TAG, "f성공") }
+                                                        .addOnFailureListener { Log.d(TAG, "f실패") }
+                                            }
+                                            break
+                                        }
+
+                                    }
+                                }
+
+                            }
+                        }
+                        .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+
+            }
+
+            builder.setPositiveButton("확인", listener)
+            builder.setNegativeButton("취소", null)
+
+            builder.show()
+
+        }
 
         return view
     }
@@ -221,15 +368,16 @@ class PostFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         LayoutInflater.from(context).inflate(R.layout.fragment_post, null, false)
-        sliderViewPager!!.refreshDrawableState()
+        // sliderViewPager!!.refreshDrawableState()
 
     }
 
     // 바텀시트에 리사이클러뷰 어댑터
-    class GalleryRVAdapter(var context: Context):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
+    class GalleryRVAdapter(var context: Context, uid:String, cid:String):RecyclerView.Adapter<GalleryRVAdapter.ViewHolder>() {
 
-        var dataList = emptyList<GalleryData>()
+        var dateGalleryData = ArrayList<HashMap<String, Any>>()
         var useImages:ArrayList<String> = arrayListOf()
+        var titleImg:ArrayList<String> = arrayListOf()
         //val TAG="갤러리 어댑터"
 
         lateinit var parentView: View
@@ -238,17 +386,27 @@ class PostFragment : Fragment() {
         lateinit var cl_PostFragment:ConstraintLayout
         lateinit var layoutIndicator:LinearLayout
 
-        internal fun setDataList(dataList: List<GalleryData>) {
-            this.dataList = dataList
+        val storage= FirebaseStorage.getInstance()
+        private lateinit var storRef: StorageReference
+
+        var userID:String = uid
+        var calID:String = cid
+
+
+
+        internal fun setDataList(dateGalleryData: ArrayList<HashMap<String, Any>>) {
+            this.dateGalleryData = dateGalleryData
         }
 
         // Provide a direct reference to each of the views with data items
         class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             var iv: ImageView
             var addminus:ImageView
+            var addtitle:ImageView
             init {
                 iv = itemView.findViewById(R.id.img_PostFragment_rv_itemimg)
                 addminus=itemView.findViewById(R.id.iv_PostFragment_addminusbtn)
+                addtitle=itemView.findViewById(R.id.iv_PostFragment_addtitle)
             }
         }
 
@@ -274,53 +432,158 @@ class PostFragment : Fragment() {
         override fun onBindViewHolder(holder: GalleryRVAdapter.ViewHolder, position: Int) {
 
             // Get the data model based on position
-            var data = dataList[position]
-            if(dataList[position].used==0){
+            var data = dateGalleryData[position]
+            val ln0:Long=0
+            val ln1:Long=1
+            val ln2:Long=2
+            if(dateGalleryData[position]["used"]?.equals(ln0) == true){
                 holder.addminus.setImageResource(R.drawable.gallery_add)
+                holder.addtitle.setImageResource(R.drawable.titlephototrans)
             }
-            else{
+            else if(dateGalleryData[position]["used"]?.equals(ln1) == true){
                 holder.addminus.setImageResource(R.drawable.gallery_minus)
-                holder.addminus.setImageResource(R.drawable.gallery_minus)
+                holder.addtitle.setImageResource(R.drawable.titlephototrans)
             }
+            else if(dateGalleryData[position]["used"]?.equals(ln2) == true){
+                holder.addminus.setImageResource(R.drawable.gallery_minus)
+                holder.addtitle.setImageResource(R.drawable.titlephoto)
+            }
+
 
             // Set item views based on your views and data model
-            holder.iv.setImageURI(data.imageUri)
+            val uri:String=data.get("imageUri").toString()
+            storRef=storage.reference.child(userID).child(calID)
+            storRef.child(uri).downloadUrl
+                .addOnSuccessListener { imageUri->
+                    Glide.with(context)
+                        .load(imageUri)
+                        .into(holder.iv)
+                }
 
-            // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
-            holder.iv.setOnClickListener {
-                Log.d("뷰페이저", dataList[position].imageUri.toString())
-                if(dataList[position].used==0){
-                    // 사용 안 한 거
-                        // 더하는 액션 하고
-                    dataList[position].used=1 // 이거 서버에 전달해야햠
+            // [대표 사진]을 눌렀을 때
+            holder.addtitle.setOnClickListener {
+                val ln0:Long=0
+                val ln1:Long=1
+                val ln2:Long=2
+                if (dateGalleryData[position]["used"]?.equals(ln0)==true){
+                    // 아예 추가 안 됨
+
+
+                    // 현재 대표사진인 친구 0으로 바꾸고
+                    removeFromTitle(dateGalleryData)
+
+                    dateGalleryData[position]["used"]=ln2
                     holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephoto)
+
+
+                } else if (dateGalleryData[position]["used"]?.equals(ln1)==true){
+                    // 대표사진 아님
+                    val ln:Long=2
+
+                    // 현재 대표사진인 친구 0으로 바꾸고
+                    removeFromTitle(dateGalleryData)
+
+                    dateGalleryData[position]["used"]=ln2
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephoto)
+
                 }
-                else{
-                    // 사용 한 거
-                        // 빼는 액션하고
-                    dataList[position].used=0 // 이거 서버에 전달해야햠
-                    holder.addminus.setImageResource(R.drawable.gallery_add)
-                }
+
+                notifyDataSetChanged()
 
                 useImages= arrayListOf()
-                for (i:Int in dataList.indices){
-                    if(dataList[i].used==1){
-                        useImages.add(dataList[i].imageUri.toString())
+                titleImg= arrayListOf()
+                for (i:Int in dateGalleryData.indices){
+                    Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
+                    val ln1:Long=1
+                    val ln2:Long=2
+                    if(dateGalleryData[i]["used"]?.equals(ln1) == true){
+                        useImages.add(dateGalleryData[i]["imageUri"].toString())
+                    }else if(dateGalleryData[i]["used"]?.equals(ln2) == true){
+                        titleImg.add(dateGalleryData[i]["imageUri"].toString())
                     }
+
                 }
+                Log.d("뷰페이저 인디1-t", dateGalleryData.toString())
+                var allImg:ArrayList<String> = arrayListOf()
+                allImg.addAll(titleImg)
+                allImg.addAll(useImages)
+                Log.d("뷰페이저 인디2-t", allImg.toString())
+
+                // 초기화
                 layoutIndicator!!.removeAllViews()
 
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, useImages)
+                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
                         setCurrentIndicator(position)
                     }
                 })
-                setupIndicators(useImages.size)
+                setupIndicators(allImg.size)
+
+            }
+
+            // 눌렀을 때 전달을 그 어댑터에 전달을 해야하네,, 이미지 어댑터..!!
+            holder.iv.setOnClickListener {
+
+                val ln:Long=0
+                if(dateGalleryData[position]["used"]?.equals(ln) == true){
+                    // 사용 안 한 거
+                    // 더하는 액션 하고
+                    val ln:Long=1
+                    dateGalleryData[position]["used"]=ln
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                }
+                else{
+                    // 사용 한 거(1, 2)
+                    // 빼는 액션하고
+                    val ln:Long=0
+                    dateGalleryData[position]["used"]=ln
+                    holder.addminus.setImageResource(R.drawable.gallery_add)
+                }
+
+                notifyDataSetChanged()
+
+                titleImg= arrayListOf()
+                useImages= arrayListOf()
+                for (i:Int in dateGalleryData.indices){
+                    Log.d("뷰페 type", dateGalleryData[i]["used"]?.javaClass.toString())
+                    val ln1:Long=1
+                    val ln2:Long=2
+                    if(dateGalleryData[i]["used"]?.equals(ln1) == true || dateGalleryData[i]["used"]?.equals(ln2) == true){
+                        useImages.add(dateGalleryData[i]["imageUri"].toString())
+                    } else if(dateGalleryData[i]["used"]?.equals(ln2) == true){
+                        titleImg.add(dateGalleryData[i]["imageUri"].toString())
+                    }
+                }
+
+                Log.d("뷰페이저 인디1", dateGalleryData.toString())
+
+                var allImg:ArrayList<String> = arrayListOf()
+                allImg.addAll(titleImg)
+                allImg.addAll(useImages)
+
+                Log.d("뷰페이저 인디2", allImg.toString())
+
+                // 초기화
+                layoutIndicator!!.removeAllViews()
+
+                // 둥근 모서리
+                cl_PostFragment.clipToOutline=true
+
+                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                    override fun onPageSelected(position: Int) {
+                        super.onPageSelected(position)
+                        setCurrentIndicator(position)
+                    }
+                })
+                setupIndicators(allImg.size)
 
             }
         }
@@ -328,7 +591,19 @@ class PostFragment : Fragment() {
             return super.getItemId(position)
         }
         //  total count of items in the list
-        override fun getItemCount() = dataList.size
+        override fun getItemCount() = dateGalleryData.size
+
+
+        // 현재 대표사진인거 0(미사용)으로 바까주기
+        fun removeFromTitle(dateGalleryData:ArrayList<HashMap<String, Any>>){
+            for (data in dateGalleryData){
+                val ln2:Long=2
+                if (data["used"]?.equals(ln2)==true){
+                    val ln0:Long=0
+                    data["used"]=ln0
+                }
+            }
+        }
 
 
         // 중복으로 들어가긴 하는데
@@ -432,121 +707,6 @@ class PostFragment : Fragment() {
                 )
             }
         }
-    }
-
-
-    private fun checkPermission() {
-        if (activity?.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
-        } else {
-            // 갤러리 연동 분기점
-            initView()
-        }
-    }
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when (requestCode) {
-            200 -> {
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    initView()
-                } else {
-                    Toast.makeText(activity, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-                    requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
-                }
-            }
-        }
-    }
-
-    private fun initView() {
-        try {
-            val cursor = getImageData()
-
-            getImages(cursor)
-
-        } catch (e: SecurityException) {
-            Toast.makeText(activity, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-            Log.d(TAG, "스토리지에 접근 권한을 허가해주세요")
-            // finish()
-        }
-    }
-
-    private fun getImageData(): Cursor {
-
-        val resolver = activity?.contentResolver
-        var queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI
-
-        //가져올 컬럼명
-        val what = arrayOf(
-            MediaStore.Images.ImageColumns._ID,
-            MediaStore.Images.ImageColumns.TITLE,
-            MediaStore.Images.ImageColumns.DATE_TAKEN
-        )
-
-        //정렬
-        val orderBy = MediaStore.Images.ImageColumns.DATE_TAKEN + " ASC"
-
-        //1건만 가져온다.
-        //queryUri = queryUri.buildUpon().appendQueryParameter("limit", "1").build()
-
-        return resolver!!.query(queryUri, what, null, null, orderBy)!!
-    }
-
-
-    private fun getImages(cursor: Cursor){
-        if (cursor != null) {
-            while (cursor.moveToNext()) {
-                // 날짜별 이미지 리스트 초기화
-
-                //1. 각 컬럼의 열 인덱스를 취득한다.
-                val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
-                val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
-                val dateTakenColNum =
-                        cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
-
-                //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
-                val id = cursor.getLong(idColNum) // 0
-                val title = cursor.getString(titleColNum) // 1
-                val dateTaken = cursor.getLong(dateTakenColNum) // 2
-//                val imageUri =
-//                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-
-                var uri= ContentUris.withAppendedId(
-                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                    id
-                )
-
-                //3. 데이터를 View로 설정
-                val calendar = Calendar.getInstance()
-                calendar.timeInMillis = dateTaken
-                val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
-                Log.d(TAG, date)
-                if (date in calendarImages.keys){
-                    // 날짜가 이미 있다면
-                    calendarImages.get(date)?.add(uri.toString())
-                }
-                else{
-                    // 날짜가 없음!
-                    calendarImages.put(date, arrayListOf())
-                    calendarImages.get(date)?.add(uri.toString())
-
-                }
-
-//                textView.text = "촬용일시: $text"
-//                imageView.setImageURI(imageUri)
-
-//                Log.d(TAG, "DATE: "+date)
-//                Log.d(TAG, "ID: "+id)
-//                Log.d(TAG, "TITLE: "+title)
-//                Log.d(TAG, "URI: "+uri)
-            }
-            cursor.close()
-            Log.d(TAG, calendarImages.toString())
-        }
-        // view?.findViewById<ImageView>(R.id.iv_CalendarFragment_test)?.setImageURI(calendarImages.get(targetDate)?.get(0)?.toUri())
-
     }
 
     override fun onDetach(){

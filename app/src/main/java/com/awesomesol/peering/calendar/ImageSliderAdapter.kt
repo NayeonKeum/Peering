@@ -10,12 +10,22 @@ import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.Target
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 
 
-class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>) :
+class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>, userID:String, calID:String) :
     RecyclerView.Adapter<ImageSliderAdapter.MyViewHolder>() {
-    private val context: Context
+    private val context: Context = context
     private var sliderImage: ArrayList<String> = arrayListOf()
+
+    val storage= FirebaseStorage.getInstance()
+    val storRef=storage.reference.child(userID).child(calID)
+
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val view: View = LayoutInflater.from(parent.context)
             .inflate(R.layout.item_slider, parent, false)
@@ -31,20 +41,20 @@ class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>) :
     }
 
     inner class MyViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val mImageView: ImageView
-        fun bindSliderImage(imageURL: String?) {
-            Glide.with(context)
-                .load(imageURL)
-                .into(mImageView)
+        private val mImageView: ImageView = itemView.findViewById(R.id.imageSlider)
+
+        fun bindSliderImage(imageURL: String) {
+            storRef.child(imageURL).downloadUrl
+                .addOnSuccessListener { imageUri->
+                    Glide.with(context)
+                        .load(imageUri)
+                        .into(mImageView)
+                }
         }
 
-        init {
-            mImageView = itemView.findViewById(R.id.imageSlider)
-        }
     }
 
     init {
-        this.context = context
         this.sliderImage = sliderImage
         notifyDataSetChanged()
     }
