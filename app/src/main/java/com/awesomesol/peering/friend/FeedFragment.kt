@@ -134,6 +134,16 @@ class FeedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
     }
+    
+    // recyclerview 클릭 수정
+    fun moreBtnClick(){
+        iv_FeedFragment_friends.setOnClickListener {
+            //val diaryreadFragment = DiaryReadFragment()
+            val friendFragment = FriendFragment()
+            requireActivity().supportFragmentManager.beginTransaction()
+                .replace(R.id.main_screen_panel, friendFragment).commitNow()
+        }
+    }
 
     // todo : 임의로 대입한 값이 아닌 실제로 작성한 값이 들어갈 수 있도록 하자..!!!
     // recyclerview multi 찾아서 mainImg 데이터 전달받도록 수정하기 -> viewholder 여러 개
@@ -162,3 +172,4 @@ class FeedFragment : Fragment() {
             }
     }
 }
+
