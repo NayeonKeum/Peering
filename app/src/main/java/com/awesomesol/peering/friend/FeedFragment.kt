@@ -1,14 +1,17 @@
 package com.awesomesol.peering.friend
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.CalendarMainFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -21,6 +24,8 @@ class FeedFragment : Fragment() {
     val db = FirebaseFirestore.getInstance()   // Firestore 인스턴스 선언
     val feedDataList = arrayListOf<FeedModel>()   // 리스트 아이템 배열
     val adapter = FeedRVAdapter(feedDataList)     // 리사이클러 뷰 어댑터
+
+    private lateinit var callback:OnBackPressedCallback
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,6 +44,18 @@ class FeedFragment : Fragment() {
 
 
     }
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                Log.d(TAG, "백프레스 눌름")
+                val calendarFragment = CalendarMainFragment()
+                activity?.supportFragmentManager?.beginTransaction()
+                        ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
+            }
+        }
+        requireActivity().onBackPressedDispatcher.addCallback(this, callback)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,55 +67,45 @@ class FeedFragment : Fragment() {
 
         val feed1 = hashMapOf(
             "mainImg" to "a",
-            "date" to "2022-02-07",
             "profileImg" to "b",
-            "uid" to "Lee",
-            "content" to "안녕~!! 반가워 ㅎㅎ",
-            "type" to 4
+            "nickname" to "Lee",
+            "content" to "반가워!!!! 이게 잘 되어야 할텐데....제발ㄹ...."
         )
 
         feeds.document("Feed_one").set(feed1)
 
         val feed2 = hashMapOf(
             "mainImg" to "c",
-            "date" to "2022-02-06",
             "profileImg" to "d",
-            "uid" to "Kim",
-            "content" to "hihihihihihiihihihi 안녕 반가워~!!~!!~!!",
-            "type" to 3
+            "nickname" to "Kim",
+            "content" to "hihihihihihiihihihi 안녕 반가워~!!~!!~!!~!!"
         )
 
         feeds.document("Feed_two").set(feed2)
 
         val feed3 = hashMapOf(
             "mainImg" to "e",
-            "date" to "2022-02-07",
             "profileImg" to "f",
-            "uid" to "Cho",
-            "content" to "여러 개의 리사이클러뷰 item을 firebase에 넣고 있는 중~!!",
-            "type" to 2
+            "nickname" to "Cho",
+            "content" to "이건 세 번째 리사이클러뷰 item에 들어갈 내용이다~~!!!!! 일단 오케이오케이...!!!!!"
         )
 
         feeds.document("Feed_three").set(feed3)
 
         val feed4 = hashMapOf(
             "mainImg" to "g",
-            "date" to "2022-02-08",
             "profileImg" to "h",
-            "uid" to "Park",
-            "content" to "더이상 무슨 말을 해야 할 지 모르겠다 이걸로 끝할까..?",
-            "type" to 1
+            "nickname" to "Park",
+            "content" to "더이상 무슨 말을 해야 할 지 모르겠다 이걸로 끄으으으으으으ㅡㅌ"
         )
 
         feeds.document("Feed_four").set(feed4)
 
         val feed5 = hashMapOf(
             "mainImg" to "g",
-            "date" to "2022-02-09",
             "profileImg" to "h",
-            "uid" to "Yang",
-            "content" to "hihi 안녕 반가워~!!",
-            "type" to 1
+            "nickname" to "Yang",
+            "content" to "끝인 줄 알았지만 일단 몇 개 더 추가할 것이다!"
         )
 
         feeds.document("Feed_five").set(feed5)*/
@@ -137,7 +144,14 @@ class FeedFragment : Fragment() {
                 // 성공할 경우
                 feedDataList.clear()
                 for (document in result){    // 가져온 문서들은 result에 들어감
-                    val item = FeedModel(document["mainImg"] as String, document["date"] as String, document["profileImg"] as String, document["uid"] as String, document["content"] as String)
+                    val item = FeedModel(
+                            document["cid"] as String,
+                            document["uid"] as String,
+                            document["nickname"] as String,
+                            document["mainImg"] as String,
+                            document["profileImg"] as String,
+                            document["content"] as String)
+
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
                 }

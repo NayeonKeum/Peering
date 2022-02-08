@@ -3,30 +3,39 @@ package com.awesomesol.peering.activity
 import android.Manifest
 import android.content.ContentUris
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_CLEAR_TOP
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.format.DateFormat
 import android.util.Base64
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.net.toUri
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarInfo
 import com.awesomesol.peering.calendar.GalleryData
 import com.awesomesol.peering.character.UserInfo
 import com.awesomesol.peering.databinding.ActivityLoginBinding
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
+import org.threeten.bp.LocalDate
+import org.threeten.bp.format.DateTimeFormatter
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
+import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
@@ -38,8 +47,8 @@ class LoginActivity : AppCompatActivity(){
     private val binding get() = mBinding!!
     private val TAG="로그인"
 
-    private val fs= Firebase.firestore
-
+    private val fs= FirebaseFirestore.getInstance()
+    var storage: FirebaseStorage= FirebaseStorage.getInstance()
 
     lateinit var uid:String
     lateinit var email:String
@@ -47,7 +56,10 @@ class LoginActivity : AppCompatActivity(){
     lateinit var profileImagePath:String
     var mfriendList: HashMap<String, Int> = hashMapOf()
 
-    private var dataList4: HashMap<String, ArrayList<HashMap<String, Any>>> = hashMapOf()
+    private lateinit var dataList4: HashMap<String, ArrayList<HashMap<String, Any>>>
+    private lateinit var contentList:HashMap<String, String>
+    private lateinit var feedList:HashMap<String, String>
+
 
     override fun onCreate(savedInstanceState: Bundle?)
     {
@@ -81,33 +93,34 @@ class LoginActivity : AppCompatActivity(){
                         else if (friends != null) {
                             Log.i(TAG, "카카오톡 친구 목록 가져오기 성공 \n${friends.elements.joinToString("\n")}")
                             Log.d(TAG, friends.toString())
+                            Log.d(TAG, "uid: $uid")
 
                             for (i in friends.elements.indices) {
                                 mfriendList.put(friends.elements[i].id.toString(), 0) // 이거 일단 다 0으로 넣음
                             }
                             // 친구의 UUID 로 메시지 보내기 가능
                             fs.collection("users").whereEqualTo("uid", uid).get()
-                                    .addOnSuccessListener { documents ->
-                                        // 이미 있는 유저
+                                .addOnSuccessListener { documents ->
+                                    // 이미 있는 유저
 
-                                        // 유저 친구/프로필/닉네임 등은 수정이 필요할 수도 있잖슴
-                                        // 친구는 근데 친구인지 아닌지가 있으니까.. 일단 이 기능은 보류.. ㅜㅜ
+                                    // 유저 친구/프로필/닉네임 등은 수정이 필요할 수도 있잖슴
+                                    // 친구는 근데 친구인지 아닌지가 있으니까.. 일단 이 기능은 보류.. ㅜㅜ
 
-                                        for (document in documents) {
-                                            var mergeable: HashMap<String, Any> = document.data as HashMap<String, Any>
-                                            mergeable["nickName"] = nickname
-                                            mergeable["profileUrl"] = profileImagePath
-                                            mergeable["friendList"] = mfriendList
-                                            fs.collection("users").document(uid).set(mergeable)
-                                                    .addOnSuccessListener { it ->
-                                                        Log.d(TAG, "fs 에 유저 정보 수정 쨘")
-                                                    }
-                                                    .addOnFailureListener { exception ->
-                                                        Log.d(TAG, "fs 에 유저 정보 수정 실패")
-                                                    }
-                                        }
+                                    for (document in documents) {
+                                        var mergeable: HashMap<String, Any> = document.data as HashMap<String, Any>
+                                        mergeable["nickName"] = nickname
+                                        mergeable["profileUrl"] = profileImagePath
+                                        mergeable["friendList"] = mfriendList
+                                        fs.collection("users").document(uid).set(mergeable)
+                                                .addOnSuccessListener { it ->
+                                                    Log.d(TAG, "fs 에 유저 정보 수정 쨘")
+                                                }
+                                                .addOnFailureListener { exception ->
+                                                    Log.d(TAG, "fs 에 유저 정보 수정 실패")
+                                                }
                                     }
-                                    .addOnFailureListener { exception -> }
+                                }
+                                .addOnFailureListener { exception -> }
 
                             val intent = Intent(this, MainActivity::class.java)
                             startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP))
@@ -175,111 +188,201 @@ class LoginActivity : AppCompatActivity(){
 
                             // 유저 데이터가 null 일 때(초기 방문) 갤러리에 있는 데이터들 전부 파베에 저장!
 
-                            setLogin(object : LoginListener {
-                                override fun loginClear(notices: HashMap<String, ArrayList<HashMap<String, Any>>>) {
-                                    Log.d(TAG, "loginClear(dataList4)")
-                                    fs.collection("users").whereEqualTo("uid", uid).get()
-                                        .addOnSuccessListener { documents ->
+                            galleryDataCallback{ dataList4->
+                                Log.d(TAG, "loginClear(dataList4)")
+                                Log.d(TAG, "얘가 있니? $uid")
+                                fs.collection("users").whereEqualTo("uid", uid).get()
+                                    .addOnSuccessListener { documents ->
 
-                                            ////// 여기서부턴 멤버들 한 번씩 넣고 나서는 제거
-                                            val calID = "calendar" + Random().nextInt(1000000)
+                                        ////// 여기서부턴 멤버들 한 번씩 넣고 나서는 제거
+                                        binding.pBarLoginActivity.visibility= View.VISIBLE
+                                        Log.d(TAG, "이미 있는 유저")
+                                        val calID = "calendar" + Random().nextInt(1000000)
 
-                                            Log.d(TAG, "calID $calID")
+                                        val user = UserInfo(
+                                                uid,
+                                                nickname,
+                                                profileImagePath,
+                                                email,
+                                                mfriendList,
+                                                hashMapOf<String, String>("myCalendar" to calID)
+                                        )
 
-                                            val user = UserInfo(
-                                                    uid,
-                                                    nickname,
-                                                    profileImagePath,
-                                                    email,
-                                                    mfriendList,
-                                                    hashMapOf<String, String>("myCalendar" to calID)
-                                            )
-                                            Log.d(TAG, "hashMapOf<String, String>(\"myCalendar\" to calID) ${hashMapOf<String, String>("myCalendar" to calID)}")
+                                        // 유저 저장
+                                        fs.collection("users").document(uid).set(user)
+                                                .addOnSuccessListener {
+                                                    Log.d(TAG, "fs 에 유저 정보 저장 쨘")
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    Log.d(TAG, "유저 저장 에러 났음 쨘", e)
+                                                    Toast.makeText(
+                                                            this@LoginActivity,
+                                                            "Peering에 오신 것을 환영합니다!",
+                                                            Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
 
-                                            // 유저 저장
-                                            fs.collection("users").document(uid).set(user)
-                                                    .addOnSuccessListener {
-                                                        Log.d(TAG, "fs 에 유저 정보 저장 쨘")
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        Log.d(TAG, "유저 저장 에러 났음 쨘", e)
-                                                        Toast.makeText(this@LoginActivity, "Peering에 오신 것을 환영합니다!", Toast.LENGTH_SHORT).show()
-                                                    }
+                                        // 내 캘린더 저장
 
-                                            Log.d("$TAG user", user.toString())
+                                        // HashMap<String, ArrayList<HashMap<String, Any>>>
+                                        val dateList: MutableSet<String> = dataList4.keys
+                                        var i=0
+                                        for (date in dateList){
+                                            // content 초기화
+                                            contentList[date]=""
+                                            feedList[date]=""
+                                            // 그외
+                                            val imgsOfDate:ArrayList<HashMap<String, Any>>? = dataList4[date]
+                                            if (imgsOfDate != null) {
+                                                for (img in imgsOfDate){
+                                                    val imgUri:String= img["imageUri"] as String
+                                                    val fileName="myCal$i"
+                                                    img["imageUri"]=fileName
+                                                    storage.reference.child(uid).child(calID).child(fileName)
+                                                            .putFile(imgUri.toUri())
+                                                            .addOnSuccessListener {
+//                                                                taskSnapshot -> // 업로드 정보를 담는다
+//                                                                taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { it ->
+//                                                                    // 업로드 한 url
+//                                                                    var imageUrl = it.toString()
+//                                                                    imgsOfDateReturn[idx]["imageUri"] = imageUrl
+//                                                                    imgsOfDateReturn[idx]["used"] = imgsOfDate[idx]["used"] as Long
+//                                                                }
+//                                                                Log.d(TAG, "imgsOfDate[idx][\"imageUri\"]111 ${imgsOfDate[idx]["imageUri"]}")
+//                                                                imgsOfDate[idx]["imageUri"]=fileName
+//                                                                Log.d(TAG, "imgsOfDate[idx][\"imageUri\"]222 ${imgsOfDate[idx]["imageUri"]}")
+                                                            }
+                                                            .addOnFailureListener{
+                                                            }
 
-                                            // 내 캘린더 저장
-                                            val calData= CalendarInfo(arrayListOf(uid), calID, "내 캘린더", notices)
-                                            fs.collection("calendars").document(calID).set(calData)
-                                                    .addOnSuccessListener { Log.d(TAG, "캘린더 저장 성공") }
-                                                    .addOnFailureListener{e-> Log.d(TAG, "캘 저장 에러 났음 쨘", e)}
+                                                    i+=1
+                                                }
+                                                dataList4[date]=imgsOfDate
+                                            }
+                                        }
 
-                                            Log.d("$TAG caldata", calData.toString())
+                                        Log.d(TAG, "dataList4 $dataList4")
+
+                                        // fs 저장
+                                        val calData=
+                                                CalendarInfo(arrayListOf(uid), calID, "내 캘린더", dataList4, contentList, feedList)
+                                        fs.collection("calendars").document(calID).set(calData)
+                                                .addOnSuccessListener {
+                                                    Log.d(TAG, "캘린더 저장 성공")
+                                                    binding.pBarLoginActivity.visibility= View.INVISIBLE
+                                                }
+                                                .addOnFailureListener{e-> Log.d(TAG, "캘 저장 에러 났음", e)}
 
                                             /////////
 
+//                                        // 이미 있는 유저
+//
+//                                        Log.d(TAG, "이미 있는 유저 $uid")
+//                                        for (document in documents){
+//                                            Log.d(TAG, document.data.toString())
+//                                        }
+//
+//                                        // 유저 친구/프로필/닉네임 등은 수정이 필요할 수도 있잖슴
+//                                        // 친구는 근데 친구인지 아닌지가 있으니까.. 일단 이 기능은 보류.. ㅜㅜ
+//
+//                                        for (document in documents){
+//                                            var mergeable:HashMap<String, Any> = document.data as HashMap<String, Any>
+//                                            mergeable["nickName"] = nickname
+//                                            mergeable["profileUrl"] = profileImagePath
+//                                            mergeable["friendList"] = mfriendList
+//
+//                                            fs.collection("users").document(uid).set(mergeable)
+//                                                .addOnSuccessListener { it ->
+//                                                    Log.d(TAG, "fs 에 유저 정보 수정 쨘")
+//                                                }
+//                                                .addOnFailureListener {
+//                                                    Log.d(TAG, "fs 에 유저 정보 수정 실패")
+//                                                }
+//                                        }
+                                    }
+                                    .addOnFailureListener {
+                                        // 첫 방문
 
-                                            // 이미 있는 유저
+                                        binding.pBarLoginActivity.visibility= View.VISIBLE
+                                        Log.d(TAG, "이미 있는 유저")
+                                        val calID = "calendar" + Random().nextInt(1000000)
 
-                                            Log.d(TAG, "이미 있는 유저")
-                                            // 유저 친구/프로필/닉네임 등은 수정이 필요할 수도 있잖슴
-                                            // 친구는 근데 친구인지 아닌지가 있으니까.. 일단 이 기능은 보류.. ㅜㅜ
+                                        val user = UserInfo(
+                                                uid,
+                                                nickname,
+                                                profileImagePath,
+                                                email,
+                                                mfriendList,
+                                                hashMapOf<String, String>("myCalendar" to calID)
+                                        )
 
-                                            for (document in documents){
-                                                var mergeable:HashMap<String, Any> = document.data as HashMap<String, Any>
-                                                mergeable["nickName"] = nickname
-                                                mergeable["profileUrl"] = profileImagePath
-                                                mergeable["friendList"] = mfriendList
+                                        // 유저 저장
+                                        fs.collection("users").document(uid).set(user)
+                                                .addOnSuccessListener {
+                                                    Log.d(TAG, "fs 에 유저 정보 저장 쨘")
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    Log.d(TAG, "유저 저장 에러 났음 쨘", e)
+                                                    Toast.makeText(
+                                                            this@LoginActivity,
+                                                            "Peering에 오신 것을 환영합니다!",
+                                                            Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
 
-                                                fs.collection("users").document(uid).set(mergeable)
-                                                        .addOnSuccessListener { it ->
-                                                            Log.d(TAG, "fs 에 유저 정보 수정 쨘")
-                                                        }
-                                                        .addOnFailureListener { exception ->
-                                                            Log.d(TAG, "fs 에 유저 정보 수정 실패")
-                                                        }
+                                        // 내 캘린더 저장
+
+                                        // HashMap<String, ArrayList<HashMap<String, Any>>>
+                                        val dateList: MutableSet<String> = dataList4.keys
+                                        var i=0
+                                        for (date in dateList){
+                                            // content 초기화
+                                            contentList[date]=""
+                                            feedList[date]=""
+                                            // 그외
+                                            val imgsOfDate:ArrayList<HashMap<String, Any>>? = dataList4[date]
+                                            if (imgsOfDate != null) {
+                                                for (img in imgsOfDate){
+                                                    val imgUri:String= img["imageUri"] as String
+                                                    val fileName="myCal$i"
+                                                    img["imageUri"]=fileName
+                                                    storage.reference.child(uid).child(calID).child(fileName)
+                                                            .putFile(imgUri.toUri())
+                                                            .addOnSuccessListener {
+//                                                                taskSnapshot -> // 업로드 정보를 담는다
+//                                                                taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { it ->
+//                                                                    // 업로드 한 url
+//                                                                    var imageUrl = it.toString()
+//                                                                    imgsOfDateReturn[idx]["imageUri"] = imageUrl
+//                                                                    imgsOfDateReturn[idx]["used"] = imgsOfDate[idx]["used"] as Long
+//                                                                }
+//                                                                Log.d(TAG, "imgsOfDate[idx][\"imageUri\"]111 ${imgsOfDate[idx]["imageUri"]}")
+//                                                                imgsOfDate[idx]["imageUri"]=fileName
+//                                                                Log.d(TAG, "imgsOfDate[idx][\"imageUri\"]222 ${imgsOfDate[idx]["imageUri"]}")
+                                                            }
+                                                            .addOnFailureListener{
+                                                            }
+
+                                                    i+=1
+                                                }
+                                                dataList4[date]=imgsOfDate
                                             }
                                         }
-                                        .addOnFailureListener { exception ->
-                                            // 첫 방문
-                                            Log.d(TAG, "첫 방문")
-                                            val calID = "calendar" + Random().nextInt(1000000)
 
-                                            val user = UserInfo(
-                                                    uid,
-                                                    nickname,
-                                                    profileImagePath,
-                                                    email,
-                                                    mfriendList,
-                                                    hashMapOf<String, String>("myCalendar" to calID)
-                                            )
 
-                                            // 유저 저장
-                                            fs.collection("users").document(uid).set(user)
-                                                    .addOnSuccessListener {
-                                                        Log.d(TAG, "fs 에 유저 정보 저장 쨘")
-                                                    }
-                                                    .addOnFailureListener { e ->
-                                                        Log.d(TAG, "유저 저장 에러 났음 쨘", e)
-                                                        Toast.makeText(
-                                                                this@LoginActivity,
-                                                                "Peering에 오신 것을 환영합니다!",
-                                                                Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }
-
-                                            // 내 캘린더 저장
-                                            val calData=
-                                                    CalendarInfo(arrayListOf(uid), calID, "내 캘린더", notices)
-                                            fs.collection("calendars").document(calID).set(calData)
-                                                    .addOnSuccessListener { Log.d(TAG, "캘린더 저장 성공") }
-                                                    .addOnFailureListener{e-> Log.d(TAG, "캘 저장 에러 났음", e)}
-                                        }
-                                    val intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                    startActivity(intent)
-
-                                }
-                            })
+                                        // fs 저장
+                                        val calData=
+                                                CalendarInfo(arrayListOf(uid), calID, "내 캘린더", dataList4, contentList, feedList)
+                                        fs.collection("calendars").document(calID).set(calData)
+                                                .addOnSuccessListener {
+                                                    Log.d(TAG, "캘린더 저장 성공")
+                                                    binding.pBarLoginActivity.visibility= View.INVISIBLE
+                                                }
+                                                .addOnFailureListener{e-> Log.d(TAG, "캘 저장 에러 났음", e)}
+                                    }
+                                val intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                startActivity(intent)
+                            }
                         }
                     }
                 }
@@ -297,37 +400,45 @@ class LoginActivity : AppCompatActivity(){
             }
         }
 
-//        binding.kakaoLogoutButton.setOnClickListener {
-//            UserApiClient.instance.logout { error ->
-//                if (error != null) {
-//                    Toast.makeText(this, "로그아웃 실패 $error", Toast.LENGTH_SHORT).show()
-//                }else {
-//                    Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_SHORT).show()
-//                }
-//                val intent = Intent(this, MainActivity::class.java)
-//                startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
-//            }
-//        }
-//
-//        binding.kakaoUnlinkButton.setOnClickListener {
-//            UserApiClient.instance.unlink { error ->
-//                if (error != null) {
-//                    Toast.makeText(this, "회원 탈퇴 실패 $error", Toast.LENGTH_SHORT).show()
-//                }else {
-//                    Toast.makeText(this, "회원 탈퇴 성공", Toast.LENGTH_SHORT).show()
-//                    val intent = Intent(this, MainActivity::class.java)
-//                    startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
-//                }
-//            }
-//        }
-//
+        binding.kakaoLogoutButton.setOnClickListener {
+            UserApiClient.instance.logout { error ->
+                if (error != null) {
+                    Toast.makeText(this, "로그아웃 실패 $error", Toast.LENGTH_SHORT).show()
+                }else {
+                    Toast.makeText(this, "로그아웃 성공", Toast.LENGTH_SHORT).show()
+                }
+                val intent = Intent(this, MainActivity::class.java)
+                startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
+            }
+        }
+
+        binding.kakaoUnlinkButton.setOnClickListener {
+            UserApiClient.instance.unlink { error ->
+                if (error != null) {
+                    Toast.makeText(this, "회원 탈퇴 실패 $error", Toast.LENGTH_SHORT).show()
+                }else {
+                    Toast.makeText(this, "회원 탈퇴 성공", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent.addFlags(FLAG_ACTIVITY_CLEAR_TOP))
+                }
+            }
+        }
+
 
     }
 
-    private fun setLogin(listener: LoginListener){
-        var mCallback=listener
-        //checkPermission() // 갤러리에 있는 data를 dataList4로 옮기는 작업스
+    private fun calendarCallback(calID:String, fileName:String, imgUri:String, callback:(Uri?)->Unit){
+        storage.reference.child(uid).child(calID).child(fileName)
+                .putFile(imgUri.toUri())
+                .addOnSuccessListener {
+                    taskSnapshot -> // 업로드 정보를 담는다
+                    taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { it->
+                        callback(it)
+                    }
+                }
+    }
 
+    fun galleryDataCallback(callback:(HashMap<String, ArrayList<HashMap<String, Any>>>)->Unit){
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
         } else {
@@ -337,6 +448,9 @@ class LoginActivity : AppCompatActivity(){
                 val cursor = getImageData()
                 //getImages(cursor)
                 if (cursor != null) {
+                    dataList4= hashMapOf()
+                    contentList=hashMapOf()
+                    feedList= hashMapOf()
                     while (cursor.moveToNext()) {
                         // 날짜별 이미지 리스트 초기화
 
@@ -344,7 +458,7 @@ class LoginActivity : AppCompatActivity(){
                         val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
                         val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
                         val dateTakenColNum =
-                                cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
+                            cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
 
                         //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
                         val id = cursor.getLong(idColNum) // 0
@@ -354,29 +468,41 @@ class LoginActivity : AppCompatActivity(){
 //                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
                         var uri= ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                id
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            id
                         )
 
                         //3. 데이터를 View로 설정
                         val calendar = Calendar.getInstance()
                         calendar.timeInMillis = dateTaken
                         val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
+
+                        // 일단 2021.10.1이전 것들은 다 안 넣음
+                        val targetDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
+                        val standardDate = LocalDate.of(2021,10,1)
+
+                        if (targetDate.isBefore(standardDate)){
+                            continue
+                        }
+
                         // Log.d(TAG, date)
                         // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
                         if (date in dataList4.keys){
                             // 날짜가 이미 있다면
                             var hmap:HashMap<String, Any> = hashMapOf()
                             hmap["imageUri"]=uri.toString()
-                            hmap["used"]=0
+                            val ln:Long=0
+                            hmap["used"]=ln
                             dataList4[date]?.add(hmap)
                         }
                         else{
                             // 날짜가 없음!
                             var hmap:HashMap<String, Any> = hashMapOf()
                             hmap["imageUri"]=uri.toString()
-                            hmap["used"]=1
-                            dataList4.put(date, arrayListOf())
+                            // 2는 대표사진
+                            val ln:Long=2
+                            hmap["used"]=ln
+                            dataList4[date] = arrayListOf()
                             dataList4[date]?.add(hmap)
 
                         }
@@ -393,7 +519,7 @@ class LoginActivity : AppCompatActivity(){
                     Log.d(TAG + " 뭐 들었니", dataList4.toString())
 
                 }
-                mCallback.loginClear(dataList4)
+                callback(dataList4)
 
             } catch (e: SecurityException) {
                 Toast.makeText(this, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
@@ -401,13 +527,6 @@ class LoginActivity : AppCompatActivity(){
                 // finish()
             }
         }
-
-        //Log.d("$TAG dataList4", dataList4.toString())
-
-    }
-
-    interface LoginListener {
-        fun loginClear(notices: HashMap<String, ArrayList<HashMap<String, Any>>>)
     }
 
     //해시 키 값 구하기
