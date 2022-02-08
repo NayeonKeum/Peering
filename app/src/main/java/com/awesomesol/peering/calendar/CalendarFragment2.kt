@@ -154,7 +154,7 @@ class CalendarFragment2(index: Int) : Fragment() {
                                             feedList[dateKey]=""
                                             val datalist:ArrayList<HashMap<String, Any>> = arrayListOf()
                                             for (data in notices[dateKey]!!){
-                                                val fileName="myCal"+Random().nextInt(1000000)
+                                                val fileName="myCal"+Random().nextInt(100000)
                                                 val iu: String =data.imageUri
                                                 storage.reference.child(uid).child(cid).child(fileName)
                                                         .putFile(iu.toUri())
