@@ -61,7 +61,7 @@
         <View
             android:id="@+id/group_40"
             android:layout_width="300dp"
-            android:layout_height="26dp"
+            android:layout_height="35dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="75dp"
@@ -74,33 +74,32 @@
 
         <ImageView
             android:id="@+id/group"
-            android:layout_width="16dp"
-            android:layout_height="18.29dp"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
             android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginTop="75dp"
-            android:layout_marginStart="32dp"
             android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
             android:layout_alignParentBottom="true"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="80dp"
             android:background="#00000000"
-            app:layout_constraintStart_toStartOf="@+id/view"
-            app:layout_constraintTop_toTopOf="@+id/view"
             android:src="@drawable/cat_title"
-            />
+            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintTop_toTopOf="@+id/view" />
 
-        <TextView
-            android:id="@+id/tv_PostFragment_catTitle"
-            android:layout_width="81dp"
-            android:layout_height="17dp"
+        <Spinner
+            android:id="@+id/spn_PostFragment_publicScope"
+            android:layout_width="260dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="11dp"
             android:gravity="top"
-            android:text="솔룩스 회식팟"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/group"
             app:layout_constraintStart_toEndOf="@+id/group"
             app:layout_constraintTop_toTopOf="@+id/group" />
+
 
         <View
             android:id="@+id/catline1"
@@ -117,7 +116,7 @@
         <View
             android:id="@+id/group_402"
             android:layout_width="300dp"
-            android:layout_height="26dp"
+            android:layout_height="35dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginTop="7dp"
@@ -128,11 +127,11 @@
 
         <ImageView
             android:id="@+id/group2"
-            android:layout_width="16dp"
-            android:layout_height="18.29dp"
+            android:layout_width="23dp"
+            android:layout_height="23dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="108dp"
+            android:layout_marginTop="120dp"
             android:layout_marginStart="32dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentBottom="true"
@@ -142,19 +141,19 @@
             android:src="@drawable/cat_sub"
             />
 
-        <TextView
-            android:id="@+id/tv_PostFragment_catSub"
-            android:layout_width="81dp"
-            android:layout_height="17dp"
+        <Spinner
+            android:id="@+id/spn_PostFragment_category"
+            android:layout_width="260dp"
+            android:layout_height="30dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentTop="true"
             android:layout_marginStart="11dp"
             android:gravity="top"
-            android:text="놀기 / 방탈출"
             android:textSize="14sp"
             app:layout_constraintBottom_toBottomOf="@+id/group2"
             app:layout_constraintStart_toEndOf="@+id/group2"
             app:layout_constraintTop_toTopOf="@+id/group2" />
+
 
         <View
             android:id="@+id/catline2"
@@ -169,13 +168,12 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/cl_PostFragment"
-            android:layout_width="300dp"
+            android:layout_width="330dp"
             android:layout_height="189dp"
             android:layout_marginTop="26dp"
             android:background="@drawable/rounded_dialog"
             android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="@+id/view"
-            app:layout_constraintStart_toStartOf="@+id/view"
+            app:layout_constraintStart_toStartOf="@+id/group_40"
             app:layout_constraintTop_toBottomOf="@+id/group_402">
 
             <androidx.viewpager2.widget.ViewPager2
