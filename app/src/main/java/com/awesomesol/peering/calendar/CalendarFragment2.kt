@@ -5,6 +5,7 @@ import android.content.ContentUris
 import android.content.Context
 import android.content.pm.PackageManager
 import android.database.Cursor
+import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.text.format.DateFormat
@@ -17,6 +18,7 @@ import android.widget.LinearLayout
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
@@ -152,8 +154,16 @@ class CalendarFragment2(index: Int) : Fragment() {
                                             feedList[dateKey]=""
                                             val datalist:ArrayList<HashMap<String, Any>> = arrayListOf()
                                             for (data in notices[dateKey]!!){
+                                                val fileName="myCal"+Random().nextInt(1000000)
+                                                val iu: String =data.imageUri
+                                                storage.reference.child(uid).child(cid).child(fileName)
+                                                        .putFile(iu.toUri())
+                                                        .addOnSuccessListener {
+                                                        }
+                                                        .addOnFailureListener{
+                                                        }
                                                 val hmap:HashMap<String, Any> =hashMapOf()
-                                                hmap["imageUri"]=data.imageUri
+                                                hmap["imageUri"]=fileName
                                                 hmap["used"]=data.used
                                                 datalist.add(hmap)
                                             }
@@ -330,12 +340,12 @@ class CalendarFragment2(index: Int) : Fragment() {
                         // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
                         if (date in dataList_fromGaL.keys){
                             // 날짜가 이미 있다면
-                            dataList_fromGaL.get(date)?.add(GalleryData(uri.toString(), 0))
+                            dataList_fromGaL[date]?.add(GalleryData(uri.toString(), 0))
                         }
                         else{
                             // 날짜가 없음!
-                            dataList_fromGaL.put(date, arrayListOf())
-                            dataList_fromGaL.get(date)?.add(GalleryData(uri.toString(), 1))
+                            dataList_fromGaL[date] = arrayListOf()
+                            dataList_fromGaL[date]?.add(GalleryData(uri.toString(), 2))
 
                         }
 
