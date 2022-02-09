@@ -28,29 +28,30 @@
 </br>
 
 ## App logo
-<img src="https://user-images.githubusercontent.com/66097819/148505423-65d460a9-df91-4166-bcf5-98985a74848a.png">
-
+<p align="center">
+<img width=20% src="https://user-images.githubusercontent.com/68985625/153275531-57c06d49-0951-4b06-a0b7-446b991a4821.png">
+</p>
 
 ## Demo
 |스플래시|로그인|내 프로필|
 |---------|--------|------|
-|<img src="https://user-images.githubusercontent.com/66097819/148501106-ec0168e2-8f36-43ac-8020-69573094ae9c.gif" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501139-cb0c7100-6233-45ce-a978-c614ff55850b.gif" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148503391-3aead377-25f2-4dbe-8903-d8e73a66e005.gif" width="250">|
+|<img src="https://user-images.githubusercontent.com/68985625/153275553-c2146e0a-378c-47e8-9b2d-12d943d3e76e.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275546-a960403d-a99c-4262-8f30-6b282d95f9c1.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275542-4e0f276d-ec96-4d18-8f1e-d3ea6a935b76.jpg" width="250">|
 
 |캘린더|게시글||
 |------|------|------|
-|<img src="https://user-images.githubusercontent.com/66097819/148501363-3bfbf526-3732-42dd-b48e-b08919035251.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501378-cb67e4f2-79f6-4cb4-b206-a74aef8c3f6a.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501369-5d17a863-1a8d-41dc-884a-cb35151080bf.jpg" width="250">|
+|<img src="https://user-images.githubusercontent.com/68985625/153275562-d79f1ede-15c1-409c-afd3-db6f41b1ba70.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275534-2e926294-e163-4fe4-b26b-6ee4b92e314b.jpg" width="250">|<img src="" width="250">|
 
 |카테고리-기본|카테고리||
 |------|------|------|
-|<img src="https://user-images.githubusercontent.com/66097819/148501363-3bfbf526-3732-42dd-b48e-b08919035251.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501378-cb67e4f2-79f6-4cb4-b206-a74aef8c3f6a.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501369-5d17a863-1a8d-41dc-884a-cb35151080bf.jpg" width="250">|
+|<img src="https://user-images.githubusercontent.com/68985625/153275559-ffd5204e-256e-4281-a05d-dad2573e6ce9.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275558-f77c3712-42b2-4fee-99b9-e2f3c15fe1e1.jpg" width="250">|<img src="" width="250">|
 
 
-|피드|친구 추가||
+|피드|친구 추가|프로필|
 |------|------|------|
-|<img src="https://user-images.githubusercontent.com/66097819/148501363-3bfbf526-3732-42dd-b48e-b08919035251.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501378-cb67e4f2-79f6-4cb4-b206-a74aef8c3f6a.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501369-5d17a863-1a8d-41dc-884a-cb35151080bf.jpg" width="250">|
+|<img src="https://user-images.githubusercontent.com/68985625/153275574-d4e28319-d509-4798-a3dd-cfeb88aebf50.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275556-4a638c51-f462-4dc0-bbad-929f236def93.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275566-884ad81c-5a0b-480c-92a3-4774e37ba408.jpg" width="250">|
 
 
 |그룹|그룹 친구 추가|메세지 예시|
 |------|------|------|
-|<img src="https://user-images.githubusercontent.com/66097819/148501363-3bfbf526-3732-42dd-b48e-b08919035251.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501378-cb67e4f2-79f6-4cb4-b206-a74aef8c3f6a.jpg" width="250">|<img src="https://user-images.githubusercontent.com/66097819/148501369-5d17a863-1a8d-41dc-884a-cb35151080bf.jpg" width="250">|
+|<img src="https://user-images.githubusercontent.com/68985625/153275539-b494934c-07e8-4f43-b670-e47244209ad6.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275540-2bf62762-9c14-4dd3-bd2f-a872bb6e04e1.jpg" width="250">|<img src="https://user-images.githubusercontent.com/68985625/153275552-c55612eb-07df-4298-b419-494a32177b89.jpg" width="250">|
 
