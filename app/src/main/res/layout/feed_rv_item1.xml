@@ -51,6 +51,14 @@
                 android:textStyle="bold"/>
 
         </LinearLayout>
+        <TextView
+            android:id="@+id/tv_FeedRVItem_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="2022-02-08"
+            android:textSize="10sp"
+            android:textAlignment="center"/>
 
         <TextView
             android:id="@+id/tv_FeedRVItem1_content"
