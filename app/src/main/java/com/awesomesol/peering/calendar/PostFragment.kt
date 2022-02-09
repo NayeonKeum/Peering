@@ -303,7 +303,7 @@ class PostFragment : Fragment() {
                                     for (data in hh) {
                                         val lnum: Long = 2
                                         if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, 2)
                                             fs.collection("feeds").document(feedName).set(feed)
                                                     .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                     .addOnFailureListener { Log.d(TAG, "f실패") }
@@ -322,7 +322,7 @@ class PostFragment : Fragment() {
                                     for (data in hh) {
                                         val lnum: Long = 2
                                         if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent)
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, 2)
                                             feedList[dateym]?.let { it1 ->
                                                 fs.collection("feeds").document(it1).set(feed)
                                                         .addOnSuccessListener { Log.d(TAG, "f성공") }

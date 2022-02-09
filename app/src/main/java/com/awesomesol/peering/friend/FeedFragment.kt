@@ -160,7 +160,7 @@ class FeedFragment : Fragment() {
                             document["nickname"] as String,
                             document["mainImg"] as String,
                             document["profileImg"] as String,
-                            document["content"] as String)
+                            document["content"] as String,2)
 
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
