@@ -457,7 +457,7 @@ class GroupCalPostFragment : Fragment() {
                                         val lnum: Long = 2
                                         if (data["used"] as Long == lnum) {
                                             // 여기서 피드에 있는 거 다 가져오는 수정 해야함!!!
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym, type=finalData.size)
                                             fs.collection("feeds").document(feedName).set(feed)
                                                     .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                     .addOnFailureListener { Log.d(TAG, "f실패") }
@@ -476,7 +476,7 @@ class GroupCalPostFragment : Fragment() {
                                     for (data in hh) {
                                         val lnum: Long = 2
                                         if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
+                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym, hh.size)
                                             feedList[dateym]?.let { it1 ->
                                                 fs.collection("feeds").document(it1).set(feed)
                                                         .addOnSuccessListener { Log.d(TAG, "f성공") }

@@ -73,6 +73,17 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/cal_rightarrow" />
 
+            <TextView
+                android:id="@+id/tv_catDiaryFragment_year"
+                android:layout_width="wrap_content"
+                android:layout_height="26dp"
+                android:text="2222년"
+                android:textSize="24dp"
+                app:layout_constraintBottom_toBottomOf="@+id/iv_catDiaryFragment_leftarr"
+                app:layout_constraintEnd_toStartOf="@+id/iv_catDiaryFragment_rightarr"
+                app:layout_constraintStart_toEndOf="@+id/iv_catDiaryFragment_leftarr"
+                app:layout_constraintTop_toTopOf="@+id/iv_catDiaryFragment_leftarr" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_catDiaryFragment_monthList"
                 android:layout_width="330dp"
