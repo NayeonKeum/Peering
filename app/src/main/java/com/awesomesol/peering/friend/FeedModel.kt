@@ -9,5 +9,6 @@ data class FeedModel (
     var content : String = "",
     var publicScope:Long=0,
     var category:String="",
-    var date:String=""
+    var date:String="",
+    val type : Int
 )

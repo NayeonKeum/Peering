@@ -145,8 +145,6 @@ class FeedFragment : Fragment() {
         }
     }
 
-    // todo : 임의로 대입한 값이 아닌 실제로 작성한 값이 들어갈 수 있도록 하자..!!!
-    // recyclerview multi 찾아서 mainImg 데이터 전달받도록 수정하기 -> viewholder 여러 개
    private fun getFBFeedData(){
         db.collection("feeds")    // 작업할 컬렉션
             .get()                   // 문서 가져오기
@@ -160,7 +158,11 @@ class FeedFragment : Fragment() {
                             document["nickname"] as String,
                             document["mainImg"] as String,
                             document["profileImg"] as String,
-                            document["content"] as String)
+                            document["content"] as String,
+                        document["publicScope"] as Long,
+                        document["category"] as String,
+                        document["date"] as String,
+                        document["type"] as Int)
 
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
