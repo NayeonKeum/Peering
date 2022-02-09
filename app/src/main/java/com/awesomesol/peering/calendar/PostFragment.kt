@@ -268,19 +268,14 @@ class PostFragment : Fragment() {
             publicScope=s_c_hashmap["publicScope"] as Long
             category=s_c_hashmap["category"] as String
 
-
             var catidx=0
-            var totalIdx=-1
             val categoryStrList:ArrayList<String> = arrayListOf()
-            val keys=categories.keys
-            for (key in keys){
-                for (i in 0 until (categories[key]?.size!!)){
-                    totalIdx+=1
-                    categoryStrList.add("$key / ${categories[key]?.get(i)}")
-                    if (("$key / ${categories[key]?.get(i)}") == category){
-                        catidx+=totalIdx
-                        Log.d(TAG, "catidx $catidx")
-                    }
+
+            for (i in 0 until (categories["CategoryList"]?.size!!)){
+                categoryStrList.add("${categories["CategoryList"]?.get(i)}")
+                if (("${categories["CategoryList"]?.get(i)}") == category){
+                    catidx=i
+                    Log.d(TAG, "catidx $catidx")
                 }
             }
             Log.d(TAG, "categories $categories")
@@ -384,7 +379,8 @@ class PostFragment : Fragment() {
                 lateinit var contList:HashMap<String, String>
                 lateinit var feedList:HashMap<String, String>
 
-                fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+
+               fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
                         .addOnSuccessListener { documents->
                             for (document in documents) {
                                 if (document.data["cid"].toString() == cid){
