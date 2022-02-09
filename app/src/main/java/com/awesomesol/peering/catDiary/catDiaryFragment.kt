@@ -33,17 +33,17 @@ class catDiaryFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-//        val groups = db.collection("groups")
-//
+        val groups = db.collection("groups")
+
 //        val group1 = hashMapOf(
-//            "groupName" to "그룹명",
-//            "groupNum" to "6",
+//            "groupName" to "힘드렁",
+//            "groupNum" to "5",
 //            "groupImg" to "img",
-//            "uid" to "uid",
-//            "profileImg" to "profileImg"
+//            "cid" to "uid",
+//            "uidList" to arrayListOf(1, 2, 3, 4, 5)
 //        )
-//        groups.document("groupOne").set(group1)
-//
+//        groups.document("groupTwo").set(group1)
+
 //        db.collection("groups")
 //            .add(group1)
 //            .addOnSuccessListener {
@@ -117,10 +117,10 @@ class catDiaryFragment : Fragment() {
                 for (document in result){    // 가져온 문서들은 result에 들어감
                     val item = GroupInfo(
                         document["groupName"] as String,
-                        document["groupNum"] as String,
+                        document["groupNum"] as Int,
                         document["groupImg"] as String,
-                        document["uid"] as String,
-                        document["profileImg"] as String)
+                        document["cid"] as String,
+                        document["uidList"] as ArrayList<String>)
                     groupDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
                 }

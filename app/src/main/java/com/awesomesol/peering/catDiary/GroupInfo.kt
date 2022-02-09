@@ -2,8 +2,8 @@ package com.awesomesol.peering.catDiary
 
 data class GroupInfo (
     val groupName: String = "",
-    val groupNum: String = "",
+    val groupNum: Int = 0,
     val groupImg: String = "",
-    val uid: String = "",
-    val profileImg : String = "",
+    val cid: String = "",
+    val uidList: ArrayList<String>,
 )
