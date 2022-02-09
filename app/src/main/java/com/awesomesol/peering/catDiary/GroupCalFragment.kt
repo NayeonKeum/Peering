@@ -14,17 +14,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.net.toUri
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
-import com.awesomesol.peering.calendar.CalendarInfo
 import com.awesomesol.peering.calendar.GalleryData
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -52,7 +48,7 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
     var contentList:HashMap<String, String> = hashMapOf()
     var feedList:HashMap<String, String> = hashMapOf()
 
-    private var dataList_fromGaL: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
+    private lateinit var dataList_fromGaL: HashMap<String, ArrayList<HashMap<String, Any>>>
 
     val fs=Firebase.firestore
     val storage=FirebaseStorage.getInstance()
@@ -74,12 +70,88 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
         }
     }
 
+    fun galleryCallback(callback:(HashMap<String, ArrayList<HashMap<String, Any>>>)->Unit){
+        var dL_fromGaL: HashMap<String, ArrayList<HashMap<String, Any>>> = hashMapOf()
+        // 갤러리 데이터들 다 저장!(오직 갤러리 데이터만,,,
+        if (activity?.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
+        } else {
+            // 갤러리 연동 분기점
+            //initView()
+            try {
+                val cursor = getImageData()
+                //getImages(cursor)
+                if (cursor != null) {
+                    while (cursor.moveToNext()) {
+                        // 날짜별 이미지 리스트 초기화
+
+                        //1. 각 컬럼의 열 인덱스를 취득한다.
+                        val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
+                        val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
+                        val dateTakenColNum =
+                            cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
+
+                        //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
+                        val id = cursor.getLong(idColNum) // 0
+                        val title = cursor.getString(titleColNum) // 1
+                        val dateTaken = cursor.getLong(dateTakenColNum) // 2
+
+                        var uri= ContentUris.withAppendedId(
+                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                            id
+                        )
+
+                        //3. 데이터를 View로 설정
+                        val calendar = Calendar.getInstance()
+                        calendar.timeInMillis = dateTaken
+                        val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
+                        // Log.d(TAG, date)
+                        // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
+
+                        val ln0:Long=0
+                        val ln2:Long=2
+                        if (date in dL_fromGaL.keys){
+                            // 날짜가 이미 있다면
+                            var hmap:HashMap<String, Any> = hashMapOf()
+                            hmap["imageUri"]=uri.toString()
+                            hmap["used"]=ln0
+                            dL_fromGaL[date]?.add(hmap)
+                        }
+                        else{
+                            // 날짜가 없음!
+                            dL_fromGaL[date]= arrayListOf()
+
+                            var hmap:HashMap<String, Any> = hashMapOf()
+                            hmap["imageUri"]=uri.toString()
+                            hmap["used"]=ln2
+
+                            dL_fromGaL[date]?.add(hmap)
+
+                        }
+                    }
+                    cursor.close()
+                    Log.d(TAG + " 뭐 들었니", dL_fromGaL.toString())
+
+                }
+                callback(dL_fromGaL)
+
+            } catch (e: SecurityException) {
+                Toast.makeText(context, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
+                Log.d(TAG, "스토리지에 접근 권한을 허가해주세요")
+            }
+        }
+
+        //Log.d("$TAG dataList4", dataList4.toString())
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
         // 원래는 초기화할 때 옴
         cid="calendar111111"
 
+
+        // 여기는 캘린더 뷰 가져오는 거(수정x)
         UserApiClient.instance.me { user, error ->
             uid = user?.id.toString()
             nickname = user?.kakaoAccount?.profile?.nickname.toString()
@@ -96,7 +168,13 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
                                 dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<HashMap<String, Any>>>
                                 contentList=it.data?.get("contentList") as HashMap<String, String>
                                 feedList=it.data?.get("feedList") as HashMap<String, String>
-                                initCalendar()
+
+                                galleryCallback{dL_fromGaL->
+                                    this.dataList_fromGaL=dL_fromGaL
+                                    Log.d(TAG, "dataList_fromGaL, ${dataList_fromGaL}")
+                                    initCalendar()
+                                    // 캘린더 뷰 따로, 데이터 가져오는 거 따로
+                                }
 
                             }
                             .addOnFailureListener{
@@ -160,12 +238,7 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
         calendarAdapter.itemClick = object :
             GroupCalAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
-//                val firstDateIndex = calendarAdapter.dataList.indexOf(1)
-//                val lastDateIndex = calendarAdapter.dataList.lastIndexOf(calendarAdapter.furangCalendar.currentMaxDate)
-//                // 현재 월의 1일 이전, 현재 월의 마지막일 이후는 터치 disable
-//                if (position < firstDateIndex || position > lastDateIndex) {
-//                    return
-//                }
+
                 val day = calendarAdapter.datelist[position].toString()
                 val date = "${calendar_year_month_text.text} ${day}일"
                 var dateym: String = SimpleDateFormat("yyyy-MM", Locale.KOREA).format(currentDate.time)
@@ -181,6 +254,13 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
                 bundle.putString("dateym", dateym)
                 bundle.putString("cid", cid)
                 bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
+                bundle.putSerializable("dataList_fromGaL", dataList_fromGaL[dateym])
+                // 여기에 해당날짜 내 갤러리도 넣자
+                // 그럼 원래 있던 거는...? 없애.. 원래는 없는거야.. 염병.. 전부 초기화!!!!
+                // 넘기고 나서 사용하면 되죠
+                // dateGalleryData[dateym]이 눌이면 처음 넣는다는 거자나요?
+                // 그럼 내껄 넣지요!!!
+
                 bundle.putSerializable("feedList", feedList)
                 bundle.putString("content", contentList[dateym])
                 bundle.putString("uid", uid)
@@ -194,81 +274,6 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
         }
     }
 
-    private fun setLogin(listener: LoginListener){
-        var mCallback=listener
-        //checkPermission() // 갤러리에 있는 data를 dataList4로 옮기는 작업스
-
-        if (activity?.checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
-        } else {
-            // 갤러리 연동 분기점
-            //initView()
-            try {
-                val cursor = getImageData()
-                //getImages(cursor)
-                if (cursor != null) {
-                    while (cursor.moveToNext()) {
-                        // 날짜별 이미지 리스트 초기화
-
-                        //1. 각 컬럼의 열 인덱스를 취득한다.
-                        val idColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns._ID)
-                        val titleColNum = cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.TITLE)
-                        val dateTakenColNum =
-                                cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATE_TAKEN)
-
-                        //2. 인덱스를 바탕으로 데이터를 Cursor로부터 취득하기
-                        val id = cursor.getLong(idColNum) // 0
-                        val title = cursor.getString(titleColNum) // 1
-                        val dateTaken = cursor.getLong(dateTakenColNum) // 2
-//                val imageUri =
-//                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-
-                        var uri= ContentUris.withAppendedId(
-                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                id
-                        )
-
-                        //3. 데이터를 View로 설정
-                        val calendar = Calendar.getInstance()
-                        calendar.timeInMillis = dateTaken
-                        val date = DateFormat.format("yyyy-MM-dd", calendar).toString() // "yyyy-MM-dd (E) kk:mm:ss"
-                        // Log.d(TAG, date)
-                        // 앞에꺼 하나만 사용, 뒤에껀 안 사용!
-                        if (date in dataList_fromGaL.keys){
-                            // 날짜가 이미 있다면
-                            dataList_fromGaL[date]?.add(GalleryData(uri.toString(), 0))
-                        }
-                        else{
-                            // 날짜가 없음!
-                            dataList_fromGaL[date] = arrayListOf()
-                            dataList_fromGaL[date]?.add(GalleryData(uri.toString(), 2))
-
-                        }
-
-//                textView.text = "촬용일시: $text"
-//                imageView.setImageURI(imageUri)
-
-//                Log.d(TAG, "DATE: "+date)
-//                Log.d(TAG, "ID: "+id)
-//                Log.d(TAG, "TITLE: "+title)
-//                Log.d(TAG, "URI: "+uri)
-                    }
-                    cursor.close()
-                    Log.d(TAG + " 뭐 들었니", dataList_fromGaL.toString())
-
-                }
-                mCallback.loginClear(dataList_fromGaL)
-
-            } catch (e: SecurityException) {
-                Toast.makeText(context, "스토리지에 접근 권한을 허가해주세요", Toast.LENGTH_SHORT).show()
-                Log.d(TAG, "스토리지에 접근 권한을 허가해주세요")
-                // finish()
-            }
-        }
-
-        //Log.d("$TAG dataList4", dataList4.toString())
-
-    }
     private fun getImageData(): Cursor {
 
         val resolver = activity?.contentResolver
@@ -288,10 +293,6 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
         //queryUri = queryUri.buildUpon().appendQueryParameter("limit", "1").build()
 
         return resolver!!.query(queryUri, what, null, null, orderBy)!!
-    }
-
-    interface LoginListener {
-        fun loginClear(notices: HashMap<String, ArrayList<GalleryData>>)
     }
 
     override fun onDestroy() {

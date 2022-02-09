@@ -17,7 +17,7 @@ class GroupCalImageSliderAdapter(context: Context, sliderImage: ArrayList<String
     private var sliderImage: ArrayList<String> = arrayListOf()
 
     val storage= FirebaseStorage.getInstance()
-    val storRef=storage.reference.child(userID).child(calID)
+    val storRef=storage.reference.child("groupcalendar").child(calID)
 
 
 

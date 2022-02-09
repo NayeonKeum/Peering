@@ -43,7 +43,7 @@ class GroupCalAdapter(
 
 
     val storage=FirebaseStorage.getInstance()
-    val storRef=storage.reference.child(uid).child(cid)
+    val storRef=storage.reference.child("groupcalendar").child(cid)
 
 
     init {
