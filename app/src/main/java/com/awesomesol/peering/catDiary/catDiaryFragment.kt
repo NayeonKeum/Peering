@@ -65,6 +65,27 @@ class catDiaryFragment : Fragment() {
 //            }
 
 
+
+//        db.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+
+
+
+//        val categoryList:HashMap<String, ArrayList<String>>,
+        val categoryList = hashMapOf(
+            "categoryList" to arrayListOf("놀기", "일상", "친구")
+        )
+        db.collection("categories").document("uid").set(categoryList)
+
+
+        db.collection("categories")
+            .get()
+            .addOnSuccessListener {
+                Log.d(TAG, "받기 성공!!")
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
+            }
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_catdiary, container, false)
 
