@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.awesomesol.peering.catDiary.GroupCalMainFragment
 import com.awesomesol.peering.friend.FriendCalMainFragment
 import com.awesomesol.peering.catDiary.catDiaryFragment
 import com.awesomesol.peering.character.CharacterFragment
@@ -182,8 +183,9 @@ class MainActivity : AppCompatActivity() {
                 when (newIndex) {
                     0 -> {
                         //val calendarFragment= FriendCalMainFragment()
-                        val calendarFragment = CalendarMainFragment()
-                        //val calendarFragment = PostFragment()
+                        val calendarFragment= GroupCalMainFragment()
+                        // val calendarFragment = CalendarMainFragment()
+                        // val calendarFragment = PostFragment()
 
                         val userBundle = Bundle()
                         userBundle.putString("id", uid)
@@ -222,8 +224,9 @@ class MainActivity : AppCompatActivity() {
         })
         kakaoDataCallback{
             //val calendarFragment= FriendCalMainFragment()
-            val calendarFragment = CalendarMainFragment()
-            //val calendarFragment = PostFragment()
+            val calendarFragment= GroupCalMainFragment()
+            // val calendarFragment = CalendarMainFragment()
+            // val calendarFragment = PostFragment()
 
             val userBundle = Bundle()
             userBundle.putString("id", uid)
