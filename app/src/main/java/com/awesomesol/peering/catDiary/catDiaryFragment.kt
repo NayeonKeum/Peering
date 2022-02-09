@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.view.isVisible
@@ -53,7 +54,8 @@ class catDiaryFragment : Fragment() {
         val rv2 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_category)
         val rv3 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_shareDiary)
         tv_catDiaryFragment_year=view.findViewById(R.id.tv_catDiaryFragment_year)
-
+        val iv_catDiaryFragment_leftarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_leftarr)
+        val iv_catDiaryFragment_rightarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_rightarr)
 
         var year_monthList:HashMap<String, Int> = hashMapOf()
 
@@ -79,9 +81,22 @@ class catDiaryFragment : Fragment() {
 
             val today: LocalDate = LocalDate.now()
             year=today.year
-            tv_catDiaryFragment_year.text=year.toString()
+            tv_catDiaryFragment_year.text=year.toString() +"년"
             rv.adapter = MonthListRVAdapter(year_monthList, year)
             rv.layoutManager = GridLayoutManager(context, 6)
+
+            iv_catDiaryFragment_leftarr.setOnClickListener{
+                year-=1
+                tv_catDiaryFragment_year.text=year.toString() +"년"
+                rv.adapter = MonthListRVAdapter(year_monthList, year)
+                rv.layoutManager = GridLayoutManager(context, 6)
+            }
+            iv_catDiaryFragment_rightarr.setOnClickListener{
+                year+=1
+                tv_catDiaryFragment_year.text=year.toString() +"년"
+                rv.adapter = MonthListRVAdapter(year_monthList, year)
+                rv.layoutManager = GridLayoutManager(context, 6)
+            }
 
         }
 
