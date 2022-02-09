@@ -2,7 +2,7 @@
 갤러리 속 정리되지 않은 사진들을 정리해 시각화하여 일기 작성을 통해 추억을 기록할 수 있는 앱
 
 
-<img src="https://user-images.githubusercontent.com/68985625/130225398-33339094-791b-45ea-89ad-460e73594d8d.jpg" width=80%>
+<img src="https://user-images.githubusercontent.com/68985625/153276324-7ea6e5fc-0450-4c31-be26-9e229ef03cd1.png" width=80%>
 
 ## About Peering
 * 
