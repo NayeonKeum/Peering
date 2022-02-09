@@ -80,7 +80,6 @@ class CalendarFragment2(index: Int) : Fragment() {
         super.onCreate(savedInstanceState)
         instance = this
 
-
         UserApiClient.instance.me { user, error ->
             uid = user?.id.toString()
             nickname = user?.kakaoAccount?.profile?.nickname.toString()
