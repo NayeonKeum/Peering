@@ -32,7 +32,7 @@ class ShareDiaryRVAdapter(val items: ArrayList<GroupInfo>) : RecyclerView.Adapte
 
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val groupName: String = ""
-        val groupNum: Int = 0
+        val groupNum: String = ""
         val groupImg: String = ""
 
         fun bindItems(item: GroupInfo) {
@@ -41,7 +41,7 @@ class ShareDiaryRVAdapter(val items: ArrayList<GroupInfo>) : RecyclerView.Adapte
             val groupContainer = itemView.findViewById<ImageView>(R.id.iv_catDiaryFragment_groupContainer)
 
             groupTitle.text = item.groupName
-            groupNumber.text = item.groupNum.toString()
+            groupNumber.text = item.groupNum
             Glide.with(itemView)
                 .load(item.groupImg)
                 .into(groupContainer)
