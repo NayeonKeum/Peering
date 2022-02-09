@@ -23,9 +23,7 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        /*
-        val v = LayoutInflater.from(parent.context).inflate(R.layout.feed_rv_item, parent, false)
-        return Viewholder(v)*/
+
         val view : View?
         return when(viewType){
             multi_type1 -> {
@@ -95,7 +93,6 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 holder.setIsRecyclable(false)
             }
         }
-        // holder.bindItems(items[position])
     }
 
     // item의 총 갯수
@@ -286,47 +283,4 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 }
         }
     }
-    /*
-    inner class Viewholder(itemView : View) : RecyclerView.ViewHolder(itemView){
-        var cid:String=""
-        var uid:String=""
-        var nickname : String = ""
-        var mainImg : String = ""
-        var profileImg : String = ""
-        var content : String = ""
-
-        // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
-        fun bindItems(item : FeedModel){
-            cid= item.cid
-            uid=item.uid
-            content=item.content
-            profileImg=item.profileImg
-            mainImg=item.mainImg
-
-
-            val tv_FeedRVItem_nickname = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_nickname)
-            tv_FeedRVItem_nickname.text = item.nickname
-            val tv_FeedRVItem_content = itemView.findViewById<TextView>(R.id.tv_FeedRVItem_content)
-            tv_FeedRVItem_content.text = content
-
-            val iv_FeedRVItem_profileImg = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem_profileImg)
-            Glide.with(itemView)
-                    .load(profileImg)
-                    .circleCrop()
-                    .into(iv_FeedRVItem_profileImg)
-            val iv_FeedRVItem_mainImg=itemView.findViewById<ImageView>(R.id.iv_FeedRVItem_mainImg)
-
-             storage.reference.child(uid).child(cid).child(mainImg).downloadUrl
-                    .addOnSuccessListener { imageUri->
-                        Glide.with(itemView)
-                                .load(imageUri)
-                                .into(iv_FeedRVItem_mainImg);
-                    }
-                     .addOnFailureListener {
-                         Glide.with(itemView)
-                                 .load(R.drawable.feed_main_img)
-                                 .into(iv_FeedRVItem_mainImg);
-                     }
-        }
-    }*/
 }
