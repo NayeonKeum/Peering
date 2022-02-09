@@ -24,7 +24,6 @@ import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
 import com.awesomesol.peering.calendar.CalendarInfo
 import com.awesomesol.peering.calendar.GalleryData
-import com.awesomesol.peering.calendar.PostFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -36,7 +35,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
-class GroupCalFragment(index: Int) : Fragment() {
+class GroupCalFragment(index: Int, var cid: String) : Fragment() {
 
     private val TAG = "캘프"
     lateinit var mContext: Context
@@ -52,7 +51,6 @@ class GroupCalFragment(index: Int) : Fragment() {
     var dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>> = hashMapOf()
     var contentList:HashMap<String, String> = hashMapOf()
     var feedList:HashMap<String, String> = hashMapOf()
-    lateinit var fbtn:FloatingActionButton
 
     private var dataList_fromGaL: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
 
@@ -63,8 +61,6 @@ class GroupCalFragment(index: Int) : Fragment() {
     var email:String=""
     var nickname:String=""
     var profileImagePath:String=""
-
-    var cid:String=""
 
     companion object {
         var instance: GroupCalFragment? = null
@@ -81,6 +77,8 @@ class GroupCalFragment(index: Int) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
+        // 원래는 초기화할 때 옴
+        cid="calendar111111"
 
         UserApiClient.instance.me { user, error ->
             uid = user?.id.toString()
@@ -92,8 +90,6 @@ class GroupCalFragment(index: Int) : Fragment() {
                 .addOnSuccessListener { documents ->
                     for (document in documents) {
                         //Log.d(TAG, "${document.id} => ${document.data}")
-                        val hh= document.data["calendarID"] as HashMap<String, String>
-                        cid= hh["myCalendar"].toString()
 
                         fs.collection("calendars").document(cid).get()
                             .addOnSuccessListener {
@@ -125,108 +121,7 @@ class GroupCalFragment(index: Int) : Fragment() {
         val view = inflater.inflate(R.layout.fragment_calendar2, container, false)
         initView(view)
         //initCalendar()
-
-        fbtn=view.findViewById(R.id.fbtn_CalendarFragment2_refreshGal)
-        // dateGalleryData: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
-        // from fs
-        // 갤러리 불러오기
-        fbtn.setOnClickListener {
-            setLogin(object : LoginListener {
-                override fun loginClear(notices: HashMap<String, ArrayList<GalleryData>>) {
-                    Log.d(TAG, "loginClear_in_cal2(dataList4)")
-
-                    // 날짜 개수 동일
-                    if (notices.size == dateGalleryData.size){
-                        Toast.makeText(context, "이미 최신임", Toast.LENGTH_SHORT).show()
-                    }
-                    else {
-                        view.findViewById<ProgressBar>(R.id.pBar_CalendarFragment2).visibility=View.VISIBLE
-                        fs.collection("users").whereEqualTo("uid", uid).get()
-                                .addOnSuccessListener { documents ->
-
-
-                                    // 없는 것들 넣기
-                                    for (dateKey in notices.keys){
-                                        if (dateGalleryData.containsKey(dateKey)){
-                                            continue
-                                        } else{
-                                            // 키 없음
-                                            contentList[dateKey]=""
-                                            feedList[dateKey]=""
-                                            val datalist:ArrayList<HashMap<String, Any>> = arrayListOf()
-                                            for (data in notices[dateKey]!!){
-                                                val fileName="myCal"+Random().nextInt(100000)
-                                                val iu: String =data.imageUri
-                                                storage.reference.child(uid).child(cid).child(fileName)
-                                                        .putFile(iu.toUri())
-                                                        .addOnSuccessListener {
-                                                        }
-                                                        .addOnFailureListener{
-                                                        }
-                                                val hmap:HashMap<String, Any> =hashMapOf()
-                                                hmap["imageUri"]=fileName
-                                                hmap["used"]=data.used
-                                                datalist.add(hmap)
-                                            }
-                                            dateGalleryData[dateKey] = datalist
-                                        }
-                                    }
-
-                                    Log.d(TAG, "캘 업뎃: $dateGalleryData")
-
-                                    // 내 캘린더 업데이트
-                                    val calData = CalendarInfo(arrayListOf(uid), cid, "내 캘린더", dateGalleryData, contentList, feedList)
-                                    fs.collection("calendars").document(cid).set(calData)
-                                            .addOnSuccessListener { Log.d(TAG, "캘린더 저장 성공") }
-                                            .addOnFailureListener { e -> Log.d(TAG, "캘 저장 에러 났음 쨘", e) }
-
-                                    // 새로 어댑트,,
-                                    calendarAdapter = GroupCalAdapter(mContext, calendar_layout, currentDate, dateGalleryData, uid, cid)
-                                    calendar_view.adapter = calendarAdapter
-                                    calendar_view.layoutManager = GridLayoutManager(mContext, 4, GridLayoutManager.VERTICAL, false)
-                                    calendar_view.setHasFixedSize(true)
-                                    calendarAdapter.itemClick = object :
-                                        GroupCalAdapter.ItemClick {
-                                            override fun onClick(view: View, position: Int) {
-                                            val day = calendarAdapter.datelist[position].toString()
-                                            val date = "${calendar_year_month_text.text} ${day}일"
-                                            var dateym: String = SimpleDateFormat("yyyy-MM", Locale.KOREA).format(currentDate.time)
-                                            if (day.length<2){
-                                                dateym+= "-0$day"
-                                            }else{
-                                                dateym+= "-$day"
-                                            }
-
-                                            val galleryFragment = PostFragment()
-                                            var bundle = Bundle()
-                                            bundle.putString("date", date)
-                                            bundle.putString("dateym", dateym)
-                                            bundle.putString("cid", cid)
-                                            bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
-                                            bundle.putSerializable("feedList", feedList)
-                                            bundle.putString("content", contentList[dateym])
-                                            bundle.putString("uid", uid)
-                                            bundle.putString("nickname", nickname)
-                                            bundle.putString("profileImagePath", profileImagePath)
-                                            galleryFragment.arguments = bundle
-                                            parentFragmentManager.beginTransaction()
-                                                    .replace(R.id.main_screen_panel, galleryFragment).commit()
-
-                                        }
-                                    }
-                                    
-                                }
-                                .addOnFailureListener { exception ->
-                                    Log.d(TAG, exception.toString())
-                                }
-                        view.findViewById<ProgressBar>(R.id.pBar_CalendarFragment2).visibility=View.INVISIBLE
-                        Toast.makeText(context, "업데이트 완료", Toast.LENGTH_SHORT).show()
-                    }
-
-                }
-            })
-
-        }
+        
 
         return view
     }
@@ -280,7 +175,7 @@ class GroupCalFragment(index: Int) : Fragment() {
                     dateym+= "-$day"
                 }
 
-                val galleryFragment = PostFragment()
+                val galleryFragment = GroupCalPostFragment()
                 var bundle = Bundle()
                 bundle.putString("date", date)
                 bundle.putString("dateym", dateym)

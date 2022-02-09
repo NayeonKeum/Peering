@@ -185,7 +185,7 @@ class GroupCalMainFragment : BaseFragment() {
     }
 
     fun initView() {
-        val calendarPagerFragmentStateAdapter = GroupCalPagerFragmentStateAdapter(requireActivity())
+        val calendarPagerFragmentStateAdapter = GroupCalPagerFragmentStateAdapter(requireActivity(), cid)
         calendarViewPager.adapter = calendarPagerFragmentStateAdapter
         calendarViewPager.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         calendarPagerFragmentStateAdapter.apply {

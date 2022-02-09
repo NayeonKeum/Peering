@@ -1,4 +1,4 @@
-package com.awesomesol.peering.calendar
+package com.awesomesol.peering.catDiary
 
 import android.app.AlertDialog
 import android.content.Context
@@ -32,7 +32,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class PostFragment : Fragment() {
+class GroupCalPostFragment : Fragment() {
 
 
     private val TAG="갤러리"
@@ -190,7 +190,7 @@ class PostFragment : Fragment() {
         allImgs.addAll(titleimgs)
         allImgs.addAll(images)
 
-        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
+        sliderViewPager!!.adapter = GroupCalImageSliderAdapter(requireContext(), allImgs, uid, cid)
 
         sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -497,7 +497,7 @@ class PostFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "백프레스 눌름")
-                val calendarFragment = CalendarMainFragment()
+                val calendarFragment = GroupCalMainFragment()
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
             }
@@ -656,7 +656,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.adapter = GroupCalImageSliderAdapter(context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
@@ -714,7 +714,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.adapter = GroupCalImageSliderAdapter(context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
