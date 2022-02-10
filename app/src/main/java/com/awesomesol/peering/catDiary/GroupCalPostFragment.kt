@@ -306,9 +306,9 @@ class GroupCalPostFragment : Fragment() {
             var catidx=0
             val categoryStrList:ArrayList<String> = arrayListOf()
 
-            for (i in 0 until (categories["CategoryList"]?.size!!)){
-                categoryStrList.add("${categories["CategoryList"]?.get(i)}")
-                if (("${categories["CategoryList"]?.get(i)}") == category){
+            for (i in 0 until (categories["categoryList"]?.size!!)){
+                categoryStrList.add("${categories["categoryList"]?.get(i)}")
+                if (("${categories["categoryList"]?.get(i)}") == category){
                     catidx=i
                     Log.d(TAG, "catidx $catidx")
                 }
