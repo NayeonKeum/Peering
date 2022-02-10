@@ -31,13 +31,14 @@ class catDiaryFragment : Fragment() {
     var uid:String=""
     var cid:String=""
     var fs= Firebase.firestore
+    val db = Firebase.firestore
     var year:Int = 0
     lateinit var tv_catDiaryFragment_year:TextView
 
 
     lateinit var dateGalleryData:HashMap<String, ArrayList<HashMap<String, Any>>>
 
-    val db = Firebase.firestore
+    val categoryDataList = arrayListOf<CategoryInfo>()
     val groupDataList = arrayListOf<GroupInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -125,50 +126,7 @@ class catDiaryFragment : Fragment() {
 //                Log.w(TAG, "Error getting documents.", exception)
 //            }
 
-
-        db.collection("users").whereEqualTo("uid", uid).get()
-            .addOnSuccessListener { result ->
-                for (document in result){
-                    Log.d(TAG, "${document.id} => ${document.data}")
-                    Log.d(TAG, "유저 받기 성공!!")
-                    val uid = document.data["uid"] as String
-                    Log.d(TAG, uid)
-                    var categoryList = hashMapOf(
-                        "categoryList" to arrayListOf("놀기", "일상", "친구", "안녕")
-                    )
-                    db.collection("categories").document(uid).set(categoryList)
-
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
-            }
-
-
-
-        db.collection("categories")
-            .get()
-            .addOnSuccessListener {
-                Log.d(TAG, "카테고리 받기 성공!!")
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents.", exception)
-            }
-
-
-
-
-        val items2 = ArrayList<String>()
-        items2.add("카테고고고리1")
-        items2.add("카테고아리2")
-        items2.add("카테고안리2")
-        items2.add("카테고안리3")
-        val items3 = ArrayList<String>()
-        items3.add("솔룩스")
-        items3.add("어썸솔 팟팅")
-        items3.add("인생은 뭘까")
-        items3.add("하하")
-        items3.add("글자를길게써봅시다")
+        
 
 
 //        if (groupDataList.size != 0) {
@@ -177,13 +135,14 @@ class catDiaryFragment : Fragment() {
 //        }
 
 //        rv.adapter = MonthListRVAdapter(items)
-        rv2.adapter = CategoryRVAdapter(items2)
+        rv2.adapter = CategoryRVAdapter(categoryDataList)
         rv3.adapter = ShareDiaryRVAdapter(groupDataList)
 
         //rv.layoutManager = GridLayoutManager(context, 6)
         rv2.layoutManager = LinearLayoutManager(requireContext())
         rv3.layoutManager = GridLayoutManager(context, 4)
 
+        getFBCategoryData()
         getFBGroupData()
         return view
     }
@@ -214,6 +173,62 @@ class catDiaryFragment : Fragment() {
             }
     }
 
+    private fun getFBCategoryData() {
+
+        db.collection("users").whereEqualTo("uid", uid).get()
+            .addOnSuccessListener { result ->
+                for (document in result){
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    Log.d(TAG, "유저 받기 성공!!")
+                    val uid = document.data["uid"] as String
+                    Log.d(TAG, uid)
+
+
+//                    var categoryInfo: HashMap<String, ArrayList<String>> = document.data as HashMap<String, ArrayList<String>>
+//                    categoryInfo["categoryList"] as HashMap<String, ArrayList<String>>
+//                    val category = CategoryInfo(
+//                        document["categoryList"] as HashMap<String, ArrayList<String>> )
+
+//                    groupDataList.add(item)
+//                    db.collection("categories").document(uid).set(category)
+
+
+                    db.collection("categories")
+                        .get()
+                        .addOnSuccessListener { result ->
+                            categoryDataList.clear()
+                            for (document in result){    // 가져온 문서들은 result에 들어감
+                                Log.d(TAG, "${document.id} => ${document.data}")
+                                val categories=document.data as HashMap<String, ArrayList<String>>
+                                val list = document.data["categoryList"] as? ArrayList<String>
+                                val category = list?.get(0).toString()
+
+                                Log.d(TAG, "리스트!!!!!!!! ${list?.get(0).toString()}")
+//                                Log.d(TAG, "리스트!!!!!!!! ${mapOf(categories)}")
+
+                                var categoryList = hashMapOf(
+                                    "categoryList" to arrayListOf("놀기", "일상", "친구", "안녕", "반가워")
+                                )
+                                db.collection("categories").document(uid).set(categories)
+
+//                                val categoryData = CategoryInfo(
+//                                    document["categoryList"] as HashMap<String, ArrayList<String>>)
+                                categoryDataList.set(categories)
+                            }
+                            CategoryRVAdapter(categoryDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.w(TAG, "Error getting documents: ", exception)
+                        }
+
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+    }
+
     private fun getFBGroupData() {
         db.collection("groups")
             .get()
@@ -236,5 +251,9 @@ class catDiaryFragment : Fragment() {
             }
 
     }
+
+}
+
+private fun <E> ArrayList<E>.set(index: HashMap<String, ArrayList<String>>) {
 
 }
