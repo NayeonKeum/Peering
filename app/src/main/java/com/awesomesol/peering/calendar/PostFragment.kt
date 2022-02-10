@@ -301,10 +301,10 @@ class PostFragment : Fragment() {
                     //tv_PostFragment_publicScope.text="나만 보기"
                 }
                 override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
                 ) {
                     when (position) {
                         // 나만 보기
@@ -338,10 +338,10 @@ class PostFragment : Fragment() {
                     //tv_PostFragment_category.text=category
                 }
                 override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long
                 ) {
                     category=categoryStrList[position]
                     //tv_PostFragment_category.text=category
@@ -385,66 +385,66 @@ class PostFragment : Fragment() {
                 lateinit var feedList:HashMap<String, String>
 
                 fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
-                        .addOnSuccessListener { documents->
-                            for (document in documents) {
-                                if (document.data["cid"].toString() == cid){
-                                    hh= document.data["dataList4"] as HashMap<String, ArrayList<HashMap<String, Any>>>
-                                    contList=document.data["contentList"] as HashMap<String, String>
-                                    feedList=document.data["feedList"] as HashMap<String, String>
-                                }
-                            }
-                            hh[dateym]=galleryRVAdapter.dateGalleryData
-                            contList[dateym]=ncontent
-
-                            fs.collection("calendars").document(cid).update("dataList4", hh)
-                                    .addOnSuccessListener { Log.d(TAG, "d성공") }
-                                    .addOnFailureListener{ Log.d(TAG, "d실패")}
-                            fs.collection("calendars").document(cid).update("contentList", contList)
-                                    .addOnSuccessListener { Log.d(TAG, "c성공") }
-                                    .addOnFailureListener{ Log.d(TAG, "c실패")}
-
-                            if (feedList[dateym].equals("")) {
-                                // 피드 처음 생김!
-                                val feedName = "Feed_" + Random().nextInt(100000)
-                                val hh = hh[dateym]
-                                if (hh != null) {
-                                    for (data in hh) {
-                                        val lnum: Long = 2
-                                        if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
-                                            fs.collection("feeds").document(feedName).set(feed)
-                                                    .addOnSuccessListener { Log.d(TAG, "f성공") }
-                                                    .addOnFailureListener { Log.d(TAG, "f실패") }
-                                            break
-                                        }
-                                    }
-                                }
-                                feedList[dateym] = feedName
-                                fs.collection("calendars").document(cid).update("feedList", feedList)
-                                        .addOnSuccessListener { Log.d(TAG, "c성공") }
-                                        .addOnFailureListener { Log.d(TAG, "c실패") }
-                            } else{
-                                // 피드 이름 feedList에서 받아옴(수정됨)
-                                val hh = hh[dateym]
-                                if (hh != null) {
-                                    for (data in hh) {
-                                        val lnum: Long = 2
-                                        if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
-                                            feedList[dateym]?.let { it1 ->
-                                                fs.collection("feeds").document(it1).set(feed)
-                                                        .addOnSuccessListener { Log.d(TAG, "f성공") }
-                                                        .addOnFailureListener { Log.d(TAG, "f실패") }
-                                            }
-                                            break
-                                        }
-
-                                    }
-                                }
-
+                    .addOnSuccessListener { documents->
+                        for (document in documents) {
+                            if (document.data["cid"].toString() == cid){
+                                hh= document.data["dataList4"] as HashMap<String, ArrayList<HashMap<String, Any>>>
+                                contList=document.data["contentList"] as HashMap<String, String>
+                                feedList=document.data["feedList"] as HashMap<String, String>
                             }
                         }
-                        .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
+                        hh[dateym]=galleryRVAdapter.dateGalleryData
+                        contList[dateym]=ncontent
+
+                        fs.collection("calendars").document(cid).update("dataList4", hh)
+                            .addOnSuccessListener { Log.d(TAG, "d성공") }
+                            .addOnFailureListener{ Log.d(TAG, "d실패")}
+                        fs.collection("calendars").document(cid).update("contentList", contList)
+                            .addOnSuccessListener { Log.d(TAG, "c성공") }
+                            .addOnFailureListener{ Log.d(TAG, "c실패")}
+
+                        if (feedList[dateym].equals("")) {
+                            // 피드 처음 생김!
+                            val feedName = "Feed_" + Random().nextInt(100000)
+                            val hh = hh[dateym]
+                            if (hh != null) {
+                                for (data in hh) {
+                                    val lnum: Long = 2
+                                    if (data["used"] as Long == lnum) {
+                                        val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
+                                        fs.collection("feeds").document(feedName).set(feed)
+                                            .addOnSuccessListener { Log.d(TAG, "f성공") }
+                                            .addOnFailureListener { Log.d(TAG, "f실패") }
+                                        break
+                                    }
+                                }
+                            }
+                            feedList[dateym] = feedName
+                            fs.collection("calendars").document(cid).update("feedList", feedList)
+                                .addOnSuccessListener { Log.d(TAG, "c성공") }
+                                .addOnFailureListener { Log.d(TAG, "c실패") }
+                        } else{
+                            // 피드 이름 feedList에서 받아옴(수정됨)
+                            val hh = hh[dateym]
+                            if (hh != null) {
+                                for (data in hh) {
+                                    val lnum: Long = 2
+                                    if (data["used"] as Long == lnum) {
+                                        val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym)
+                                        feedList[dateym]?.let { it1 ->
+                                            fs.collection("feeds").document(it1).set(feed)
+                                                .addOnSuccessListener { Log.d(TAG, "f성공") }
+                                                .addOnFailureListener { Log.d(TAG, "f실패") }
+                                        }
+                                        break
+                                    }
+
+                                }
+                            }
+
+                        }
+                    }
+                    .addOnFailureListener { e -> Log.w(TAG, "Error updating document", e) }
 
             }
 
@@ -462,32 +462,32 @@ class PostFragment : Fragment() {
     fun categories_and_feedname_Callback(callback:(HashMap<String, Any>)->Unit){
         // 카테고리 가져오기
         fs.collection("categories").document(uid).get()
-                .addOnSuccessListener { documents ->
-                    val categories=documents.data as HashMap<String, ArrayList<String>>
-                    this.categories=categories
-                    lateinit var feedListcallback:HashMap<String, String>
-                    fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
-                            .addOnSuccessListener { documents ->
-                                for (document in documents) {
-                                    if (document.data["cid"].toString() == cid) {
-                                        feedListcallback = document.data["feedList"] as HashMap<String, String>
-                                    }
-                                }
-
-                                val feedName = feedListcallback[dateym] as String
-                                //callback(feedName)
-
-                                fs.collection("feeds").document(feedName).get()
-                                        .addOnSuccessListener {
-                                            var hmap:HashMap<String, Any> = hashMapOf()
-                                            hmap["category"]=it.data?.get("category") as String
-                                            hmap["publicScope"]=it.data?.get("publicScope") as Long
-
-                                            callback(hmap)
-                                        }
-
+            .addOnSuccessListener { documents ->
+                val categories=documents.data as HashMap<String, ArrayList<String>>
+                this.categories=categories
+                lateinit var feedListcallback:HashMap<String, String>
+                fs.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+                    .addOnSuccessListener { documents ->
+                        for (document in documents) {
+                            if (document.data["cid"].toString() == cid) {
+                                feedListcallback = document.data["feedList"] as HashMap<String, String>
                             }
-                }
+                        }
+
+                        val feedName = feedListcallback[dateym] as String
+                        //callback(feedName)
+
+                        fs.collection("feeds").document(feedName).get()
+                            .addOnSuccessListener {
+                                var hmap:HashMap<String, Any> = hashMapOf()
+                                hmap["category"]=it.data?.get("category") as String
+                                hmap["publicScope"]=it.data?.get("publicScope") as Long
+
+                                callback(hmap)
+                            }
+
+                    }
+            }
     }
 
 
