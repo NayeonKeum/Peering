@@ -2,22 +2,28 @@ package com.awesomesol.peering.friend
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.activity.OnBackPressedCallback
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.CalendarMainFragment
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_friend.*
 
 class FriendFragment : Fragment() {
     val TAG="피드"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
 
 //        // 카카오톡 친구 목록 가져오기 (기본)
 //        TalkApiClient.instance.friends { friends, error ->
@@ -49,6 +55,9 @@ class FriendFragment : Fragment() {
         items.add(FriendModel("a", "b", "c", "d","Kang", "abc@gmail.com"))
         items.add(FriendModel("a", "b", "c", "d","Cho", "abc@gmail.com"))
         items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
+        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
+        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
+        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
 
         rv.adapter = FriendRVAdapter(items)
         rv.layoutManager = LinearLayoutManager(requireContext())
@@ -66,7 +75,7 @@ class FriendFragment : Fragment() {
         iv_FriendFragment_friends.setOnClickListener {
             val diaryreadFragment = DiaryReadFragment()
 
-            requireActivity().supportFragmentManager.beginTransaction()
+            parentFragmentManager.beginTransaction()
                 .replace(R.id.main_screen_panel, diaryreadFragment).commitNow()
         }
     }

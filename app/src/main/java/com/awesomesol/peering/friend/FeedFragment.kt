@@ -133,15 +133,16 @@ class FeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        friendBtnClick()
     }
-    
-    // recyclerview 클릭 수정
-    fun moreBtnClick(){
+
+    // friends 버튼 클릭
+    private fun friendBtnClick() {
         iv_FeedFragment_friends.setOnClickListener {
-            //val diaryreadFragment = DiaryReadFragment()
             val friendFragment = FriendFragment()
             requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main_screen_panel, friendFragment).commitNow()
+                .replace(R.id.main_screen_panel, friendFragment).commit()
+
         }
     }
 
@@ -176,4 +177,3 @@ class FeedFragment : Fragment() {
             }
     }
 }
-
