@@ -19,11 +19,13 @@
         <ImageView
             android:id="@+id/iv_FeedRVItem2_mainImg"
             android:src="@drawable/feed_img"
+            android:scaleType="centerCrop"
             android:layout_width="150dp"
             android:layout_height="108dp" />
         <ImageView
             android:id="@+id/iv_FeedRVItem2_mainImg2"
             android:src="@drawable/feed_main_img"
+            android:scaleType="centerCrop"
             android:layout_width="150dp"
             android:layout_height="108dp" />
     </LinearLayout>

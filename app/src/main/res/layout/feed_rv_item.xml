@@ -19,6 +19,8 @@
         <ImageView
             android:id="@+id/iv_FeedRVItem_mainImg"
             android:src="@drawable/feed_main_img"
+            android:background="@drawable/bg_feed_img"
+            android:scaleType="centerCrop"
             android:layout_width="150dp"
             android:layout_height="150dp" />
 
@@ -29,6 +31,8 @@
             <ImageView
                 android:id="@+id/iv_FeedRVItem_Img"
                 android:src="@drawable/feed_img"
+                android:background="@drawable/bg_feed_img"
+                android:scaleType="centerCrop"
                 android:layout_width="75dp"
                 android:layout_height="75dp" />
             <TextView
@@ -38,6 +42,7 @@
                 android:layout_height="75dp"
                 android:gravity="center"
                 android:text="more"
+                android:backgroundTint="#57BBDED6"
                 android:textColor="@color/theme_green"
                 android:textStyle="bold"
                 android:textSize="18sp"/>

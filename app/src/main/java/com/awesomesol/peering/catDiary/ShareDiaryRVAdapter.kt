@@ -38,7 +38,14 @@ class ShareDiaryRVAdapter(val items: ArrayList<GroupInfo>) : RecyclerView.Adapte
             val groupContainer = itemView.findViewById<ImageView>(R.id.iv_catDiaryFragment_groupContainer)
 
             groupTitle.text = item.groupName
-            groupNumber.text = item.groupNum
+
+            var uidNum = item.uidList.count()
+            if (uidNum < 10) {
+                groupNumber.text = "0" + uidNum.toString()
+            } else {
+                groupNumber.text = uidNum.toString()
+            }
+
             Glide.with(itemView)
                 .load(item.groupImg)
                 .into(groupContainer)

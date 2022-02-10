@@ -19,6 +19,8 @@
         <ImageView
             android:id="@+id/iv_FeedRVItem1_mainImg"
             android:src="@drawable/feed_main_img2"
+            android:background="@drawable/bg_feed_img"
+            android:scaleType="centerCrop"
             android:layout_width="150dp"
             android:layout_height="216dp" />
     </LinearLayout>
