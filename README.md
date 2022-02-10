@@ -5,18 +5,14 @@
 
 <img src="https://user-images.githubusercontent.com/68985625/153276324-7ea6e5fc-0450-4c31-be26-9e229ef03cd1.png" width=80%>
 
-## About Peering
-
-**P**hoto+f**ee**ling+sha**ring** : Share your photos and feelings with your peer!
-
 
 ## Technology Stack
 
 </br>
 <p align="center">
   
-<img src="https://user-images.githubusercontent.com/68985625/153458477-9f5a9746-9882-418d-8dc2-a41b07f2908a.png" width="100">
-  <img src="https://user-images.githubusercontent.com/68985625/153458488-78be0100-a035-4aeb-afa3-e5880c296260.png" width="100">
+<img src="https://user-images.githubusercontent.com/68985625/153458477-9f5a9746-9882-418d-8dc2-a41b07f2908a.png" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <img src="https://user-images.githubusercontent.com/68985625/153458488-78be0100-a035-4aeb-afa3-e5880c296260.png" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <img src="https://user-images.githubusercontent.com/68985625/153458498-0ceb5812-1e13-4ec2-a868-47980af593a8.png" width="100">
 
 </p>
@@ -49,6 +45,8 @@
 </p>
 
 </br>
+
+
 ## Team AWESOMESOL
 * [금나연(팀장)](https://github.com/NayeonKeum)
 * [김서현](https://github.com/seohyun319)
@@ -58,6 +56,10 @@
 
 </br>
 
+
+## About Peering
+
+**P**hoto+f**ee**ling+sha**ring** : Share your photos and feelings with your peer!
 
 
 ### 대표 기능
@@ -69,7 +71,6 @@
 </br>
 
 
-</br>
 ### 타겟
 1. 날짜별 추억을 되돌아보길 원하는 사람
 2. 산발적인 갤러리의 사진을 모아 보고 싶은 사람
