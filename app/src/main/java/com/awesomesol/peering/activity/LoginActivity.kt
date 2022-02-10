@@ -18,25 +18,24 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.net.toUri
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarInfo
-import com.awesomesol.peering.calendar.GalleryData
 import com.awesomesol.peering.character.UserInfo
 import com.awesomesol.peering.databinding.ActivityLoginBinding
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import com.kakao.network.ApiErrorCode
+import com.kakao.network.ErrorResult
 import com.kakao.sdk.auth.LoginClient
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.AuthErrorCause.*
 import com.kakao.sdk.talk.TalkApiClient
 import com.kakao.sdk.user.UserApiClient
+import com.kakao.usermgmt.UserManagement
+import com.kakao.usermgmt.callback.UnLinkResponseCallback
 import org.threeten.bp.LocalDate
 import org.threeten.bp.format.DateTimeFormatter
 import java.security.MessageDigest
 import java.security.NoSuchAlgorithmException
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
 
 
 class LoginActivity : AppCompatActivity(){
@@ -271,7 +270,7 @@ class LoginActivity : AppCompatActivity(){
                                                     Log.d(TAG, "캘린더 저장 성공")
                                                     binding.pBarLoginActivity.visibility= View.INVISIBLE
                                                 }
-                                                .addOnFailureListener{e-> Log.d(TAG, "캘 저장 에러 났음", e)}
+                                                .addOnFailureListener{ e-> Log.d(TAG, "캘 저장 에러 났음", e)}
 
                                             /////////
 
@@ -378,7 +377,7 @@ class LoginActivity : AppCompatActivity(){
                                                     Log.d(TAG, "캘린더 저장 성공")
                                                     binding.pBarLoginActivity.visibility= View.INVISIBLE
                                                 }
-                                                .addOnFailureListener{e-> Log.d(TAG, "캘 저장 에러 났음", e)}
+                                                .addOnFailureListener{ e-> Log.d(TAG, "캘 저장 에러 났음", e)}
                                     }
                                 val intent = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(intent)
@@ -399,6 +398,27 @@ class LoginActivity : AppCompatActivity(){
                 }
             }
         }
+
+
+//        UserManagement.getInstance()
+//                .requestUnlink(object : UnLinkResponseCallback() {
+//                    override fun onSessionClosed(errorResult: ErrorResult) {
+//                        Toast.makeText(applicationContext, "에러: " + errorResult + "로그인 세션이 닫혔습니다.", Toast.LENGTH_SHORT).show()
+//                    }
+//
+//                    override fun onFailure(errorResult: ErrorResult) {
+//                        val error = errorResult.errorCode
+//                        if (error == ApiErrorCode.CLIENT_ERROR_CODE) {
+//                            Toast.makeText(applicationContext, "에러: $error\n네트워크 연결이 불안정합니다.", Toast.LENGTH_SHORT).show()
+//                        } else {
+//                            Toast.makeText(applicationContext, "에러: $error\n회원 탈퇴에 실패했습니다.", Toast.LENGTH_SHORT).show()
+//                        }
+//                    }
+//
+//                    override fun onSuccess(result: Long) {
+//                        Toast.makeText(applicationContext, "성공: $result\n회원 탈퇴 되었습니다.", Toast.LENGTH_SHORT).show()
+//                    }
+//                })
 
         binding.kakaoLogoutButton.setOnClickListener {
             UserApiClient.instance.logout { error ->
@@ -427,18 +447,17 @@ class LoginActivity : AppCompatActivity(){
 
     }
 
-    private fun calendarCallback(calID:String, fileName:String, imgUri:String, callback:(Uri?)->Unit){
+    private fun calendarCallback(calID: String, fileName: String, imgUri: String, callback: (Uri?) -> Unit){
         storage.reference.child(uid).child(calID).child(fileName)
                 .putFile(imgUri.toUri())
-                .addOnSuccessListener {
-                    taskSnapshot -> // 업로드 정보를 담는다
+                .addOnSuccessListener { taskSnapshot -> // 업로드 정보를 담는다
                     taskSnapshot.metadata?.reference?.downloadUrl?.addOnSuccessListener { it->
                         callback(it)
                     }
                 }
     }
 
-    fun galleryDataCallback(callback:(HashMap<String, ArrayList<HashMap<String, Any>>>)->Unit){
+    fun galleryDataCallback(callback: (HashMap<String, ArrayList<HashMap<String, Any>>>) -> Unit){
         if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 200)
         } else {
@@ -468,8 +487,8 @@ class LoginActivity : AppCompatActivity(){
 //                        withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
 
                         var uri= ContentUris.withAppendedId(
-                            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            id
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                id
                         )
 
                         //3. 데이터를 View로 설정
@@ -479,7 +498,7 @@ class LoginActivity : AppCompatActivity(){
 
                         // 일단 2021.10.1이전 것들은 다 안 넣음
                         val targetDate = LocalDate.parse(date, DateTimeFormatter.ISO_DATE)
-                        val standardDate = LocalDate.of(2021,10,1)
+                        val standardDate = LocalDate.of(2021, 10, 1)
 
                         if (targetDate.isBefore(standardDate)){
                             continue
@@ -593,9 +612,9 @@ class LoginActivity : AppCompatActivity(){
 
         //가져올 컬럼명
         val what = arrayOf(
-            MediaStore.Images.ImageColumns._ID,
-            MediaStore.Images.ImageColumns.TITLE,
-            MediaStore.Images.ImageColumns.DATE_TAKEN
+                MediaStore.Images.ImageColumns._ID,
+                MediaStore.Images.ImageColumns.TITLE,
+                MediaStore.Images.ImageColumns.DATE_TAKEN
         )
 
         //정렬

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
@@ -7,28 +8,33 @@
     android:padding="10dp"
     android:background="#efefef">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <ImageView
             android:id="@+id/iv_bottomsheet_up"
-            android:src="@drawable/bottom_up"
-            android:layout_height="27dp"
             android:layout_width="27dp"
+            android:layout_height="27dp"
             android:layout_gravity="center"
-            />
+            android:src="@drawable/bottom_up"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <View
+            android:id="@+id/view4"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:layout_marginVertical="8dp"
-            android:background="#dddddd"/>
+            android:background="#dddddd"
+            app:layout_constraintTop_toBottomOf="@+id/iv_bottomsheet_up" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rv_PostFragment"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            />
-    </LinearLayout>
+            app:layout_constraintTop_toBottomOf="@+id/view4" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

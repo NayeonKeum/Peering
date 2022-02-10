@@ -2,10 +2,12 @@ package com.awesomesol.peering.activity
 
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.awesomesol.peering.catDiary.GroupCalMainFragment
 import com.awesomesol.peering.friend.FriendCalMainFragment
 import com.awesomesol.peering.catDiary.catDiaryFragment
 import com.awesomesol.peering.character.CharacterFragment
@@ -13,6 +15,8 @@ import com.awesomesol.peering.databinding.ActivityMainBinding
 import com.awesomesol.peering.friend.FeedFragment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.link.LinkClient
+import com.kakao.sdk.template.model.*
 import com.kakao.sdk.user.UserApiClient
 import nl.joery.animatedbottombar.AnimatedBottomBar
 import kotlin.collections.HashMap
@@ -50,6 +54,42 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
 
+//        // 메세지 보내기
+//        val defaultFeed = FeedTemplate(
+//            content = Content(
+//                title = "Peering",
+//                description = "순간을 기억해주는 당신만의 앱",
+//                imageUrl = "https://firebasestorage.googleapis.com/v0/b/peering-58c65.appspot.com/o/applogo.png?alt=media&token=99d9aa01-ddae-45e6-8d9b-fee0a0ad3528",
+//                link = Link(
+//                    webUrl = "https://developers.kakao.com",
+//                    mobileWebUrl = "https://developers.kakao.com"
+//                )
+//            ),
+//            buttons = listOf(
+//                Button(
+//                    "앱으로 보기",
+//                    Link(
+//                        androidExecParams = hashMapOf("key1" to "value1", "key2" to "value2"),
+//                        iosExecParams = hashMapOf("key1" to "value1", "key2" to "value2")
+//                    )
+//                )
+//            )
+//        )
+//
+//
+//        LinkClient.instance.defaultTemplate(this, defaultFeed) { linkResult, error ->
+//            if (error != null) {
+//                Log.e(TAG, "카카오링크 보내기 실패", error)
+//            }
+//            else if (linkResult != null) {
+//                Log.d(TAG, "카카오링크 보내기 성공 ${linkResult.intent}")
+//                startActivity(linkResult.intent)
+//
+//                // 카카오링크 보내기에 성공했지만 아래 경고 메시지가 존재할 경우 일부 컨텐츠가 정상 동작하지 않을 수 있습니다.
+//                Log.w(TAG, "Warning Msg: ${linkResult.warningMsg}")
+//                Log.w(TAG, "Argument Msg: ${linkResult.argumentMsg}")
+//            }
+//        }
 
 
         /* 여기는 전부 firestore 사용 예시~ */
@@ -143,8 +183,9 @@ class MainActivity : AppCompatActivity() {
                 when (newIndex) {
                     0 -> {
                         //val calendarFragment= FriendCalMainFragment()
-                        val calendarFragment = CalendarMainFragment()
-                        //val calendarFragment = PostFragment()
+                        val calendarFragment= GroupCalMainFragment()
+                        // val calendarFragment = CalendarMainFragment()
+                        // val calendarFragment = PostFragment()
 
                         val userBundle = Bundle()
                         userBundle.putString("id", uid)
@@ -158,6 +199,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     1 -> {
                         val friendFragment = catDiaryFragment()
+                        val userBundle = Bundle()
+                        userBundle.putString("id", uid)
+                        friendFragment.arguments = userBundle
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.main_screen_panel, friendFragment).commit()
                     }
@@ -183,8 +227,9 @@ class MainActivity : AppCompatActivity() {
         })
         kakaoDataCallback{
             //val calendarFragment= FriendCalMainFragment()
-            val calendarFragment = CalendarMainFragment()
-            //val calendarFragment = PostFragment()
+            val calendarFragment= GroupCalMainFragment()
+            // val calendarFragment = CalendarMainFragment()
+            // val calendarFragment = PostFragment()
 
             val userBundle = Bundle()
             userBundle.putString("id", uid)
