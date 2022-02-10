@@ -7,7 +7,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 
-class CategoryRVAdapter(val items: ArrayList<String>) : RecyclerView.Adapter<CategoryRVAdapter.Viewholder>()  {
+class CategoryRVAdapter(val items: ArrayList<CategoryInfo>) : RecyclerView.Adapter<CategoryRVAdapter.Viewholder>()  {
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -25,9 +25,9 @@ class CategoryRVAdapter(val items: ArrayList<String>) : RecyclerView.Adapter<Cat
     }
 
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bindItems(item: String) {
+        fun bindItems(item: CategoryInfo) {
             val categoryTitle = itemView.findViewById<TextView>(R.id.tv_catDiaryFragment_catSub)
-            categoryTitle.text = item
+            categoryTitle.text = item.categoryList.toString()
 
         }
     }
