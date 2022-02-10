@@ -3,7 +3,6 @@ package com.awesomesol.peering.catDiary
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.media.Image
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -24,7 +23,6 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_first.view.*
 import org.threeten.bp.LocalDate
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
@@ -32,16 +30,11 @@ class GroupCalMainFragment : BaseFragment() {
     
     val TAG="그룹캘"
 
-    lateinit var id:String
+    //lateinit var id:String
     lateinit var email:String
-    lateinit var nickname:String
-    lateinit var profileImagePath: String
-    lateinit var followingNum: String
-    lateinit var followerNum:String
-    lateinit var progressNow: String
-    lateinit var dDay:String
-    lateinit var diaryCnt:String
-    lateinit var diaryLeftCnt: String
+    lateinit var groupName:String
+    lateinit var groupImg: String
+
     lateinit var gid:String
     lateinit var cid:String
     lateinit var uidList:ArrayList<String>
@@ -87,17 +80,24 @@ class GroupCalMainFragment : BaseFragment() {
 //            nickname = it.getString("nickname").toString()
 //            profileImagePath = it.getString("profileImagePath").toString()
             // 이건 정보 번들 받아야함
-            id = "2077226967"
+            //id = "2077226967"
             cid="calendar573471"
-            nickname = "예시) 금나연(그룹이면 됨)"
+            groupName = "예시) 금나연(그룹이면 됨)"
             // 이거 그룹명
-            profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+            groupImg = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
             // 위에 거가 그룹 사진이겠지(groupName)
             email ="ryann3@naver.com"
-            followingNum = "140"
-            gid="grouptest"
+            gid="grouptest" // 이거 필수(키 값)
 
         }
+
+        cid="calendar573471"
+        groupName = "예시) 금나연(그룹이면 됨)"
+        // 이거 그룹명
+        groupImg = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+        // 위에 거가 그룹 사진이겠지(groupName)
+        email ="ryann3@naver.com"
+        gid="grouptest" // 이거 필수(키 값)
 
         instance = this
 
@@ -109,10 +109,10 @@ class GroupCalMainFragment : BaseFragment() {
             .addOnSuccessListener {
               Log.d(TAG, "it.data, ${it.data}")
               // callback(it.data as HashMap<String, Any>)
-            nickname= it.data?.get("groupName") as String
+            groupName= it.data?.get("groupName") as String
             cid= it.data!!["cid"] as String
             uidList= it.data!!["uidList"] as ArrayList<String>
-            profileImagePath=it.data!!["groupImg"] as String
+            groupImg=it.data!!["groupImg"] as String
 
             Log.d(TAG, "cid $cid")
             fs.collection("users").get()
@@ -136,13 +136,13 @@ class GroupCalMainFragment : BaseFragment() {
         calendarViewPager = viewFrag.calendarViewPager
 
         groupNuserCallback {
-            viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.text = nickname
+            viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.text = groupName
 
 
             iv_CharacterFragment_profileImg =  viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)
 
 
-            if (profileImagePath != ""){
+            if (groupImg != ""){
                 storage.reference.child("groupcalendar").child(cid).child("groupImg").downloadUrl
                     .addOnSuccessListener { groupImg->
                         Log.d(TAG, "이 불러오는 데 성공했구만")
@@ -172,10 +172,8 @@ class GroupCalMainFragment : BaseFragment() {
             }
 
 
-
-
-            viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_followingNum)?.text =
-                followingNum
+//            viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_followingNum)?.text =
+//                groupNum
 
             // 리사이클러뷰 어댑트
             // uid:[cid:slkdf, gr:sdkfjs]

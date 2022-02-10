@@ -105,19 +105,19 @@ class LoginActivity : AppCompatActivity(){
                                     // 유저 친구/프로필/닉네임 등은 수정이 필요할 수도 있잖슴
                                     // 친구는 근데 친구인지 아닌지가 있으니까.. 일단 이 기능은 보류.. ㅜㅜ
 
-                                    for (document in documents) {
-                                        var mergeable: HashMap<String, Any> = document.data as HashMap<String, Any>
-                                        mergeable["nickName"] = nickname
-                                        mergeable["profileUrl"] = profileImagePath
-                                        mergeable["friendList"] = mfriendList
-                                        fs.collection("users").document(uid).set(mergeable)
-                                                .addOnSuccessListener { it ->
-                                                    Log.d(TAG, "fs 에 유저 정보 수정 쨘")
-                                                }
-                                                .addOnFailureListener { exception ->
-                                                    Log.d(TAG, "fs 에 유저 정보 수정 실패")
-                                                }
-                                    }
+//                                    for (document in documents) {
+//                                        var mergeable: HashMap<String, Any> = document.data as HashMap<String, Any>
+//                                        mergeable["nickName"] = nickname
+//                                        mergeable["profileUrl"] = profileImagePath
+//                                        mergeable["friendList"] = mfriendList
+//                                        fs.collection("users").document(uid).set(mergeable)
+//                                               .addOnSuccessListener { it ->
+//                                                    Log.d(TAG, "fs 에 유저 정보 수정 쨘")
+//                                                }
+//                                                .addOnFailureListener { exception ->
+//                                                    Log.d(TAG, "fs 에 유저 정보 수정 실패")
+//                                                }
+//                                   }
                                 }
                                 .addOnFailureListener { exception -> }
 
