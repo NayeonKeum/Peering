@@ -282,11 +282,11 @@ class PostFragment : Fragment() {
             Log.d(TAG, "categoryStrList $categoryStrList")
 
 
-            spn_PostFragment_publicScope.adapter=ArrayAdapter.createFromResource(requireContext(), R.array.dialog_scope, android.R.layout.simple_spinner_item)
+            spn_PostFragment_publicScope.adapter=ArrayAdapter.createFromResource(requireContext(), R.array.dialog_scope,  android.R.layout.simple_list_item_1)
 
             spn_PostFragment_publicScope.setSelection(publicScope.toInt())
 
-            spn_PostFragment_category.adapter=ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, categoryStrList)
+            spn_PostFragment_category.adapter=ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, categoryStrList)
 
             spn_PostFragment_category.setSelection(catidx)
 

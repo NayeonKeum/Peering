@@ -60,15 +60,19 @@
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item1.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item2.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item3.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_calendar2.xml" value="0.20923913043478262" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_friend_cal.xml" value="0.1" />
-        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_friend_cal_main.xml" value="0.18857142857142858" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_friend_cal_main.xml" value="0.14285714285714285" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_group_cal_main.xml" value="0.3828571428571429" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_group_cal_rv_item.xml" value="2.857142857142857" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_post.xml" value="0.3828571428571429" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_post_bottomsheet_photos.xml" value="0.5142857142857143" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_post_read_only.xml" value="0.36614583333333334" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_post_rv_item.xml" value="0.21014492753623187" />
-        <entry key="..\:/Users/user/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_item.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/spinner_custom.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/user/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_list_item_1.xml" value="0.17552083333333332" />
+        <entry key="..\:/Users/user/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_list_item_2.xml" value="0.17552083333333332" />
+        <entry key="..\:/Users/user/AppData/Local/Android/Sdk/platforms/android-31/data/res/layout/simple_spinner_item.xml" value="0.42857142857142855" />
       </map>
     </option>
   </component>

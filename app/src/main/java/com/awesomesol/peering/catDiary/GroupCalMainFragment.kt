@@ -91,6 +91,14 @@ class GroupCalMainFragment : BaseFragment() {
 
         }
 
+        cid="calendar573471"
+        groupName = "예시) 금나연(그룹이면 됨)"
+        // 이거 그룹명
+        groupImg = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+        // 위에 거가 그룹 사진이겠지(groupName)
+        email ="ryann3@naver.com"
+        gid="grouptest" // 이거 필수(키 값)
+
         instance = this
 
 
@@ -162,8 +170,6 @@ class GroupCalMainFragment : BaseFragment() {
                 photoPickerIntent.type="image/*"
                 startActivityForResult(photoPickerIntent, pickImageFromAlbum)
             }
-
-
 
 
 //            viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_followingNum)?.text =
