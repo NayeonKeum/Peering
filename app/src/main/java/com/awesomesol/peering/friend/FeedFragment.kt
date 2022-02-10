@@ -16,7 +16,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_feed.*
-import kotlinx.android.synthetic.main.fragment_friend.*
 
 class FeedFragment : Fragment() {
     val TAG="피드"
@@ -45,7 +44,6 @@ class FeedFragment : Fragment() {
 
 
     }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
@@ -53,7 +51,7 @@ class FeedFragment : Fragment() {
                 Log.d(TAG, "백프레스 눌름")
                 val calendarFragment = CalendarMainFragment()
                 activity?.supportFragmentManager?.beginTransaction()
-                    ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
+                        ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
@@ -123,8 +121,8 @@ class FeedFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val diaryreadFragment = DiaryReadFragment()
 
-               requireActivity().supportFragmentManager.beginTransaction()
-                 .replace(R.id.main_screen_panel, diaryreadFragment).commit()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_screen_panel, diaryreadFragment).commit()
             }
         }
         rv.adapter = adapter
@@ -148,10 +146,7 @@ class FeedFragment : Fragment() {
         }
     }
 
-
-    // todo : 임의로 대입한 값이 아닌 실제로 작성한 값이 들어갈 수 있도록 하자..!!!
-    // recyclerview multi 찾아서 mainImg 데이터 전달받도록 수정하기 -> viewholder 여러 개
-    private fun getFBFeedData(){
+   private fun getFBFeedData(){
         db.collection("feeds")    // 작업할 컬렉션
             .get()                   // 문서 가져오기
             .addOnSuccessListener { result ->
@@ -159,12 +154,16 @@ class FeedFragment : Fragment() {
                 feedDataList.clear()
                 for (document in result){    // 가져온 문서들은 result에 들어감
                     val item = FeedModel(
-                        document["cid"] as String,
-                        document["uid"] as String,
-                        document["nickname"] as String,
-                        document["mainImg"] as String,
-                        document["profileImg"] as String,
-                        document["content"] as String)
+                            document["cid"] as String,
+                            document["uid"] as String,
+                            document["nickname"] as String,
+                            document["mainImg"] as String,
+                            document["profileImg"] as String,
+                            document["content"] as String,
+                        document["publicScope"] as Long,
+                        document["category"] as String,
+                        document["date"] as String,
+                        document["type"] as Int)
 
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")
@@ -176,4 +175,3 @@ class FeedFragment : Fragment() {
             }
     }
 }
-
