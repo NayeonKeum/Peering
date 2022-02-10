@@ -38,7 +38,10 @@ class catDiaryFragment : Fragment() {
 
     lateinit var dateGalleryData:HashMap<String, ArrayList<HashMap<String, Any>>>
 
-    val categoryDataList = arrayListOf<CategoryInfo>()
+    lateinit var rv2: RecyclerView
+    lateinit var rv3: RecyclerView
+
+    var categoryDataList = arrayListOf<String>()
     val groupDataList = arrayListOf<GroupInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,8 +59,8 @@ class catDiaryFragment : Fragment() {
 
         // RecyclerView 생성
         val rv = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_monthList)
-        val rv2 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_category)
-        val rv3 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_shareDiary)
+        rv2 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_category)
+        rv3 = view.findViewById<RecyclerView>(R.id.rv_catDiaryFragment_shareDiary)
         tv_catDiaryFragment_year=view.findViewById(R.id.tv_catDiaryFragment_year)
         val iv_catDiaryFragment_leftarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_leftarr)
         val iv_catDiaryFragment_rightarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_rightarr)
@@ -160,44 +163,33 @@ class catDiaryFragment : Fragment() {
                     val uid = document.data["uid"] as String
                     Log.d(TAG, uid)
 
-
-//                    var categoryInfo: HashMap<String, ArrayList<String>> = document.data as HashMap<String, ArrayList<String>>
-//                    categoryInfo["categoryList"] as HashMap<String, ArrayList<String>>
-//                    val category = CategoryInfo(
-//                        document["categoryList"] as HashMap<String, ArrayList<String>> )
-
-//                    groupDataList.add(item)
-//                    db.collection("categories").document(uid).set(category)
-
-
-                    db.collection("categories")
+                    // uid와 일치하는 카테고리 받아옴 (해당 유저의 카테고리)
+                    db.collection("categories").document(uid)
                         .get()
-                        .addOnSuccessListener { result ->
+                        .addOnSuccessListener { document ->
                             categoryDataList.clear()
-                            for (document in result){    // 가져온 문서들은 result에 들어감
-                                Log.d(TAG, "${document.id} => ${document.data}")
-                                val categories=document.data as HashMap<String, ArrayList<String>>
-                                val list = document.data["categoryList"] as? ArrayList<String>
-                                val category = list?.get(0).toString()
+                            Log.d(TAG, "${document.id} => ${document.data}")
+                            val categories = document.data as HashMap<String, ArrayList<String>>
+                            val list = categories["categoryList"]
+                            Log.d(TAG, "리스트!!!!!!!! ${list?.get(0).toString()}")
 
-                                Log.d(TAG, "리스트!!!!!!!! ${list?.get(0).toString()}")
-//                                Log.d(TAG, "리스트!!!!!!!! ${mapOf(categories)}")
+//                            var categoryList = hashMapOf(
+//                                "categoryList" to arrayListOf("놀기", "일상", "친구", "안녕", "반가워")
+//                            )
+//                            db.collection("categories").document(uid).set(categories)
 
-                                var categoryList = hashMapOf(
-                                    "categoryList" to arrayListOf("놀기", "일상", "친구", "안녕", "반가워")
-                                )
-                                db.collection("categories").document(uid).set(categories)
-
-//                                val categoryData = CategoryInfo(
-//                                    document["categoryList"] as HashMap<String, ArrayList<String>>)
-                                categoryDataList.set(categories)
+                            if (list != null) {
+                                categoryDataList = list
                             }
-                            CategoryRVAdapter(categoryDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
+                            Log.d(TAG, categoryDataList.toString())
+
+//                            CategoryRVAdapter(categoryDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
+                            rv2.adapter = CategoryRVAdapter(categoryDataList)
+                            rv2.layoutManager = LinearLayoutManager(requireContext())
                         }
                         .addOnFailureListener { exception ->
                             Log.w(TAG, "Error getting documents: ", exception)
                         }
-
                 }
             }
             .addOnFailureListener { exception ->
@@ -248,6 +240,3 @@ class catDiaryFragment : Fragment() {
     }
 }
 
-private fun <E> ArrayList<E>.set(index: HashMap<String, ArrayList<String>>) {
-
-}
