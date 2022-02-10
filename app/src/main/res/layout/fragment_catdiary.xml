@@ -118,7 +118,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/view3" />
 
             <ImageView
-                android:id="@+id/imageView3"
+                android:id="@+id/iv_catDiaryFragment_category_create_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="1dp"
@@ -192,35 +192,35 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/horizon_category2" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:id="@+id/catDiaryFragment_default_container"
-                app:layout_constraintEnd_toEndOf="@+id/horizon_category2"
-                app:layout_constraintStart_toStartOf="@+id/horizon_category2"
-                app:layout_constraintTop_toBottomOf="@+id/horizon_category2">
+<!--            <androidx.constraintlayout.widget.ConstraintLayout-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:layout_marginTop="30dp"-->
+<!--                android:id="@+id/catDiaryFragment_default_container"-->
+<!--                app:layout_constraintEnd_toEndOf="@+id/horizon_category2"-->
+<!--                app:layout_constraintStart_toStartOf="@+id/horizon_category2"-->
+<!--                app:layout_constraintTop_toBottomOf="@+id/horizon_category2">-->
 
-                <ImageView
-                    android:id="@+id/iv_catDiaryFragment_default"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:srcCompat="@drawable/badge_radius" />
+<!--                <ImageView-->
+<!--                    android:id="@+id/iv_catDiaryFragment_default"-->
+<!--                    android:layout_width="wrap_content"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    app:layout_constraintStart_toStartOf="parent"-->
+<!--                    app:layout_constraintTop_toTopOf="parent"-->
+<!--                    app:srcCompat="@drawable/badge_radius" />-->
 
-                <TextView
-                    android:id="@+id/tv_catDiaryFragment_info"
-                    android:layout_width="170dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="15dp"
-                    android:text="공유 다이어리로 친구들과의 추억을 기록해 보세요! "
-                    app:layout_constraintBottom_toBottomOf="@+id/iv_catDiaryFragment_default"
-                    app:layout_constraintStart_toEndOf="@+id/iv_catDiaryFragment_default"
-                    app:layout_constraintTop_toTopOf="@+id/iv_catDiaryFragment_default" />
+<!--                <TextView-->
+<!--                    android:id="@+id/tv_catDiaryFragment_info"-->
+<!--                    android:layout_width="170dp"-->
+<!--                    android:layout_height="wrap_content"-->
+<!--                    android:layout_marginStart="15dp"-->
+<!--                    android:text="공유 다이어리로 친구들과의 추억을 기록해 보세요! "-->
+<!--                    app:layout_constraintBottom_toBottomOf="@+id/iv_catDiaryFragment_default"-->
+<!--                    app:layout_constraintStart_toEndOf="@+id/iv_catDiaryFragment_default"-->
+<!--                    app:layout_constraintTop_toTopOf="@+id/iv_catDiaryFragment_default" />-->
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+<!--            </androidx.constraintlayout.widget.ConstraintLayout>-->
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

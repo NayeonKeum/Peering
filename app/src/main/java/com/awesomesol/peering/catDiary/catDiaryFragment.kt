@@ -61,7 +61,21 @@ class catDiaryFragment : Fragment() {
         val iv_catDiaryFragment_leftarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_leftarr)
         val iv_catDiaryFragment_rightarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_rightarr)
 
+        val makeCategoryBtn = view.findViewById<ImageView>(R.id.iv_catDiaryFragment_category_create_btn)
+
         var year_monthList:HashMap<String, Int> = hashMapOf()
+
+        makeCategoryBtn.setOnClickListener {
+            val dialog = context?.let { it1 -> CategoryDialog(it1) }
+            dialog?.showDialog()
+            dialog?.setOnClickListener(object : CategoryDialog.OnDialogClickListener {
+                override fun onClicked(categoryName: String) {
+                    db.collection("categories").document(uid)
+                        .update("categoryList", categoryName)
+                }
+
+            })
+        }
 
         arguments?.let {
             // 테스트
