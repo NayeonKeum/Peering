@@ -106,28 +106,6 @@ class catDiaryFragment : Fragment() {
         }
 
 
-        // 그룹
-//        val gid= "group"+ Random().nextInt(10000)
-//        val group1 = hashMapOf(
-//            "groupName" to "이제 된 건가",
-//            "groupNum" to "4",
-//            "groupImg" to "img",
-//            "cid" to "uid",
-//            "uidList" to arrayListOf(1, 2, 3, 4)
-//        )
-//        db.collection("groups").document(gid).set(group1)
-//
-//        db.collection("groups")
-//            .get()
-//            .addOnSuccessListener {
-//                Log.d(TAG, "받기 성공!!")
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.w(TAG, "Error getting documents.", exception)
-//            }
-
-        
-
 
 //        if (groupDataList.size != 0) {
 //            val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
@@ -174,7 +152,6 @@ class catDiaryFragment : Fragment() {
     }
 
     private fun getFBCategoryData() {
-
         db.collection("users").whereEqualTo("uid", uid).get()
             .addOnSuccessListener { result ->
                 for (document in result){
@@ -226,32 +203,49 @@ class catDiaryFragment : Fragment() {
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
             }
-
     }
 
     private fun getFBGroupData() {
-        db.collection("groups")
-            .get()
+        db.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
             .addOnSuccessListener { result ->
-                groupDataList.clear()
-                for (document in result){    // 가져온 문서들은 result에 들어감
-                    val item = GroupInfo(
-                        document["groupName"] as String,
-                        document["groupNum"] as String,
-                        document["groupImg"] as String,
-                        document["cid"] as String,
-                        document["uidList"] as ArrayList<String>)
-                    groupDataList.add(item)
-                    Log.d(TAG, "${document.id} => ${document.data}")
+                for (document in result) {
+                    db.collection("groups")
+                        .get()
+                        .addOnSuccessListener { result ->
+                            groupDataList.clear()
+                            for (document in result) {    // 가져온 문서들은 result에 들어감
+                                val gid = "group" + Random().nextInt(10000)
+                                val item = GroupInfo(
+                                    document["groupName"] as String,
+                                    document["groupNum"] as String,
+                                    document["groupImg"] as String,
+                                    document["cid"] as String,
+                                    document["uidList"] as ArrayList<String>
+                                )
+//                    db.collection("groups").document(gid).set(item)
+                                groupDataList.add(item)
+
+
+                                //                    val group1 = hashMapOf(
+                                //                        "groupName" to "죽여줘",
+                                //                        "groupNum" to "4",
+                                //                        "groupImg" to "img",
+                                //                        "cid" to "uid",
+                                //                        "uidList" to arrayListOf(1, 2, 3, 4)
+                                //                    )
+//
+                            }
+                            ShareDiaryRVAdapter(groupDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
+                        }
+                        .addOnFailureListener { exception ->
+                            Log.w(TAG, "Error getting documents: ", exception)
+                        }
                 }
-                ShareDiaryRVAdapter(groupDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
             }
-
     }
-
 }
 
 private fun <E> ArrayList<E>.set(index: HashMap<String, ArrayList<String>>) {
