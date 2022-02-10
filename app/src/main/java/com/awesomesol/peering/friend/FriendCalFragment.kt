@@ -1,32 +1,22 @@
 package com.awesomesol.peering.friend
 
-import android.Manifest
-import android.content.ContentUris
 import android.content.Context
-import android.content.pm.PackageManager
-import android.database.Cursor
 import android.os.Bundle
-import android.provider.MediaStore
-import android.text.format.DateFormat
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
 import com.awesomesol.peering.calendar.*
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_calendar2.view.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -48,19 +38,17 @@ class FriendCalFragment(index: Int) : Fragment() {
     lateinit var calendarAdapter: Calendar2Adapter
     var dateGalleryData: HashMap<String, ArrayList<HashMap<String, Any>>> = hashMapOf()
 
-    private var dataList_fromGaL: HashMap<String, ArrayList<GalleryData>> = hashMapOf()
 
     val fs= Firebase.firestore
     val storage= FirebaseStorage.getInstance()
 
-    var uid:String=""
+    var fuid:String=""
     var email:String=""
     var nickname:String=""
     var profileImagePath:String=""
+    var contentList:HashMap<String, String> = hashMapOf()
 
-    var cid:String=""
-
-    private var pBar_CalendarFragment2: ProgressBar? = null
+    var fcid:String=""
 
 
     companion object {
@@ -80,22 +68,23 @@ class FriendCalFragment(index: Int) : Fragment() {
         instance = this
 
         // 이건 정보 번들 받아야함
-        uid = "2077226967"
+        // 친구의 정보임. 친구 전용임. 친구꺼라고 (친구의 마이캘 보는 용도라고,,,)
+        fuid = "2077226967"
         nickname = "예시) 금나연"
         profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
         email ="ryann3@naver.com"
 
-        fs.collection("users").whereEqualTo("uid", uid).get()
+        fs.collection("users").whereEqualTo("uid", fuid).get()
             .addOnSuccessListener { documents ->
                 for (document in documents) {
                     //Log.d(TAG, "${document.id} => ${document.data}")
                     val hh= document.data["calendarID"] as HashMap<String, String>
-                    cid= hh["myCalendar"].toString()
+                    fcid= hh["myCalendar"].toString()
 
-                    fs.collection("calendars").document(cid).get()
+                    fs.collection("calendars").document(fcid).get()
                         .addOnSuccessListener {
                             dateGalleryData= it.data?.get("dataList4") as HashMap<String, ArrayList<HashMap<String, Any>>>
-
+                            contentList= it.data?.get("contentList") as HashMap<String, String>
                             initCalendar()
                         }
                         .addOnFailureListener{
@@ -107,7 +96,6 @@ class FriendCalFragment(index: Int) : Fragment() {
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
             }
-
     }
 
     override fun onCreateView(
@@ -142,7 +130,7 @@ class FriendCalFragment(index: Int) : Fragment() {
 
     fun initCalendar() {
         Log.d(TAG, "dateGalleryData $dateGalleryData")
-        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData, uid, cid)
+        calendarAdapter = Calendar2Adapter(mContext, calendar_layout, currentDate, dateGalleryData, fuid, fcid)
         calendar_view.adapter = calendarAdapter
         calendar_view.layoutManager =
             GridLayoutManager(mContext, 4, GridLayoutManager.VERTICAL, false)
@@ -160,13 +148,21 @@ class FriendCalFragment(index: Int) : Fragment() {
                     dateym += "-$day"
                 }
 
-                val galleryFragment = PostFragment()
+                val galleryFragment = PostReadOnlyFragment()
                 var bundle = Bundle()
                 bundle.putString("date", date)
                 bundle.putString("dateym", dateym)
-                bundle.putString("cid", cid)
+                bundle.putString("cid", fcid)
+                bundle.putString("email", email)
                 bundle.putSerializable("dateGalleryData", dateGalleryData[dateym])
-                galleryFragment.setArguments(bundle)
+                bundle.putSerializable("content", contentList[dateym])
+                bundle.putString("uid", fuid)
+                bundle.putString("nickname", nickname)
+                bundle.putString("profileImagePath", profileImagePath)
+                galleryFragment.arguments = bundle
+
+
+
                 parentFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, galleryFragment).commit()
 
