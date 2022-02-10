@@ -92,6 +92,7 @@ class FeedFragment : Fragment() {
                 var type=adapter.items[position].type
                 var group=adapter.items[position].isGroup
 
+                Log.d(TAG, "mainImg, $mainImg")
 
                 var date="${dateym.split("-")[0]}년 ${dateym.split("-")[1]}월 ${dateym.split("-")[2]}일"
 
@@ -105,6 +106,7 @@ class FeedFragment : Fragment() {
                 bundle.putString("uid", uid) // 친구!!!!! uid임
                 bundle.putString("nickname", nickname) //
                 bundle.putString("profileImagePath", profileImg)
+                bundle.putString("group", group.toString())
 
                 postreadonlyFragment.arguments = bundle
 
@@ -150,14 +152,12 @@ class FeedFragment : Fragment() {
                 }
 
 
-
                 uid_list.add(uid)
-                Log.d(TAG, "uid_list $uid_list")
 
                 val feedRef = db.collection("feeds")
                 feedRef.whereIn("uid", uid_list).get()
                     .addOnSuccessListener { result ->
-                        Log.d(TAG, "RESULT, ${result.documents}")
+
                         for (document in result){
                             Log.d(TAG, document.data["publicScope"].toString())
                             if(document.data["publicScope"]?.equals(ln1) == true  || document.data["publicScope"]?.equals(ln2) == true ){
