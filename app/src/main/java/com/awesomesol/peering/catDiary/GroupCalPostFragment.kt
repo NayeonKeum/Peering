@@ -451,16 +451,20 @@ class GroupCalPostFragment : Fragment() {
                             if (feedList[dateym].equals("") || feedList[dateym]==null) {
                                 // 피드 처음 생김!
                                 val feedName = "Feed_" + Random().nextInt(100000)
-                                val hh = hh[dateym]
-                                if (hh != null) {
-                                    for (data in hh) {
+                                val hmap = hh[dateym]
+                                if (hmap != null) {
+                                    for (data in hmap) {
                                         val lnum: Long = 2
-                                        if (data["used"] as Long == lnum) {
+                                        val lnum1: Long = 1
+                                        if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
                                             // 여기서 피드에 있는 거 다 가져오는 수정 해야함!!!
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym, type=finalData.size)
-                                            fs.collection("feeds").document(feedName).set(feed)
+
+                                            val feed = hh[dateym]?.let { it1 -> FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym, it1.size.toLong(), 1) }
+                                            if (feed != null) {
+                                                fs.collection("feeds").document(feedName).set(feed)
                                                     .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                     .addOnFailureListener { Log.d(TAG, "f실패") }
+                                            }
                                             break
                                         }
                                     }
@@ -471,16 +475,20 @@ class GroupCalPostFragment : Fragment() {
                                         .addOnFailureListener { Log.d(TAG, "c실패") }
                             } else{
                                 // 피드 이름 feedList에서 받아옴(수정됨)
-                                val hh = hh[dateym]
-                                if (hh != null) {
-                                    for (data in hh) {
+                                val hmap = hh[dateym]
+                                if (hmap != null) {
+                                    for (data in hmap) {
                                         val lnum: Long = 2
-                                        if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym, hh.size)
+                                        val lnum1: Long = 1
+                                        if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
+                                            val feed = hh[dateym]?.let { it1 -> FeedModel(cid, uid, nickname,hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym, it1.size.toLong(), 1) }
+
                                             feedList[dateym]?.let { it1 ->
-                                                fs.collection("feeds").document(it1).set(feed)
+                                                if (feed != null) {
+                                                    fs.collection("feeds").document(it1).set(feed)
                                                         .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                         .addOnFailureListener { Log.d(TAG, "f실패") }
+                                                }
                                             }
                                             break
                                         }

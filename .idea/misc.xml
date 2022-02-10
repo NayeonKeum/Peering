@@ -58,9 +58,16 @@
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/drawable/gradience_horizontal.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/drawable/rounded_1.xml" value="0.38229166666666664" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/drawable/rounded_dialog.xml" value="0.38229166666666664" />
+
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item.xml" value="0.20923913043478262" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item1.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item2.xml" value="0.36614583333333334" />
+        <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/feed_rv_item3.xml" value="0.36614583333333334" />
+
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/catdiary_month_list_rv_item.xml" value="0.42857142857142855" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_catdiary.xml" value="0.2857142857142857" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_friend.xml" value="0.1765625" />
+
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_friend_cal.xml" value="0.1" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_friend_cal_main.xml" value="0.18857142857142858" />
         <entry key="..\:/Users/user/AndroidStudioProjects/Peering/app/src/main/res/layout/fragment_group_cal_main.xml" value="0.3828571428571429" />
