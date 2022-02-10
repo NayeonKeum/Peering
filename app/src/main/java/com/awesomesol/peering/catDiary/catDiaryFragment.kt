@@ -22,8 +22,6 @@ import org.threeten.bp.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 
 class catDiaryFragment : Fragment() {
@@ -51,59 +49,6 @@ class catDiaryFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        val groups = db.collection("groups")
-
-        val gid= "group"+ Random().nextInt(10000)
-
-        val group1 = hashMapOf(
-            "groupName" to "이제 된 건가",
-            "groupNum" to "4",
-            "groupImg" to "img",
-            "cid" to "uid",
-            "uidList" to arrayListOf(1, 2, 3, 4)
-        )
-        groups.document(gid).set(group1)
-
-//        db.collection("groups")
-//            .add(group1)
-//            .addOnSuccessListener {
-//                Log.d(TAG, "성공!!")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w(TAG, "Error adding document", e)
-//            }
-//
-//        db.collection("groups")
-//            .get()
-//            .addOnSuccessListener {
-//                Log.d(TAG, "받기 성공!!")
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.w(TAG, "Error getting documents.", exception)
-//            }
-
-
-
-//        db.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
-
-
-
-//        val categoryList:HashMap<String, ArrayList<String>>,
-        val categoryList = hashMapOf(
-            "categoryList" to arrayListOf("놀기", "일상", "친구")
-        )
-        db.collection("categories").document("uid").set(categoryList)
-
-
-        db.collection("categories")
-            .get()
-            .addOnSuccessListener {
-                Log.d(TAG, "받기 성공!!")
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents.", exception)
-            }
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_catdiary, container, false)
@@ -160,6 +105,56 @@ class catDiaryFragment : Fragment() {
         }
 
 
+        // 그룹
+//        val gid= "group"+ Random().nextInt(10000)
+//        val group1 = hashMapOf(
+//            "groupName" to "이제 된 건가",
+//            "groupNum" to "4",
+//            "groupImg" to "img",
+//            "cid" to "uid",
+//            "uidList" to arrayListOf(1, 2, 3, 4)
+//        )
+//        db.collection("groups").document(gid).set(group1)
+//
+//        db.collection("groups")
+//            .get()
+//            .addOnSuccessListener {
+//                Log.d(TAG, "받기 성공!!")
+//            }
+//            .addOnFailureListener { exception ->
+//                Log.w(TAG, "Error getting documents.", exception)
+//            }
+
+
+        db.collection("users").whereEqualTo("uid", uid).get()
+            .addOnSuccessListener { result ->
+                for (document in result){
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    Log.d(TAG, "유저 받기 성공!!")
+                    val uid = document.data["uid"] as String
+                    Log.d(TAG, uid)
+                    var categoryList = hashMapOf(
+                        "categoryList" to arrayListOf("놀기", "일상", "친구", "안녕")
+                    )
+                    db.collection("categories").document(uid).set(categoryList)
+
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
+            }
+
+
+
+        db.collection("categories")
+            .get()
+            .addOnSuccessListener {
+                Log.d(TAG, "카테고리 받기 성공!!")
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents.", exception)
+            }
+
 
 
 
@@ -176,13 +171,12 @@ class catDiaryFragment : Fragment() {
         items3.add("글자를길게써봅시다")
 
 
-        if (groupDataList.size != 0) {
-            val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
-            groupDefault.isVisible = false
-        }
+//        if (groupDataList.size != 0) {
+//            val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
+//            groupDefault.isVisible = false
+//        }
 
-        // rv의 adapter는 여기에서 만든 Adapter이다~
-        //rv.adapter = MonthListRVAdapter(items)
+//        rv.adapter = MonthListRVAdapter(items)
         rv2.adapter = CategoryRVAdapter(items2)
         rv3.adapter = ShareDiaryRVAdapter(groupDataList)
 
