@@ -8,16 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.view.isVisible
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.storage.FirebaseStorage
-import com.google.firebase.storage.StorageReference
 import org.threeten.bp.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
@@ -42,7 +38,7 @@ class catDiaryFragment : Fragment() {
     lateinit var rv3: RecyclerView
 
     var categoryDataList = arrayListOf<String>()
-    val groupDataList = arrayListOf<GroupInfo>()
+    var groupDataList = arrayListOf<GroupInfo>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,14 +110,6 @@ class catDiaryFragment : Fragment() {
 //            val groupDefault = view.findViewById<ConstraintLayout>(R.id.catDiaryFragment_default_container)
 //            groupDefault.isVisible = false
 //        }
-
-//        rv.adapter = MonthListRVAdapter(items)
-        rv2.adapter = CategoryRVAdapter(categoryDataList)
-        rv3.adapter = ShareDiaryRVAdapter(groupDataList)
-
-        //rv.layoutManager = GridLayoutManager(context, 6)
-        rv2.layoutManager = LinearLayoutManager(requireContext())
-        rv3.layoutManager = GridLayoutManager(context, 4)
 
         getFBCategoryData()
         getFBGroupData()
@@ -198,41 +186,37 @@ class catDiaryFragment : Fragment() {
     }
 
     private fun getFBGroupData() {
-        db.collection("calendars").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
+        db.collection("groups").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
-                    db.collection("groups")
-                        .get()
-                        .addOnSuccessListener { result ->
-                            groupDataList.clear()
-                            for (document in result) {    // 가져온 문서들은 result에 들어감
-                                val gid = "group" + Random().nextInt(10000)
-                                val item = GroupInfo(
-                                    document["groupName"] as String,
-                                    document["groupNum"] as String,
-                                    document["groupImg"] as String,
-                                    document["cid"] as String,
-                                    document["uidList"] as ArrayList<String>
-                                )
-//                    db.collection("groups").document(gid).set(item)
-                                groupDataList.add(item)
+                    val uidList = document.data["uidList"] as ArrayList<String>
+                    Log.d(TAG, "${document.id} => ${document.data}")
+//                    Log.d(TAG, "유저 아이디 리스트! => ${uidList}")
+                    val gid = "group" + Random().nextInt(10000)
+                    val groupItem = GroupInfo(
+                        document["groupName"] as String,
+                        document["groupNum"] as String,
+                        document["groupImg"] as String,
+                        document["cid"] as String,
+                        document["uidList"] as ArrayList<String>
+                    )
+//                    Log.d(TAG, "아이템!! => ${groupItem}")
+                    groupDataList.add(groupItem)
+                    Log.d(TAG, groupDataList.toString())
 
-
-                                //                    val group1 = hashMapOf(
-                                //                        "groupName" to "죽여줘",
-                                //                        "groupNum" to "4",
-                                //                        "groupImg" to "img",
-                                //                        "cid" to "uid",
-                                //                        "uidList" to arrayListOf(1, 2, 3, 4)
-                                //                    )
-//
-                            }
-                            ShareDiaryRVAdapter(groupDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
-                        }
-                        .addOnFailureListener { exception ->
-                            Log.w(TAG, "Error getting documents: ", exception)
-                        }
+//                    val group1 = hashMapOf(
+//                        "groupName" to "죽여줘",
+//                        "groupNum" to "4",
+//                        "groupImg" to "img",
+//                        "cid" to "uid",
+//                        "uidList" to arrayListOf(1, 2, 3, 4)
+//                    )
+//                    db.collection("groups").document(gid).set(item)//
                 }
+                //                    ShareDiaryRVAdapter(groupDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
+                Log.d(TAG, "데이터!! ${groupDataList.toString()}")
+                rv3.adapter = ShareDiaryRVAdapter(groupDataList)
+                rv3.layoutManager = GridLayoutManager(context, 4)
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
