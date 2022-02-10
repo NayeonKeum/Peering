@@ -155,7 +155,6 @@ class catDiaryFragment : Fragment() {
                     db.collection("categories").document(uid)
                         .get()
                         .addOnSuccessListener { document ->
-                            categoryDataList.clear()
                             Log.d(TAG, "${document.id} => ${document.data}")
                             val categories = document.data as HashMap<String, ArrayList<String>>
                             val list = categories["categoryList"]
@@ -195,7 +194,6 @@ class catDiaryFragment : Fragment() {
                     val gid = "group" + Random().nextInt(10000)
                     val groupItem = GroupInfo(
                         document["groupName"] as String,
-                        document["groupNum"] as String,
                         document["groupImg"] as String,
                         document["cid"] as String,
                         document["uidList"] as ArrayList<String>
