@@ -16,13 +16,17 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 
 
-class ImageSliderAdapter(context: Context, sliderImage: ArrayList<String>, userID:String, calID:String) :
+class ImageSliderAdapter(var group:String, context: Context, sliderImage: ArrayList<String>, userID:String, calID:String) :
     RecyclerView.Adapter<ImageSliderAdapter.MyViewHolder>() {
     private val context: Context = context
     private var sliderImage: ArrayList<String> = arrayListOf()
 
     val storage= FirebaseStorage.getInstance()
-    val storRef=storage.reference.child(userID).child(calID)
+    val storRef = if (group == "1"){
+        storage.reference.child("groupcalendar").child(calID)
+    }else{
+        storage.reference.child(userID).child(calID)
+    }
 
 
 

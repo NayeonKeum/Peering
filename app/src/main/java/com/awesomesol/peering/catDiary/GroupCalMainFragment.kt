@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.awesomesol.peering.R
 import com.awesomesol.peering.activity.MainActivity
+import com.awesomesol.peering.calendar.CalendarInfo
 import com.awesomesol.peering.calendar.PostFragment
 import com.awesomesol.peering.common.BaseFragment
 import com.bumptech.glide.Glide
@@ -88,6 +89,8 @@ class GroupCalMainFragment : BaseFragment() {
             // 위에 거가 그룹 사진이겠지(groupName)
             email ="ryann3@naver.com"
             gid="grouptest" // 이거 필수(키 값)
+
+
 
         }
 

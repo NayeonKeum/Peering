@@ -51,6 +51,7 @@ class PostReadOnlyFragment : Fragment() {
     private var email:String=""
     private var nickname:String=""
     private var profileImagePath=""
+    var group=""
 
     private var categories:HashMap<String, ArrayList<String>> = hashMapOf()
 
@@ -80,8 +81,16 @@ class PostReadOnlyFragment : Fragment() {
             uid=bundle.getString("uid").toString()
             nickname=bundle.getString("nickname").toString()
             profileImagePath=bundle.getString("profileImagePath").toString()
+            group=bundle.getString("group").toString()
 
-            storRef=storage.reference.child(uid).child(cid)
+            Log.d(TAG, "groupY ${cid}")
+
+            storRef = if (group == "1"){
+                storage.reference.child("groupcalendar").child(cid)
+            }else{
+                storage.reference.child(uid).child(cid)
+            }
+
 
             try{
                 Log.d(TAG, "넘어온 번들: ${bundle.getSerializable("dateGalleryData")}")
@@ -148,7 +157,7 @@ class PostReadOnlyFragment : Fragment() {
         allImgs.addAll(titleimgs)
         allImgs.addAll(images)
 
-        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
+        sliderViewPager!!.adapter = ImageSliderAdapter(group, requireContext(), allImgs, uid, cid)
 
         sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {

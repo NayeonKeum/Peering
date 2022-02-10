@@ -190,7 +190,7 @@ class PostFragment : Fragment() {
         allImgs.addAll(titleimgs)
         allImgs.addAll(images)
 
-        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
+        sliderViewPager!!.adapter = ImageSliderAdapter("0", requireContext(), allImgs, uid, cid)
 
         sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
@@ -677,7 +677,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.adapter = ImageSliderAdapter("0", context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
@@ -735,7 +735,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.adapter = ImageSliderAdapter("0", context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
