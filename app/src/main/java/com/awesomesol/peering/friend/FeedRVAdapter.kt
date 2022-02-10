@@ -19,13 +19,15 @@ import com.google.firebase.storage.StorageReference
 
 class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    val storage= FirebaseStorage.getInstance()
+    val storage = FirebaseStorage.getInstance()
+    val ln0:Long=0
+    val ln1:Long=1
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        val view : View?
-        return when(viewType){
+        val view: View?
+        return when (viewType) {
             multi_type1 -> {
                 view = LayoutInflater.from(parent.context).inflate(
                     R.layout.feed_rv_item1,
@@ -62,20 +64,21 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
     }
 
     // Item 클릭을 위한 추가
-    interface ItemClick{
+    interface ItemClick {
         fun onClick(view: View, position: Int)
     }
+
     var itemClick: ItemClick? = null
 
     // onCreateViewHolder에서 가져와서 view에 실제 데이터 연결
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         // Item클릭을 위한 추가
-        if(itemClick != null){
+        if (itemClick != null) {
             holder?.itemView?.setOnClickListener { v ->
                 itemClick?.onClick(v, position)
             }
         }
-        when(items[position].type){
+        when (items[position].type.toInt()) {
             multi_type1 -> {
                 (holder as MultiViewHolder1).bindItems(items[position])
                 holder.setIsRecyclable(false)
@@ -100,17 +103,23 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
         return items.size
     }
 
-    override fun getItemViewType(position: Int): Int {
-        return items[position].type
+    override fun getItemViewType(position: Int):Int {
+        return items[position].type.toInt()
     }
-    inner class MultiViewHolder1(itemView : View) : RecyclerView.ViewHolder(itemView) {
+
+    inner class MultiViewHolder1(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var cid: String = ""
         var uid: String = ""
         var nickname: String = ""
-        var mainImg: String = ""
+        var mainImg: ArrayList<HashMap<String, Any>> = arrayListOf()
         var profileImg: String = ""
         var content: String = ""
-        val type : Int = 0
+        var publicScope: Long = 0
+        var category: String = ""
+        var date: String = ""
+        var type: Long = 0
+        var isGroup: Long = 0
+        lateinit var storRef: StorageReference
 
         // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item: FeedModel) {
@@ -119,7 +128,9 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
             content = item.content
             profileImg = item.profileImg
             mainImg = item.mainImg
-
+            isGroup = item.isGroup
+            date=item.date
+            itemView.findViewById<TextView>(R.id.tv_FeedRVItem_date).text=date
 
             val tv_FeedRVItem_nickname =
                 itemView.findViewById<TextView>(R.id.tv_FeedRVItem1_nickname)
@@ -133,9 +144,15 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 .load(profileImg)
                 .circleCrop()
                 .into(iv_FeedRVItem_profileImg)
-            val iv_FeedRVItem_mainImg = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem1_mainImg)
+            val iv_FeedRVItem_mainImg =
+                itemView.findViewById<ImageView>(R.id.iv_FeedRVItem1_mainImg)
 
-            storage.reference.child(uid).child(cid).child(mainImg).downloadUrl
+
+            if (isGroup == ln0) { storRef=storage.reference.child(uid).child(cid)}
+            else if(isGroup==ln1) {storRef=storage.reference.child("groupcalendar").child(cid)}
+
+
+            storRef.child(mainImg[0]["imageUri"] as String).downloadUrl
                 .addOnSuccessListener { imageUri ->
                     Glide.with(itemView)
                         .load(imageUri)
@@ -148,14 +165,21 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 }
         }
     }
-    inner class MultiViewHolder2(itemView : View) : RecyclerView.ViewHolder(itemView) {
+
+    inner class MultiViewHolder2(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var cid: String = ""
         var uid: String = ""
         var nickname: String = ""
-        var mainImg: String = ""
+        var mainImg: ArrayList<HashMap<String, Any>> = arrayListOf()
         var profileImg: String = ""
         var content: String = ""
-        val type : Int = 0
+        var publicScope: Long = 0
+        var category: String = ""
+        var date: String = ""
+        var type: Long = 0
+        var isGroup: Long = 0
+        lateinit var storRef: StorageReference
+
 
         // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item: FeedModel) {
@@ -164,7 +188,9 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
             content = item.content
             profileImg = item.profileImg
             mainImg = item.mainImg
-
+            isGroup = item.isGroup
+            date=item.date
+            itemView.findViewById<TextView>(R.id.tv_FeedRVItem_date).text=date
 
             val tv_FeedRVItem_nickname =
                 itemView.findViewById<TextView>(R.id.tv_FeedRVItem2_nickname)
@@ -178,9 +204,17 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 .load(profileImg)
                 .circleCrop()
                 .into(iv_FeedRVItem_profileImg)
-            val iv_FeedRVItem_mainImg = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem2_mainImg)
+            val iv_FeedRVItem_mainImg =
+                itemView.findViewById<ImageView>(R.id.iv_FeedRVItem2_mainImg)
+            val iv_FeedRVItem2_mainImg2 =
+                itemView.findViewById<ImageView>(R.id.iv_FeedRVItem2_mainImg2)
 
-            storage.reference.child(uid).child(cid).child(mainImg).downloadUrl
+
+            if (isGroup == ln0) { storRef=storage.reference.child(uid).child(cid)}
+            else if(isGroup==ln1) {storRef=storage.reference.child("groupcalendar").child(cid)}
+
+
+            storRef.child(mainImg[0]["imageUri"] as String).downloadUrl
                 .addOnSuccessListener { imageUri ->
                     Glide.with(itemView)
                         .load(imageUri)
@@ -191,16 +225,34 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                         .load(R.drawable.feed_main_img)
                         .into(iv_FeedRVItem_mainImg);
                 }
+            storRef.child(mainImg[1]["imageUri"] as String).downloadUrl
+                .addOnSuccessListener { imageUri ->
+                    Glide.with(itemView)
+                        .load(imageUri)
+                        .into(iv_FeedRVItem2_mainImg2);
+                }
+                .addOnFailureListener {
+                    Glide.with(itemView)
+                        .load(R.drawable.feed_main_img)
+                        .into(iv_FeedRVItem2_mainImg2);
+                }
         }
     }
     inner class MultiViewHolder3(itemView : View) : RecyclerView.ViewHolder(itemView) {
         var cid: String = ""
         var uid: String = ""
         var nickname: String = ""
-        var mainImg: String = ""
+        var mainImg:ArrayList<HashMap<String, Any>> = arrayListOf()
         var profileImg: String = ""
         var content: String = ""
-        val type : Int = 0
+        var publicScope:Long=0
+        var category:String=""
+        var date:String=""
+        var type : Long = 0
+        var isGroup:Long=0
+        lateinit var storRef:StorageReference
+
+
 
         // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item: FeedModel) {
@@ -209,7 +261,9 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
             content = item.content
             profileImg = item.profileImg
             mainImg = item.mainImg
-
+            isGroup=item.isGroup
+            date=item.date
+            itemView.findViewById<TextView>(R.id.tv_FeedRVItem_date).text=date
 
             val tv_FeedRVItem_nickname =
                 itemView.findViewById<TextView>(R.id.tv_FeedRVItem3_nickname)
@@ -224,8 +278,16 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 .circleCrop()
                 .into(iv_FeedRVItem_profileImg)
             val iv_FeedRVItem_mainImg = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem3_mainImg)
+            val iv_FeedRVItem3_Img=itemView.findViewById<ImageView>(R.id.iv_FeedRVItem3_Img)
+            val iv_FeedRVItem3_Img2=itemView.findViewById<ImageView>(R.id.iv_FeedRVItem3_Img2)
 
-            storage.reference.child(uid).child(cid).child(mainImg).downloadUrl
+
+
+            if (isGroup == ln0) { storRef=storage.reference.child(uid).child(cid)}
+            else if(isGroup==ln1) {storRef=storage.reference.child("groupcalendar").child(cid)}
+
+
+            storRef.child(mainImg[0]["imageUri"] as String).downloadUrl
                 .addOnSuccessListener { imageUri ->
                     Glide.with(itemView)
                         .load(imageUri)
@@ -236,16 +298,45 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                         .load(R.drawable.feed_main_img)
                         .into(iv_FeedRVItem_mainImg);
                 }
+            storRef.child(mainImg[1]["imageUri"] as String).downloadUrl
+                .addOnSuccessListener { imageUri ->
+                    Glide.with(itemView)
+                        .load(imageUri)
+                        .into(iv_FeedRVItem3_Img);
+                }
+                .addOnFailureListener {
+                    Glide.with(itemView)
+                        .load(R.drawable.feed_main_img)
+                        .into(iv_FeedRVItem3_Img);
+                }
+            storRef.child(mainImg[2]["imageUri"] as String).downloadUrl
+                .addOnSuccessListener { imageUri ->
+                    Glide.with(itemView)
+                        .load(imageUri)
+                        .into(iv_FeedRVItem3_Img2);
+                }
+                .addOnFailureListener {
+                    Glide.with(itemView)
+                        .load(R.drawable.feed_main_img)
+                        .into(iv_FeedRVItem3_Img2);
+                }
         }
     }
     inner class MultiViewHolder4(itemView : View) : RecyclerView.ViewHolder(itemView) {
         var cid: String = ""
         var uid: String = ""
         var nickname: String = ""
-        var mainImg: String = ""
+        var mainImg:ArrayList<HashMap<String, Any>> = arrayListOf()
         var profileImg: String = ""
         var content: String = ""
-        val type : Int = 0
+        var publicScope:Long=0
+        var category:String=""
+        var date:String=""
+        var type : Long = 0
+        var isGroup:Long=0
+        lateinit var storRef:StorageReference
+
+
 
         // feed_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item: FeedModel) {
@@ -254,7 +345,9 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
             content = item.content
             profileImg = item.profileImg
             mainImg = item.mainImg
-
+            isGroup=item.isGroup
+            date=item.date
+            itemView.findViewById<TextView>(R.id.tv_FeedRVItem_date).text=date
 
             val tv_FeedRVItem_nickname =
                 itemView.findViewById<TextView>(R.id.tv_FeedRVItem_nickname)
@@ -269,8 +362,14 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                 .circleCrop()
                 .into(iv_FeedRVItem_profileImg)
             val iv_FeedRVItem_mainImg = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem_mainImg)
+            val iv_FeedRVItem_Img = itemView.findViewById<ImageView>(R.id.iv_FeedRVItem_Img)
 
-            storage.reference.child(uid).child(cid).child(mainImg).downloadUrl
+
+            if (isGroup == ln0) { storRef=storage.reference.child(uid).child(cid)}
+            else if(isGroup==ln1) {storRef=storage.reference.child("groupcalendar").child(cid)}
+
+
+            storRef.child(mainImg[0]["imageUri"] as String).downloadUrl
                 .addOnSuccessListener { imageUri ->
                     Glide.with(itemView)
                         .load(imageUri)
@@ -280,6 +379,17 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
                     Glide.with(itemView)
                         .load(R.drawable.feed_main_img)
                         .into(iv_FeedRVItem_mainImg);
+                }
+            storRef.child(mainImg[1]["imageUri"] as String).downloadUrl
+                .addOnSuccessListener { imageUri ->
+                    Glide.with(itemView)
+                        .load(imageUri)
+                        .into(iv_FeedRVItem_Img);
+                }
+                .addOnFailureListener {
+                    Glide.with(itemView)
+                        .load(R.drawable.feed_main_img)
+                        .into(iv_FeedRVItem_Img);
                 }
         }
     }

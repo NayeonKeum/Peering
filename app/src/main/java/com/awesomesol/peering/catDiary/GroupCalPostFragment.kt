@@ -1,4 +1,4 @@
-package com.awesomesol.peering.calendar
+package com.awesomesol.peering.catDiary
 
 import android.app.AlertDialog
 import android.content.Context
@@ -13,6 +13,7 @@ import android.widget.*
 import androidx.activity.OnBackPressedCallback
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,7 @@ import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
 
 
-class PostFragment : Fragment() {
+class GroupCalPostFragment : Fragment() {
 
 
     private val TAG="갤러리"
@@ -72,6 +73,7 @@ class PostFragment : Fragment() {
     private lateinit var callback:OnBackPressedCallback
 
     private lateinit var dateGalleryData: ArrayList<HashMap<String, Any>>
+    private lateinit var dataList_fromGaL: ArrayList<HashMap<String, Any>>
     private var content:String=""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,18 +92,48 @@ class PostFragment : Fragment() {
             nickname=bundle.getString("nickname").toString()
             profileImagePath=bundle.getString("profileImagePath").toString()
 
+
             storRef=storage.reference.child(uid).child(cid)
 
             try{
-                Log.d(TAG, "넘어온 번들: ${bundle.getSerializable("dateGalleryData")}")
                 dateGalleryData = bundle.getSerializable("dateGalleryData") as ArrayList<HashMap<String, Any>>
-                Log.d(TAG, "넘어온 번들 갤데화: $dateGalleryData")
+                Log.d(TAG, "넘어온 번들 갤데화1: $dateGalleryData")
             } catch(e:NullPointerException){
-                dateGalleryData= arrayListOf()
+                Log.d(TAG, "넘어온 번들1 null")
+                dateGalleryData = arrayListOf()
             }
+            try{
+                dataList_fromGaL=bundle.getSerializable("dataList_fromGaL") as ArrayList<HashMap<String, Any>>
+                Log.d(TAG, "넘어온 번들 갤데화2: $dataList_fromGaL")
+            } catch(e:NullPointerException){
+                Log.d(TAG, "넘어온 번들2 null")
+                dataList_fromGaL = arrayListOf()
+            }
+
         }
 
     }
+
+    fun storageCallback(callback:(ArrayList<HashMap<String, Any>>)->Unit){
+        // HashMap<String, ArrayList<HashMap<String, Any>>>
+        // 그외
+        val imgsOfDate: ArrayList<HashMap<String, Any>>? = dataList_fromGaL
+        if (imgsOfDate != null) {
+            for (img in imgsOfDate){
+                val imgUri:String= img["imageUri"] as String
+                val fileName="myCal"+Random().nextInt(100000)
+                img["imageUri"]=fileName
+                storage.reference.child("groupcalendar").child(cid).child(fileName)
+                    .putFile(imgUri.toUri())
+                    .addOnSuccessListener {}
+                    .addOnFailureListener{}
+
+            }
+            dataList_fromGaL=imgsOfDate
+            callback(imgsOfDate)
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -125,7 +157,6 @@ class PostFragment : Fragment() {
 
 
 
-
         val rv:RecyclerView=view.findViewById<View>(R.id.bottomsheetview).findViewById<RecyclerView>(
             R.id.rv_PostFragment
         )
@@ -140,65 +171,69 @@ class PostFragment : Fragment() {
         rv.adapter=galleryRVAdapter
 
 
-        Log.d(TAG, "targetDate에 있는 사진 개수: " + dateGalleryData.size)
-        val datasize: Int? =dateGalleryData.size
-        Log.d(TAG+"뭐들었니", dateGalleryData.toString())
+        var groupNuserGalData:ArrayList<HashMap<String, Any>> = arrayListOf()
+        groupNuserGalData.addAll(dateGalleryData)
 
-        val titleimgs:ArrayList<String> = arrayListOf()
-        for (i : Int in 0 until datasize!!){
-            val ln1:Long=1
-            val ln2:Long=2
-            // 대표사진(2) 거나 게시 사진(1)이면
-            if (dateGalleryData[i]["used"]?.equals(ln1) == true){
-                images.add(dateGalleryData[i]["imageUri"] as String)
+        storageCallback {
+            if(dateGalleryData.size!=0 && dataList_fromGaL.size!=0){
+                dataList_fromGaL[0]["used"]=0
             }
-            else if (dateGalleryData[i]["used"]?.equals(ln2) == true){
-                titleimgs.add(dateGalleryData[i]["imageUri"] as String)
+            groupNuserGalData.addAll(dataList_fromGaL)
+
+            Log.d(TAG, "사진 개수: " + groupNuserGalData.size)
+            val datasize: Int? =groupNuserGalData.size
+            Log.d(TAG+"뭐들었니", groupNuserGalData.toString())
+
+            val titleimgs:ArrayList<String> = arrayListOf()
+            for (i : Int in 0 until datasize!!){
+                val ln1:Long=1
+                val ln2:Long=2
+                // 대표사진(2) 거나 게시 사진(1)이면
+                if (groupNuserGalData[i]["used"]?.equals(ln1) == true){
+                    images.add(groupNuserGalData[i]["imageUri"] as String)
+                }
+                else if (groupNuserGalData[i]["used"]?.equals(ln2) == true){
+                    titleimgs.add(groupNuserGalData[i]["imageUri"] as String)
+                }
             }
+
+            Log.d(TAG, "groupNuserGalData, $groupNuserGalData")
+            galleryRVAdapter.setDataList(groupNuserGalData)
+
+
+            // 바텀 쉿 부착!
+            bottomView= view?.findViewById(R.id.ll_PostFragment_bottomsheet)!!
+            bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
+
+
+            // 둥근 모서리
+            cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
+            cl_PostFragment.clipToOutline=true
+
+            // 초기에 해주는 거!
+            sliderViewPager = view.findViewById(R.id.sliderViewPager)
+            layoutIndicator = view.findViewById(R.id.layoutIndicators)
+
+            sliderViewPager!!.offscreenPageLimit = 1
+
+            var allImgs:ArrayList<String> = arrayListOf()
+            allImgs.addAll(titleimgs)
+            allImgs.addAll(images)
+
+
+
+            sliderViewPager!!.adapter = GroupCalImageSliderAdapter(requireContext(), allImgs, uid, cid)
+
+            sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
+                override fun onPageSelected(position: Int) {
+                    super.onPageSelected(position)
+                    setCurrentIndicator(position)
+                }
+            })
+            setupIndicators(allImgs.size)
+
         }
 
-        galleryRVAdapter.setDataList(dateGalleryData)
-
-
-        // 바텀 쉿 부착!
-        bottomView= view?.findViewById(R.id.ll_PostFragment_bottomsheet)!!
-        bottomSheetBehavior= BottomSheetBehavior.from(bottomView as View)
-
-        // 전체 숨김
-        // behavior.state = BottomSheetBehavior.STATE_HIDDEN
-        // peekHight 만큼
-//        bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
-//
-//        inflater.inflate(R.layout.fragment_post_bottomsheet_photos, container).findViewById<ImageView>(
-//            R.id.iv_bottomsheet_up
-//        ).setOnClickListener {
-//            // 전체 보여주기
-//            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-//        }
-
-        // 둥근 모서리
-        cl_PostFragment=view.findViewById(R.id.cl_PostFragment)
-        cl_PostFragment.clipToOutline=true
-
-        // 초기에 해주는 거!
-        sliderViewPager = view.findViewById(R.id.sliderViewPager)
-        layoutIndicator = view.findViewById(R.id.layoutIndicators)
-
-        sliderViewPager!!.offscreenPageLimit = 1
-
-        var allImgs:ArrayList<String> = arrayListOf()
-        allImgs.addAll(titleimgs)
-        allImgs.addAll(images)
-
-        sliderViewPager!!.adapter = ImageSliderAdapter(requireContext(), allImgs, uid, cid)
-
-        sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
-            override fun onPageSelected(position: Int) {
-                super.onPageSelected(position)
-                setCurrentIndicator(position)
-            }
-        })
-        setupIndicators(allImgs.size)
 
 
         //키보드 올라올때 바텀네비케이션 올라오는거 처리 부분
@@ -263,7 +298,7 @@ class PostFragment : Fragment() {
         var category=""
         // categories:HashMap<String, ArrayList<String>>={놀기=[방탈출, 연극, 뮤지컬], 여가=[스키], 일상=[]}
 
-        categories_and_feedname_Callback(){ s_c_hashmap->
+        categories_and_feedname_Callback{ s_c_hashmap->
 
             publicScope=s_c_hashmap["publicScope"] as Long
             category=s_c_hashmap["category"] as String
@@ -389,8 +424,24 @@ class PostFragment : Fragment() {
                                     feedList=document.data["feedList"] as HashMap<String, String>
                                 }
                             }
-                            hh[dateym]=galleryRVAdapter.dateGalleryData
+
+                            /**
+                             * 1, 2인 것만 빼오고, 나머지는 아예 저장도 하지 말 것.
+                             */
+                            var finalData:ArrayList<HashMap<String, Any>> = arrayListOf()
+                            val ln0:Long=0
+                            for (data in galleryRVAdapter.dateGalleryData){
+                                if (data["used"]==ln0){
+                                    continue
+                                }else{
+                                    finalData.add(data)
+                                }
+                            }
+                            Log.d(TAG, "finalData, $finalData")
+
+                            hh[dateym]=finalData
                             contList[dateym]=ncontent
+
 
                             fs.collection("calendars").document(cid).update("dataList4", hh)
                                     .addOnSuccessListener { Log.d(TAG, "d성공") }
@@ -408,18 +459,15 @@ class PostFragment : Fragment() {
                                         val lnum: Long = 2
                                         val lnum1: Long = 1
                                         if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
-                                            val feed = hh[dateym]?.size?.let { it1 ->
-                                                FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym,
-                                                    it1.toLong(), 0
-                                                )
-                                            }
+                                            // 여기서 피드에 있는 거 다 가져오는 수정 해야함!!!
+
+                                            val feed = hh[dateym]?.let { it1 -> FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym, it1.size.toLong(), 1) }
                                             if (feed != null) {
                                                 fs.collection("feeds").document(feedName).set(feed)
                                                     .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                     .addOnFailureListener { Log.d(TAG, "f실패") }
                                             }
                                             break
-
                                         }
                                     }
                                 }
@@ -435,11 +483,8 @@ class PostFragment : Fragment() {
                                         val lnum: Long = 2
                                         val lnum1: Long = 1
                                         if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
-                                            val feed = hh[dateym]?.size?.let { it1 ->
-                                                FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym,
-                                                    it1.toLong(), 0
-                                                )
-                                            }
+                                            val feed = hh[dateym]?.let { it1 -> FeedModel(cid, uid, nickname,hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym, it1.size.toLong(), 1) }
+
                                             feedList[dateym]?.let { it1 ->
                                                 if (feed != null) {
                                                     fs.collection("feeds").document(it1).set(feed)
@@ -489,18 +534,29 @@ class PostFragment : Fragment() {
                                     val feedName = feedListcallback[dateym] as String
                                     fs.collection("feeds").document(feedName).get()
                                         .addOnSuccessListener {
-                                            var hmap:HashMap<String, Any> = hashMapOf()
-                                            hmap["category"]=it.data?.get("category") as String
-                                            hmap["publicScope"]=it.data?.get("publicScope") as Long
-                                            callback(hmap)
+                                            try {
+                                                var hmap: HashMap<String, Any> = hashMapOf()
+                                                hmap["category"] =
+                                                    it.data?.get("category") as String
+                                                hmap["publicScope"] =
+                                                    it.data?.get("publicScope") as Long
+                                                callback(hmap)
+                                            }catch(e:java.lang.NullPointerException){
+                                                var hmap:HashMap<String, Any> = hashMapOf()
+                                                val ln0:Long=0
+                                                hmap["category"]="없음"
+                                                hmap["publicScope"]=ln0
+                                                callback(hmap)
+                                            }
+                                            catch(e:IllegalArgumentException){
+                                                var hmap:HashMap<String, Any> = hashMapOf()
+                                                val ln0:Long=0
+                                                hmap["category"]="없음"
+                                                hmap["publicScope"]=ln0
+                                                callback(hmap)
+                                            }
                                         }
                                 } catch(e:NullPointerException){
-                                    var hmap:HashMap<String, Any> = hashMapOf()
-                                    val ln0:Long=0
-                                    hmap["category"]="없음"
-                                    hmap["publicScope"]=ln0
-                                    callback(hmap)
-                                }catch(e:IllegalArgumentException){
                                     var hmap:HashMap<String, Any> = hashMapOf()
                                     val ln0:Long=0
                                     hmap["category"]="없음"
@@ -518,7 +574,7 @@ class PostFragment : Fragment() {
         callback = object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 Log.d(TAG, "백프레스 눌름")
-                val calendarFragment = CalendarMainFragment()
+                val calendarFragment = GroupCalMainFragment()
                 activity?.supportFragmentManager?.beginTransaction()
                     ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
             }
@@ -553,10 +609,13 @@ class PostFragment : Fragment() {
         var userID:String = uid
         var calID:String = cid
 
+        val TAG="갤 어댑터"
+
 
 
         internal fun setDataList(dateGalleryData: ArrayList<HashMap<String, Any>>) {
             this.dateGalleryData = dateGalleryData
+            Log.d(TAG, "this.dateGalleryData, ${this.dateGalleryData}")
         }
 
         // Provide a direct reference to each of the views with data items
@@ -569,6 +628,8 @@ class PostFragment : Fragment() {
                 addminus=itemView.findViewById(R.id.iv_PostFragment_addminusbtn)
                 addtitle=itemView.findViewById(R.id.iv_PostFragment_addtitle)
             }
+
+
         }
 
         fun setView(parentView: View){
@@ -591,29 +652,33 @@ class PostFragment : Fragment() {
 
         // Involves populating data into the item through holder
         override fun onBindViewHolder(holder: GalleryRVAdapter.ViewHolder, position: Int) {
-
             // Get the data model based on position
+
+            Log.d(TAG, "dateGalleryData222[position] ${dateGalleryData[position]}")
+
             var data = dateGalleryData[position]
             val ln0:Long=0
             val ln1:Long=1
             val ln2:Long=2
-            if(dateGalleryData[position]["used"]?.equals(ln0) == true){
-                holder.addminus.setImageResource(R.drawable.gallery_add)
-                holder.addtitle.setImageResource(R.drawable.titlephototrans)
-            }
-            else if(dateGalleryData[position]["used"]?.equals(ln1) == true){
-                holder.addminus.setImageResource(R.drawable.gallery_minus)
-                holder.addtitle.setImageResource(R.drawable.titlephototrans)
-            }
-            else if(dateGalleryData[position]["used"]?.equals(ln2) == true){
-                holder.addminus.setImageResource(R.drawable.gallery_minus)
-                holder.addtitle.setImageResource(R.drawable.titlephoto)
+            when {
+                dateGalleryData[position]["used"]?.equals(ln0) == true -> {
+                    holder.addminus.setImageResource(R.drawable.gallery_add)
+                    holder.addtitle.setImageResource(R.drawable.titlephototrans)
+                }
+                dateGalleryData[position]["used"]?.equals(ln1) == true -> {
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephototrans)
+                }
+                dateGalleryData[position]["used"]?.equals(ln2) == true -> {
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephoto)
+                }
             }
 
 
             // Set item views based on your views and data model
             val uri:String=data.get("imageUri").toString()
-            storRef=storage.reference.child(userID).child(calID)
+            storRef=storage.reference.child("groupcalendar").child(calID)
             storRef.child(uri).downloadUrl
                 .addOnSuccessListener { imageUri->
                     Glide.with(context)
@@ -677,7 +742,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.adapter = GroupCalImageSliderAdapter(context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
@@ -735,7 +800,7 @@ class PostFragment : Fragment() {
                 // 둥근 모서리
                 cl_PostFragment.clipToOutline=true
 
-                sliderViewPager!!.adapter = ImageSliderAdapter(context, allImg, userID, calID)
+                sliderViewPager!!.adapter = GroupCalImageSliderAdapter(context, allImg, userID, calID)
                 sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
                     override fun onPageSelected(position: Int) {
                         super.onPageSelected(position)
