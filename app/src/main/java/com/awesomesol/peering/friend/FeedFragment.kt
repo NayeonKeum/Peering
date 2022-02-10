@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_feed.*
@@ -26,6 +27,8 @@ class FeedFragment : Fragment() {
     val adapter = FeedRVAdapter(feedDataList)     // 리사이클러 뷰 어댑터
 
     private lateinit var callback:OnBackPressedCallback
+
+    private var uid:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,9 +44,12 @@ class FeedFragment : Fragment() {
 //                // 친구의 UUID 로 메시지 보내기 가능
 //            }
 //        }
+        arguments?.let {
+            uid = it.getString("id").toString()
 
-
+        }
     }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
@@ -61,54 +67,6 @@ class FeedFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        /*
-        val feeds = db.collection("feeds")
-
-        val feed1 = hashMapOf(
-            "mainImg" to "a",
-            "profileImg" to "b",
-            "nickname" to "Lee",
-            "content" to "반가워!!!! 이게 잘 되어야 할텐데....제발ㄹ...."
-        )
-
-        feeds.document("Feed_one").set(feed1)
-
-        val feed2 = hashMapOf(
-            "mainImg" to "c",
-            "profileImg" to "d",
-            "nickname" to "Kim",
-            "content" to "hihihihihihiihihihi 안녕 반가워~!!~!!~!!~!!"
-        )
-
-        feeds.document("Feed_two").set(feed2)
-
-        val feed3 = hashMapOf(
-            "mainImg" to "e",
-            "profileImg" to "f",
-            "nickname" to "Cho",
-            "content" to "이건 세 번째 리사이클러뷰 item에 들어갈 내용이다~~!!!!! 일단 오케이오케이...!!!!!"
-        )
-
-        feeds.document("Feed_three").set(feed3)
-
-        val feed4 = hashMapOf(
-            "mainImg" to "g",
-            "profileImg" to "h",
-            "nickname" to "Park",
-            "content" to "더이상 무슨 말을 해야 할 지 모르겠다 이걸로 끄으으으으으으ㅡㅌ"
-        )
-
-        feeds.document("Feed_four").set(feed4)
-
-        val feed5 = hashMapOf(
-            "mainImg" to "g",
-            "profileImg" to "h",
-            "nickname" to "Yang",
-            "content" to "끝인 줄 알았지만 일단 몇 개 더 추가할 것이다!"
-        )
-
-        feeds.document("Feed_five").set(feed5)*/
 
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_feed, container, false)
@@ -146,34 +104,57 @@ class FeedFragment : Fragment() {
         }
     }
 
-   private fun getFBFeedData(){
-        db.collection("feeds")    // 작업할 컬렉션
-            .get()                   // 문서 가져오기
-            .addOnSuccessListener { result ->
-                // 성공할 경우
-                Log.d(TAG, "result $result")
-                feedDataList.clear()
-                for (document in result){    // 가져온 문서들은 result에 들어감
-                    val item = FeedModel(
-                            document["cid"] as String,
-                            document["uid"] as String,
-                            document["nickname"] as String,
-                            document["mainImg"] as ArrayList<HashMap<String, Any>>,
-                            document["profileImg"] as String,
-                            document["content"] as String,
-                        document["publicScope"] as Long,
-                        document["category"] as String,
-                        document["date"] as String,
-                        document["type"] as Long,
-                        document["group"] as Long)
+    private fun getFBFeedData(){
+        val uid_list : ArrayList<String> = arrayListOf()
+        val ln1:Long=0
+        val ln2:Long=1
+        val ln3:Long=2
 
-                    feedDataList.add(item)
-                    Log.d(TAG, "${document.id} => ${document.data}")
+
+        db.collection("users").document(uid).get()
+            .addOnSuccessListener {
+
+                val hmap = it.data?.get("friendList") as HashMap<String, Long>
+                for (data in hmap){
+
+                    if(data.value.equals(ln1) == true){
+                        uid_list.add(data.key)
+                        Log.d(TAG,uid_list[0])
+                    }
                 }
-                adapter.notifyDataSetChanged()    // 리사이클러 뷰 갱신
-            }
-            .addOnFailureListener { exception ->
-                Log.w(TAG, "Error getting documents: ", exception)
+                val feedRef = db.collection("feeds")
+                feedRef.whereIn("uid", uid_list).get()
+                    .addOnSuccessListener { result ->
+                        Log.d(TAG, "result ${result}")
+
+                        for (document in result){
+                            Log.d(TAG, document.data["publicScope"].toString())
+                            if(document.data["publicScope"]?.equals(ln2) == true  || document.data["publicScope"]?.equals(ln3) == true ){
+
+                                feedRef.orderBy("date", Query.Direction.DESCENDING)
+
+                                val item = FeedModel(
+                                    document["cid"] as String,
+                                    document["uid"] as String,
+                                    document["nickname"] as String,
+                                    document["mainImg"] as ArrayList<HashMap<String, Any>>,
+                                    document["profileImg"] as String,
+                                    document["content"] as String,
+                                    document["publicScope"] as Long,
+                                    document["category"] as String,
+                                    document["date"] as String,
+                                    document["type"] as Long,
+                                    document["group"] as Long)
+
+                                feedDataList.add(item)
+                                Log.d(TAG, "${document.id} => ${document.data}")
+                            }
+                        }
+                        adapter.notifyDataSetChanged()    // 리사이클러 뷰 갱신
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.w(TAG, "Error getting documents: ", exception)
+                    }
             }
     }
 }
