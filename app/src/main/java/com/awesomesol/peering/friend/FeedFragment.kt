@@ -152,7 +152,6 @@ class FeedFragment : Fragment() {
                 }
 
 
-
                 uid_list.add(uid)
 
                 val feedRef = db.collection("feeds")
