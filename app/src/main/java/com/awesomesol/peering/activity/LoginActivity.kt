@@ -117,7 +117,7 @@ class LoginActivity : AppCompatActivity(){
 //                                                .addOnFailureListener { exception ->
 //                                                    Log.d(TAG, "fs 에 유저 정보 수정 실패")
 //                                                }
-                                    }
+//                                   }
                                 }
                                 .addOnFailureListener { exception -> }
 
