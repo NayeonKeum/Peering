@@ -9,13 +9,14 @@
 ## Technology Stack
 
 </br>
+
 <p align="center">
   
-<img src="https://user-images.githubusercontent.com/68985625/153458477-9f5a9746-9882-418d-8dc2-a41b07f2908a.png" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://user-images.githubusercontent.com/68985625/153458488-78be0100-a035-4aeb-afa3-e5880c296260.png" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-  <img src="https://user-images.githubusercontent.com/68985625/153458498-0ceb5812-1e13-4ec2-a868-47980af593a8.png" width="100">
+<img src="https://user-images.githubusercontent.com/68985625/153458477-9f5a9746-9882-418d-8dc2-a41b07f2908a.png" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/68985625/153458488-78be0100-a035-4aeb-afa3-e5880c296260.png" width="100">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img src="https://user-images.githubusercontent.com/68985625/153458498-0ceb5812-1e13-4ec2-a868-47980af593a8.png" width="100">
 
 </p>
+
+
 </br>
 
 ### Android Studio 4.1.0
