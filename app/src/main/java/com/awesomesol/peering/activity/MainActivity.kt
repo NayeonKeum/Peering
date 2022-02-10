@@ -182,8 +182,8 @@ class MainActivity : AppCompatActivity() {
             ) {
                 when (newIndex) {
                     0 -> {
-                        val calendarFragment= FriendCalMainFragment()
-                        // val calendarFragment= GroupCalMainFragment()
+                        // val calendarFragment= FriendCalMainFragment()
+                        val calendarFragment= GroupCalMainFragment()
                         //val calendarFragment = CalendarMainFragment()
                         // val calendarFragment = PostFragment()
 
@@ -226,8 +226,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
         kakaoDataCallback{
-            val calendarFragment= FriendCalMainFragment()
-            // val calendarFragment= GroupCalMainFragment()
+            // val calendarFragment= FriendCalMainFragment()
+            val calendarFragment= GroupCalMainFragment()
             //val calendarFragment = CalendarMainFragment()
             // val calendarFragment = PostFragment()
 

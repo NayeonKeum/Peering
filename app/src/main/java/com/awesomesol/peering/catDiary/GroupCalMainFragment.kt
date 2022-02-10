@@ -1,6 +1,10 @@
 package com.awesomesol.peering.catDiary
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
+import android.media.Image
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -56,7 +60,12 @@ class GroupCalMainFragment : BaseFragment() {
     val fs= Firebase.firestore
     val storage= FirebaseStorage.getInstance()
 
+    var iv_CharacterFragment_profileImg:ImageView?=null
 
+    var pickImageFromAlbum=0
+
+
+    var groupImgUri: Uri?=null
 
 
     companion object {
@@ -80,8 +89,10 @@ class GroupCalMainFragment : BaseFragment() {
             // 이건 정보 번들 받아야함
             id = "2077226967"
             cid="calendar573471"
-            nickname = "예시) 금나연"
+            nickname = "예시) 금나연(그룹이면 됨)"
+            // 이거 그룹명
             profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+            // 위에 거가 그룹 사진이겠지(groupName)
             email ="ryann3@naver.com"
             followingNum = "140"
             gid="grouptest"
@@ -128,12 +139,42 @@ class GroupCalMainFragment : BaseFragment() {
         groupNuserCallback {
             viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_nickname)?.text = nickname
 
-            viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)?.let {
-                Glide.with(viewFrag)
-                    .load(profileImagePath)
-                    .circleCrop()
-                    .into(it)
+
+            iv_CharacterFragment_profileImg =  viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)
+
+
+            if (profileImagePath != ""){
+                storage.reference.child("groupcalendar").child(cid).child("groupImg").downloadUrl
+                    .addOnSuccessListener { groupImg->
+                        Log.d(TAG, "이 불러오는 데 성공했구만")
+
+                        iv_CharacterFragment_profileImg?.let { it1 ->
+                            Glide.with(viewFrag)
+                                .load(groupImg)
+                                .circleCrop()
+                                .into(it1)
+                    }
+
+                }
+            }else{
+                iv_CharacterFragment_profileImg?.let {
+                    Glide.with(viewFrag)
+                        .load(R.drawable.badge)
+                        .circleCrop()
+                        .into(it)
+                }
             }
+
+
+            iv_CharacterFragment_profileImg?.setOnClickListener {
+                var photoPickerIntent=Intent(Intent.ACTION_PICK)
+                photoPickerIntent.type="image/*"
+                startActivityForResult(photoPickerIntent, pickImageFromAlbum)
+            }
+
+
+
+
             viewFrag?.findViewById<TextView>(R.id.tv_CharacterFragment_followingNum)?.text =
                 followingNum
 
@@ -177,6 +218,40 @@ class GroupCalMainFragment : BaseFragment() {
         iv_CalendarFragment2_righttarr=viewFrag.findViewById(R.id.iv_CalendarFragment2_rightarr)
         
         return viewFrag
+    }
+
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if(requestCode==pickImageFromAlbum){
+            if(resultCode== Activity.RESULT_OK){
+                groupImgUri=data?.data
+
+                view?.let {
+                    iv_CharacterFragment_profileImg?.let { it1 ->
+                        Glide.with(it)
+                            .load(groupImgUri)
+                            .circleCrop()
+                            .into(it1)
+                    }
+                }
+
+                groupImgUri?.let {
+                    storage.reference.child("groupcalendar").child(cid).child("groupImg")
+                        .putFile(it)
+                        .addOnSuccessListener {
+                            Log.d(TAG, "이거이거 성공했구만")
+
+                            fs.collection("groups").document(gid).update("groupImg", "true")
+
+
+                        }
+                }
+
+            }
+        }
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
