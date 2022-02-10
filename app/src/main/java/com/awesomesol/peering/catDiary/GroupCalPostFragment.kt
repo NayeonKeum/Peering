@@ -458,6 +458,7 @@ class GroupCalPostFragment : Fragment() {
                                         val lnum1: Long = 1
                                         if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
                                             // 여기서 피드에 있는 거 다 가져오는 수정 해야함!!!
+
                                             val feed = hh[dateym]?.let { it1 -> FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym, it1.size.toLong(), 1) }
                                             if (feed != null) {
                                                 fs.collection("feeds").document(feedName).set(feed)
@@ -481,6 +482,7 @@ class GroupCalPostFragment : Fragment() {
                                         val lnum1: Long = 1
                                         if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
                                             val feed = hh[dateym]?.let { it1 -> FeedModel(cid, uid, nickname,hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym, it1.size.toLong(), 1) }
+
                                             feedList[dateym]?.let { it1 ->
                                                 if (feed != null) {
                                                     fs.collection("feeds").document(it1).set(feed)

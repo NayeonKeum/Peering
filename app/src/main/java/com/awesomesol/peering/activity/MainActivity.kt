@@ -199,6 +199,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     1 -> {
                         val friendFragment = catDiaryFragment()
+                        val userBundle = Bundle()
+                        userBundle.putString("id", uid)
+                        friendFragment.arguments = userBundle
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.main_screen_panel, friendFragment).commit()
                     }

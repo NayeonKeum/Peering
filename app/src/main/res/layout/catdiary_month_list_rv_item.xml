@@ -18,12 +18,12 @@
 
     <ImageView
         android:id="@+id/ghostMonthFill"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
         android:layout_marginTop="3dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ghost_o_fill" />
+        android:src="@drawable/ghost_o_fill" />
 
     <TextView
         android:id="@+id/textMonth"
