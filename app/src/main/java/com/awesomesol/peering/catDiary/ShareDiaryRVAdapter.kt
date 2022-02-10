@@ -1,5 +1,6 @@
 package com.awesomesol.peering.catDiary
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -31,10 +32,6 @@ class ShareDiaryRVAdapter(val items: ArrayList<GroupInfo>) : RecyclerView.Adapte
     }
 
     inner class Viewholder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val groupName: String = ""
-        val groupNum: String = ""
-        val groupImg: String = ""
-
         fun bindItems(item: GroupInfo) {
             val groupTitle = itemView.findViewById<TextView>(R.id.tv_catDiaryFragment_groupName)
             val groupNumber = itemView.findViewById<TextView>(R.id.tv_catDiaryFragment_groupNum)
