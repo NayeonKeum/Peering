@@ -110,7 +110,6 @@ class GroupCalMainFragment : BaseFragment() {
               Log.d(TAG, "it.data, ${it.data}")
               // callback(it.data as HashMap<String, Any>)
             nickname= it.data?.get("groupName") as String
-            followingNum= it.data!!["groupNum"] as String
             cid= it.data!!["cid"] as String
             uidList= it.data!!["uidList"] as ArrayList<String>
             profileImagePath=it.data!!["groupImg"] as String

@@ -208,6 +208,14 @@ class MainActivity : AppCompatActivity() {
 
                     2 -> {
                         val feedFragment = FeedFragment()
+
+                        val userBundle = Bundle()
+                        userBundle.putString("id", uid)
+                        userBundle.putString("email", email)
+                        userBundle.putString("nickname", nickname)
+                        userBundle.putString("profileImagePath", profileImagePath)
+                        feedFragment.arguments = userBundle
+
                         supportFragmentManager.beginTransaction()
                             .replace(R.id.main_screen_panel, feedFragment).commit()
                     }
