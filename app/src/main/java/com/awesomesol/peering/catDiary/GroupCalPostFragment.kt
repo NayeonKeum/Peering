@@ -220,6 +220,8 @@ class GroupCalPostFragment : Fragment() {
             allImgs.addAll(titleimgs)
             allImgs.addAll(images)
 
+
+
             sliderViewPager!!.adapter = GroupCalImageSliderAdapter(requireContext(), allImgs, uid, cid)
 
             sliderViewPager!!.registerOnPageChangeCallback(object : OnPageChangeCallback() {
@@ -546,6 +548,13 @@ class GroupCalPostFragment : Fragment() {
                                                 hmap["publicScope"]=ln0
                                                 callback(hmap)
                                             }
+                                            catch(e:IllegalArgumentException){
+                                                var hmap:HashMap<String, Any> = hashMapOf()
+                                                val ln0:Long=0
+                                                hmap["category"]="없음"
+                                                hmap["publicScope"]=ln0
+                                                callback(hmap)
+                                            }
                                         }
                                 } catch(e:NullPointerException){
                                     var hmap:HashMap<String, Any> = hashMapOf()
@@ -619,6 +628,8 @@ class GroupCalPostFragment : Fragment() {
                 addminus=itemView.findViewById(R.id.iv_PostFragment_addminusbtn)
                 addtitle=itemView.findViewById(R.id.iv_PostFragment_addtitle)
             }
+
+
         }
 
         fun setView(parentView: View){
@@ -641,23 +652,27 @@ class GroupCalPostFragment : Fragment() {
 
         // Involves populating data into the item through holder
         override fun onBindViewHolder(holder: GalleryRVAdapter.ViewHolder, position: Int) {
-
             // Get the data model based on position
+
+            Log.d(TAG, "dateGalleryData222[position] ${dateGalleryData[position]}")
+
             var data = dateGalleryData[position]
             val ln0:Long=0
             val ln1:Long=1
             val ln2:Long=2
-            if(dateGalleryData[position]["used"]?.equals(ln0) == true){
-                holder.addminus.setImageResource(R.drawable.gallery_add)
-                holder.addtitle.setImageResource(R.drawable.titlephototrans)
-            }
-            else if(dateGalleryData[position]["used"]?.equals(ln1) == true){
-                holder.addminus.setImageResource(R.drawable.gallery_minus)
-                holder.addtitle.setImageResource(R.drawable.titlephototrans)
-            }
-            else if(dateGalleryData[position]["used"]?.equals(ln2) == true){
-                holder.addminus.setImageResource(R.drawable.gallery_minus)
-                holder.addtitle.setImageResource(R.drawable.titlephoto)
+            when {
+                dateGalleryData[position]["used"]?.equals(ln0) == true -> {
+                    holder.addminus.setImageResource(R.drawable.gallery_add)
+                    holder.addtitle.setImageResource(R.drawable.titlephototrans)
+                }
+                dateGalleryData[position]["used"]?.equals(ln1) == true -> {
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephototrans)
+                }
+                dateGalleryData[position]["used"]?.equals(ln2) == true -> {
+                    holder.addminus.setImageResource(R.drawable.gallery_minus)
+                    holder.addtitle.setImageResource(R.drawable.titlephoto)
+                }
             }
 
 
