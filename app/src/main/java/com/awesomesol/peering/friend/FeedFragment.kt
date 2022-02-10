@@ -150,19 +150,21 @@ class FeedFragment : Fragment() {
             .get()                   // 문서 가져오기
             .addOnSuccessListener { result ->
                 // 성공할 경우
+                Log.d(TAG, "result $result")
                 feedDataList.clear()
                 for (document in result){    // 가져온 문서들은 result에 들어감
                     val item = FeedModel(
                             document["cid"] as String,
                             document["uid"] as String,
                             document["nickname"] as String,
-                            document["mainImg"] as String,
+                            document["mainImg"] as ArrayList<HashMap<String, Any>>,
                             document["profileImg"] as String,
                             document["content"] as String,
                         document["publicScope"] as Long,
                         document["category"] as String,
                         document["date"] as String,
-                        document["type"] as Int)
+                        document["type"] as Long,
+                        document["group"] as Long)
 
                     feedDataList.add(item)
                     Log.d(TAG, "${document.id} => ${document.data}")

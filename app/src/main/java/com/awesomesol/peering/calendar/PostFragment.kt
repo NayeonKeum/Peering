@@ -402,16 +402,24 @@ class PostFragment : Fragment() {
                             if (feedList[dateym].equals("") || feedList[dateym]==null) {
                                 // 피드 처음 생김!
                                 val feedName = "Feed_" + Random().nextInt(100000)
-                                val hh = hh[dateym]
-                                if (hh != null) {
-                                    for (data in hh) {
+                                val hmap = hh[dateym]
+                                if (hmap != null) {
+                                    for (data in hmap) {
                                         val lnum: Long = 2
-                                        if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym,2)
-                                            fs.collection("feeds").document(feedName).set(feed)
+                                        val lnum1: Long = 1
+                                        if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
+                                            val feed = hh[dateym]?.size?.let { it1 ->
+                                                FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym,
+                                                    it1.toLong(), 0
+                                                )
+                                            }
+                                            if (feed != null) {
+                                                fs.collection("feeds").document(feedName).set(feed)
                                                     .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                     .addOnFailureListener { Log.d(TAG, "f실패") }
+                                            }
                                             break
+
                                         }
                                     }
                                 }
@@ -421,16 +429,23 @@ class PostFragment : Fragment() {
                                         .addOnFailureListener { Log.d(TAG, "c실패") }
                             } else{
                                 // 피드 이름 feedList에서 받아옴(수정됨)
-                                val hh = hh[dateym]
-                                if (hh != null) {
-                                    for (data in hh) {
+                                val hmap = hh[dateym]
+                                if (hmap != null) {
+                                    for (data in hmap) {
                                         val lnum: Long = 2
-                                        if (data["used"] as Long == lnum) {
-                                            val feed = FeedModel(cid, uid, nickname, data["imageUri"] as String, profileImagePath, ncontent, publicScope, category, dateym,2)
+                                        val lnum1: Long = 1
+                                        if (data["used"] as Long == lnum || data["used"] as Long == lnum1) {
+                                            val feed = hh[dateym]?.size?.let { it1 ->
+                                                FeedModel(cid, uid, nickname, hh[dateym] as ArrayList<HashMap<String, Any>>, profileImagePath, ncontent, publicScope, category, dateym,
+                                                    it1.toLong(), 0
+                                                )
+                                            }
                                             feedList[dateym]?.let { it1 ->
-                                                fs.collection("feeds").document(it1).set(feed)
+                                                if (feed != null) {
+                                                    fs.collection("feeds").document(it1).set(feed)
                                                         .addOnSuccessListener { Log.d(TAG, "f성공") }
                                                         .addOnFailureListener { Log.d(TAG, "f실패") }
+                                                }
                                             }
                                             break
                                         }
