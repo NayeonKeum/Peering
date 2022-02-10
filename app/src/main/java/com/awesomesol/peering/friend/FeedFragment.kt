@@ -80,6 +80,34 @@ class FeedFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val postreadonlyFragment = PostReadOnlyFragment()
 
+                var cid=adapter.items[position].cid
+                var uid=adapter.items[position].uid
+                var nickname=adapter.items[position].nickname
+                var mainImg=adapter.items[position].mainImg
+                var profileImg=adapter.items[position].profileImg
+                var content=adapter.items[position].content
+                var publicScope=adapter.items[position].publicScope
+                var category=adapter.items[position].category
+                var dateym=adapter.items[position].date
+                var type=adapter.items[position].type
+                var group=adapter.items[position].isGroup
+
+
+                var date="${dateym.split("-")[0]}년 ${dateym.split("-")[1]}월 ${dateym.split("-")[2]}일"
+
+
+                var bundle = Bundle()
+                bundle.putString("date", date) //nn년 nn월 nn일
+                bundle.putString("dateym", dateym) // 2022-02-02
+                bundle.putString("cid", cid) // cid
+                bundle.putSerializable("dateGalleryData", mainImg)
+                bundle.putSerializable("content", content)
+                bundle.putString("uid", uid) // 친구!!!!! uid임
+                bundle.putString("nickname", nickname) //
+                bundle.putString("profileImagePath", profileImg)
+
+                postreadonlyFragment.arguments = bundle
+
                 requireActivity().supportFragmentManager.beginTransaction()
                     .replace(R.id.main_screen_panel, postreadonlyFragment).commit()
             }
@@ -114,20 +142,22 @@ class FeedFragment : Fragment() {
 
         db.collection("users").document(uid).get()
             .addOnSuccessListener {
-
                 val hmap = it.data?.get("friendList") as HashMap<String, Long>
                 for (data in hmap){
-
-                    if(data.value.equals(ln0) == true){
+                    if(data.value == ln1){
                         uid_list.add(data.key)
-                        Log.d(TAG,uid_list[0])
                     }
                 }
+
+
+
+                uid_list.add(uid)
+                Log.d(TAG, "uid_list $uid_list")
+
                 val feedRef = db.collection("feeds")
                 feedRef.whereIn("uid", uid_list).get()
                     .addOnSuccessListener { result ->
-                        Log.d(TAG, "result ${result}")
-
+                        Log.d(TAG, "RESULT, ${result.documents}")
                         for (document in result){
                             Log.d(TAG, document.data["publicScope"].toString())
                             if(document.data["publicScope"]?.equals(ln1) == true  || document.data["publicScope"]?.equals(ln2) == true ){
