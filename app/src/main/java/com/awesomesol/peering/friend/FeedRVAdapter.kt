@@ -147,7 +147,6 @@ class FeedRVAdapter(val items : ArrayList<FeedModel>) : RecyclerView.Adapter<Rec
             val iv_FeedRVItem_mainImg =
                 itemView.findViewById<ImageView>(R.id.iv_FeedRVItem1_mainImg)
 
-
             if (isGroup == ln0) { storRef=storage.reference.child(uid).child(cid)}
             else if(isGroup==ln1) {storRef=storage.reference.child("groupcalendar").child(cid)}
 

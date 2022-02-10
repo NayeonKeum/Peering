@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.awesomesol.peering.calendar.PostReadOnlyFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -77,10 +78,10 @@ class FeedFragment : Fragment() {
         // adapter에서 item을 클릭할 경우 FeedFragment으로 넘어가는 코드
         adapter.itemClick = object : FeedRVAdapter.ItemClick{
             override fun onClick(view: View, position: Int) {
-                val diaryreadFragment = DiaryReadFragment()
+                val postreadonlyFragment = PostReadOnlyFragment()
 
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_screen_panel, diaryreadFragment).commit()
+                    .replace(R.id.main_screen_panel, postreadonlyFragment).commit()
             }
         }
         rv.adapter = adapter
@@ -94,7 +95,7 @@ class FeedFragment : Fragment() {
         friendBtnClick()
     }
 
-    // friends 버튼 클릭
+    // friend
     private fun friendBtnClick() {
         iv_FeedFragment_friends.setOnClickListener {
             val friendFragment = FriendFragment()
@@ -106,10 +107,10 @@ class FeedFragment : Fragment() {
 
     private fun getFBFeedData(){
         val uid_list : ArrayList<String> = arrayListOf()
-        val ln1:Long=0
-        val ln2:Long=1
-        val ln3:Long=2
 
+        val ln0:Long=0
+        val ln1:Long=1
+        val ln2:Long=2
 
         db.collection("users").document(uid).get()
             .addOnSuccessListener {
@@ -117,7 +118,7 @@ class FeedFragment : Fragment() {
                 val hmap = it.data?.get("friendList") as HashMap<String, Long>
                 for (data in hmap){
 
-                    if(data.value.equals(ln1) == true){
+                    if(data.value.equals(ln0) == true){
                         uid_list.add(data.key)
                         Log.d(TAG,uid_list[0])
                     }
@@ -129,7 +130,7 @@ class FeedFragment : Fragment() {
 
                         for (document in result){
                             Log.d(TAG, document.data["publicScope"].toString())
-                            if(document.data["publicScope"]?.equals(ln2) == true  || document.data["publicScope"]?.equals(ln3) == true ){
+                            if(document.data["publicScope"]?.equals(ln1) == true  || document.data["publicScope"]?.equals(ln2) == true ){
 
                                 feedRef.orderBy("date", Query.Direction.DESCENDING)
 
