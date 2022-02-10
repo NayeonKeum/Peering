@@ -25,7 +25,7 @@
             android:id="@+id/iv_PostFragment_addminusbtn"
             android:layout_width="17dp"
             android:layout_height="17dp"
-            android:src="@drawable/gallery_minus"
+            android:src="@drawable/gallery_add"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 

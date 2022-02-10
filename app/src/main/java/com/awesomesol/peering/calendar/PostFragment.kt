@@ -500,6 +500,12 @@ class PostFragment : Fragment() {
                                     hmap["category"]="없음"
                                     hmap["publicScope"]=ln0
                                     callback(hmap)
+                                }catch(e:IllegalArgumentException){
+                                    var hmap:HashMap<String, Any> = hashMapOf()
+                                    val ln0:Long=0
+                                    hmap["category"]="없음"
+                                    hmap["publicScope"]=ln0
+                                    callback(hmap)
                                 }
 
                             }
