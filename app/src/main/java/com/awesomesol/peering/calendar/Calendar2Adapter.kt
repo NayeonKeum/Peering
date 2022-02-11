@@ -74,7 +74,6 @@ class Calendar2Adapter(
 
         // furangCalendar.initBaseCalendar()
         //  = furangCalendar.dateList
-
     }
 
 
@@ -171,7 +170,6 @@ class Calendar2Adapter(
                             val uri=data["imageUri"] as String
                             storRef.child(uri).downloadUrl
                                 .addOnSuccessListener { imageUri->
-
                                     Glide.with(context)
                                         .load(imageUri)
                                         .into(iv_CalendarFragment2_img);

@@ -147,8 +147,6 @@ class GroupCalFragment(index: Int, var cid: String) : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         instance = this
-        // 원래는 초기화할 때 옴
-        cid="calendar111111"
 
 
         // 여기는 캘린더 뷰 가져오는 거(수정x)
