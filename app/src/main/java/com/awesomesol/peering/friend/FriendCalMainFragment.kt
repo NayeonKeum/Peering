@@ -57,7 +57,7 @@ class FriendCalMainFragment : Fragment() {
 //            profileImagePath = it.getString("profileImagePath").toString()
             // 이건 정보 번들 받아야함
             id = "2077226967"
-            nickname = "예시) 금나연"
+            nickname = "금나연"
             profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
             email ="ryann3@naver.com"
             //나중에 데이터 제대로 연결해야함
@@ -68,6 +68,18 @@ class FriendCalMainFragment : Fragment() {
             diaryCnt="10"
             diaryLeftCnt="2"
         }
+
+        id = "2077226967"
+        nickname = "금나연"
+        profileImagePath = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
+        email ="ryann3@naver.com"
+        //나중에 데이터 제대로 연결해야함
+        progressNow = "70"
+        followingNum = "140"
+        followerNum = "200"
+        dDay = "100"
+        diaryCnt="10"
+        diaryLeftCnt="2"
 
         instance = this
 
