@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.CalendarInfo
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import org.threeten.bp.LocalDate
@@ -62,6 +63,7 @@ class catDiaryFragment : Fragment() {
         val iv_catDiaryFragment_rightarr=view.findViewById<ImageView>(R.id.iv_catDiaryFragment_rightarr)
 
         val makeCategoryBtn = view.findViewById<ImageView>(R.id.iv_catDiaryFragment_category_create_btn)
+        val makeGroupBtn = view.findViewById<ImageView>(R.id.iv_catDiaryFragment_group_create_btn)
 
         var year_monthList:HashMap<String, Int> = hashMapOf()
 
@@ -74,6 +76,38 @@ class catDiaryFragment : Fragment() {
                         .update("categoryList", categoryName)
                 }
 
+            })
+        }
+
+        makeGroupBtn.setOnClickListener {
+            val dialog = context?.let { it2 -> GroupDialog(it2) }
+            dialog?.showDialog()
+            dialog?.setOnClickListener(object : GroupDialog.OnDialogClickListener {
+                override fun onClicked(groupName: String) {
+                    val gid = "group" + Random().nextInt(10000)
+                    val cid = "calendar" + Random().nextInt(10000)
+                    val gtem = GroupInfo(
+                        groupName,
+                        "",
+                        cid,
+                        arrayListOf(uid)
+                    )
+                    val gcal= CalendarInfo(
+                        arrayListOf(uid),
+                        cid,
+                        groupName,
+                        hashMapOf(),//dataList4: HashMap<String, ArrayList<HashMap<String, Any>>>,
+                        hashMapOf(),
+                        hashMapOf()
+                    )
+                    db.collection("groups").document(gid).set(gtem)
+                        .addOnSuccessListener {
+                            groupDataList.add(gtem)
+                            rv3.adapter = ShareDiaryRVAdapter(groupDataList)
+                            rv3.layoutManager = GridLayoutManager(context, 4)
+                        }
+                    db.collection("calendars").document(cid).set(gcal)
+                }
             })
         }
 
@@ -177,7 +211,7 @@ class catDiaryFragment : Fragment() {
 //                            var categoryList = hashMapOf(
 //                                "categoryList" to arrayListOf("놀기", "일상", "친구", "안녕", "반가워")
 //                            )
-//                            db.collection("categories").document(uid).set(categories)
+//                            db.collection("categories").document(uid).set(categoryList)
 
                             if (list != null) {
                                 categoryDataList = list
@@ -225,8 +259,6 @@ class catDiaryFragment : Fragment() {
 //                    )
 //                    db.collection("groups").document(gid).set(item)//
                 }
-                //                    ShareDiaryRVAdapter(groupDataList).notifyDataSetChanged()    // 리사이클러 뷰 갱신
-                Log.d(TAG, "데이터!! ${groupDataList.toString()}")
                 rv3.adapter = ShareDiaryRVAdapter(groupDataList)
                 rv3.layoutManager = GridLayoutManager(context, 4)
             }

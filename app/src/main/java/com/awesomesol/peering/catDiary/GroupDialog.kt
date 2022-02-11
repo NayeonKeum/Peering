@@ -18,16 +18,16 @@ class GroupDialog(context: Context) {
 
     fun showDialog()
     {
-        dialog.setContentView(R.layout.catdiary_sharediary_rv_item)
+        dialog.setContentView(R.layout.catdiary_sharediary_create_dialog)
         dialog.window!!.setLayout(WindowManager.LayoutParams.WRAP_CONTENT, WindowManager.LayoutParams.WRAP_CONTENT)
         dialog.setCanceledOnTouchOutside(true)
         dialog.setCancelable(true)
         dialog.show()
 
-        val createCategory = dialog.findViewById<EditText>(R.id.et_catDiaryFragment_group)
+        val createGroup = dialog.findViewById<EditText>(R.id.et_catDiaryFragment_group)
 
         dialog.btn_catDiaryFragment_group_finish.setOnClickListener {
-            onClickListener.onClicked(createCategory.text.toString())
+            onClickListener.onClicked(createGroup.text.toString())
             dialog.dismiss()
         }
     }
