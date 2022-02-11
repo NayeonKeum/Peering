@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
+import com.awesomesol.peering.calendar.Calendar2Adapter
 import com.awesomesol.peering.calendar.CalendarInfo
+import com.awesomesol.peering.calendar.PostFragment
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import org.threeten.bp.LocalDate
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
@@ -98,6 +101,7 @@ class catDiaryFragment : Fragment() {
                     val gid = "group" + Random().nextInt(10000)
                     val cid = "calendar" + Random().nextInt(10000)
                     val gtem = GroupInfo(
+                        gid,
                         groupName,
                         "https://firebasestorage.googleapis.com/v0/b/peering-58c65.appspot.com/o/applogo.png?alt=media&token=99d9aa01-ddae-45e6-8d9b-fee0a0ad3528",
                         cid,
@@ -118,6 +122,21 @@ class catDiaryFragment : Fragment() {
                             rv3.layoutManager = GridLayoutManager(context, 3)
                         }
                     db.collection("calendars").document(cid).set(gcal)
+
+                    val galleryFragment = GroupCalMainFragment()
+                    var bundle = Bundle()
+
+                    bundle.putString("cid", gtem.cid)
+                    bundle.putString("groupName", gtem.groupName)
+                    bundle.putString("groupImg", gtem.groupImg)
+                    bundle.putString("gid", gid)
+
+
+                    galleryFragment.arguments = bundle
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_screen_panel, galleryFragment).commit()
+
+
                 }
             })
         }
@@ -171,7 +190,38 @@ class catDiaryFragment : Fragment() {
 //        }
 
         getFBCategoryData()
-        getFBGroupData()
+        getFBGroupData {it->
+
+            var shareadp=ShareDiaryRVAdapter(it)
+            shareadp.itemClick = object :
+                ShareDiaryRVAdapter.ItemClick {
+                override fun onClick(view: View, position: Int) {
+
+
+                    val galleryFragment = GroupCalMainFragment()
+
+                    val item=shareadp.items[position]
+
+                    var bundle = Bundle()
+                    bundle.putString("cid", item.cid)
+                    bundle.putString("groupName", item.groupName)
+                    bundle.putString("groupImg", item.groupImg)
+                    bundle.putString("gid", item.gid)
+
+                    galleryFragment.arguments = bundle
+                    parentFragmentManager.beginTransaction()
+                        .replace(R.id.main_screen_panel, galleryFragment).commit()
+
+                }
+            }
+
+
+            rv3.adapter = shareadp
+            rv3.layoutManager = GridLayoutManager(context, 3)
+
+        }
+
+
         return view
     }
 
@@ -243,7 +293,7 @@ class catDiaryFragment : Fragment() {
             }
     }
 
-    private fun getFBGroupData() {
+    private fun getFBGroupData(callback:(ArrayList<GroupInfo>)->Unit) {
         db.collection("groups").whereArrayContainsAny("uidList", arrayListOf(uid)).get()
             .addOnSuccessListener { result ->
                 for (document in result) {
@@ -252,6 +302,7 @@ class catDiaryFragment : Fragment() {
 //                    Log.d(TAG, "유저 아이디 리스트! => ${uidList}")
                     val gid = "group" + Random().nextInt(10000)
                     val groupItem = GroupInfo(
+                        document["gid"] as String,
                         document["groupName"] as String,
                         document["groupImg"] as String,
                         document["cid"] as String,
@@ -260,18 +311,8 @@ class catDiaryFragment : Fragment() {
 //                    Log.d(TAG, "아이템!! => ${groupItem}")
                     groupDataList.add(groupItem)
                     Log.d(TAG, groupDataList.toString())
-
-//                    val group1 = hashMapOf(
-//                        "groupName" to "죽여줘",
-//                        "groupNum" to "4",
-//                        "groupImg" to "img",
-//                        "cid" to "uid",
-//                        "uidList" to arrayListOf(1, 2, 3, 4)
-//                    )
-//                    db.collection("groups").document(gid).set(item)//
                 }
-                rv3.adapter = ShareDiaryRVAdapter(groupDataList)
-                rv3.layoutManager = GridLayoutManager(context, 3)
+                callback(groupDataList)
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
