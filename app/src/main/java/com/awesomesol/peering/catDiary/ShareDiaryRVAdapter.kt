@@ -23,8 +23,23 @@ class ShareDiaryRVAdapter(val items: ArrayList<GroupInfo>) : RecyclerView.Adapte
         return Viewholder(v)
     }
 
+    interface ItemClick {
+        fun onClick(view: View, position: Int)
+    }
+
+    var itemClick: ItemClick? = null
+
+
     override fun onBindViewHolder(holder: ShareDiaryRVAdapter.Viewholder, position: Int) {
+
+
         holder.bindItems(items[position])
+
+        if (itemClick != null) {
+            holder?.itemView?.setOnClickListener { v ->
+                itemClick?.onClick(v, position)
+            }
+        }
     }
 
     override fun getItemCount(): Int {

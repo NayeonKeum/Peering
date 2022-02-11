@@ -32,12 +32,7 @@ class FriendRVAdapter(val items : ArrayList<FriendModel>) : RecyclerView.Adapter
             email.text = item.email
             val profileImg = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_profileImg)
             Glide.with(itemView).load(R.drawable.feed_profile).circleCrop().into(profileImg)
-            val feedImg1 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg1)
-            Glide.with(itemView).load(R.drawable.feed_main_img).circleCrop().into(feedImg1)
-            val feedImg2 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg2)
-            Glide.with(itemView).load(R.drawable.feed_main_img).circleCrop().into(feedImg2)
-            val feedImg3 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg3)
-            Glide.with(itemView).load(R.drawable.feed_main_img).circleCrop().into(feedImg3)
+
         }
     }
 }

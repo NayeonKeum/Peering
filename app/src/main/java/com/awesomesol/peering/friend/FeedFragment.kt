@@ -128,7 +128,7 @@ class FeedFragment : Fragment() {
     // friend
     private fun friendBtnClick() {
         iv_FeedFragment_friends.setOnClickListener {
-            val friendFragment = FriendFragment()
+            val friendFragment = FriendFragment(uid)
             requireActivity().supportFragmentManager.beginTransaction()
                 .replace(R.id.main_screen_panel, friendFragment).commit()
 

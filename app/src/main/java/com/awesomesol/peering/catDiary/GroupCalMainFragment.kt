@@ -32,7 +32,6 @@ class GroupCalMainFragment : BaseFragment() {
     val TAG="그룹캘"
 
     //lateinit var id:String
-    lateinit var email:String
     lateinit var groupName:String
     lateinit var groupImg: String
 
@@ -76,31 +75,12 @@ class GroupCalMainFragment : BaseFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-//            id = it.getString("id").toString()
-//            email = it.getString("email").toString()
-//            nickname = it.getString("nickname").toString()
-//            profileImagePath = it.getString("profileImagePath").toString()
-            // 이건 정보 번들 받아야함
-            //id = "2077226967"
-            cid="calendar573471"
-            groupName = "예시) 금나연(그룹이면 됨)"
-            // 이거 그룹명
-            groupImg = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
-            // 위에 거가 그룹 사진이겠지(groupName)
-            email ="ryann3@naver.com"
-            gid="grouptest" // 이거 필수(키 값)
-
-
+            cid = it.getString("cid").toString()
+            gid = it.getString("gid").toString()
+            groupName = it.getString("groupName").toString()
+            groupImg = it.getString("groupImg").toString()
 
         }
-
-        cid="calendar573471"
-        groupName = "예시) 금나연(그룹이면 됨)"
-        // 이거 그룹명
-        groupImg = "https://k.kakaocdn.net/dn/vXU15/btrrr6F36R6/dDTklzgUtdGkHiRFZ5Mdm1/img_640x640.jpg"
-        // 위에 거가 그룹 사진이겠지(groupName)
-        email ="ryann3@naver.com"
-        gid="grouptest" // 이거 필수(키 값)
 
         instance = this
 
@@ -113,7 +93,7 @@ class GroupCalMainFragment : BaseFragment() {
               Log.d(TAG, "it.data, ${it.data}")
               // callback(it.data as HashMap<String, Any>)
             groupName= it.data?.get("groupName") as String
-            cid= it.data!!["cid"] as String
+            // cid= it.data!!["cid"] as String
             uidList= it.data!!["uidList"] as ArrayList<String>
             groupImg=it.data!!["groupImg"] as String
 
@@ -145,7 +125,7 @@ class GroupCalMainFragment : BaseFragment() {
             iv_CharacterFragment_profileImg =  viewFrag?.findViewById<ImageView>(R.id.iv_CharacterFragment_profileImg)
 
 
-            if (groupImg != ""){
+            if (groupImg != "https://firebasestorage.googleapis.com/v0/b/peering-58c65.appspot.com/o/applogo.png?alt=media&token=99d9aa01-ddae-45e6-8d9b-fee0a0ad3528"){
                 storage.reference.child("groupcalendar").child(cid).child("groupImg").downloadUrl
                     .addOnSuccessListener { groupImg->
                         Log.d(TAG, "이 불러오는 데 성공했구만")

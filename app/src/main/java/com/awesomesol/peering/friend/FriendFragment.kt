@@ -14,31 +14,44 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
 import kotlinx.android.synthetic.main.fragment_feed.*
 import kotlinx.android.synthetic.main.fragment_friend.*
 
-class FriendFragment : Fragment() {
-    val TAG="피드"
+class FriendFragment(val uid:String) : Fragment() {
+
+    val TAG="프렌드"
+
+    val fs= Firebase.firestore
+    val storage= FirebaseStorage.getInstance()
+
+    var friendList:HashMap<String, Long> = hashMapOf()
+
+    var userList:ArrayList<HashMap<String, Any>> = arrayListOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
 
-
-//        // 카카오톡 친구 목록 가져오기 (기본)
-//        TalkApiClient.instance.friends { friends, error ->
-//            if (error != null) {
-//                Log.e(TAG, "카카오톡 친구 목록 가져오기 실패", error)
-//            }
-//            else if (friends != null) {
-//                Log.i(TAG, "카카오톡 친구 목록 가져오기 성공 \n${friends.elements.joinToString("\n")}")
-//                Log.d(TAG, friends.toString())
-//                // 친구의 UUID 로 메시지 보내기 가능
-//            }
-//        }
-
-
     }
+
+    fun userListCallback(callback:(ArrayList<HashMap<String, Any>>)->Unit){
+        fs.collection("users").get().addOnSuccessListener { it->
+
+            Log.d(TAG,"It.documents, ${it.documents}" )
+            Log.d(TAG,"It.documents, ${it.documents[0].data}" )
+            val documents=it.documents
+            for (document in documents){
+                userList.add(document.data as HashMap<String, Any>)
+            }
+            callback(userList)
+
+        }
+    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,18 +62,48 @@ class FriendFragment : Fragment() {
         val view = inflater.inflate(R.layout.fragment_friend, container, false)
         val rv = view.findViewById<RecyclerView>(R.id.rv_FriendFragment)
 
-        val items = ArrayList<FriendModel>()
-        items.add(FriendModel("a", "b",  "c", "d","Kim", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Lee", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Kang", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Cho", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
-        items.add(FriendModel("a", "b", "c", "d","Park", "abc@gmail.com"))
 
-        rv.adapter = FriendRVAdapter(items)
-        rv.layoutManager = LinearLayoutManager(requireContext())
+        val items = ArrayList<FriendModel>()
+
+        userListCallback{ // userList->
+            fs.collection("users").document(uid).get()
+                .addOnSuccessListener {
+                    friendList = it.data?.get("friendList") as HashMap<String, Long>
+                    Log.d(TAG, "friendList $friendList")
+
+                    val uidList:ArrayList<String> = arrayListOf()
+
+                    for (key in friendList.keys){
+                        uidList.add(key)
+                    }
+
+                    Log.d(TAG, "uidList $uidList")
+
+
+
+                    for (key in uidList){
+                        for (data in userList){
+                            if (data["uid"]==key){
+                                var fm=FriendModel()
+                                fm.profileImg=data["profileUrl"] as String
+                                fm.nickname= data["nickName"] as String
+                                fm.email= data["email"] as String
+
+                                Log.d(TAG, "fm $fm")
+                                items.add(fm)
+
+                            }
+                        }
+                    }
+
+
+                    rv.adapter = FriendRVAdapter(items)
+                    rv.layoutManager = LinearLayoutManager(requireContext())
+
+                }
+
+        }
+
 
         return view
     }
