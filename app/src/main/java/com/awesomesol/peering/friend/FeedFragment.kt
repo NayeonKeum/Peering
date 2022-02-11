@@ -138,7 +138,7 @@ class FeedFragment : Fragment() {
     private fun getFBFeedData(){
         val uid_list : ArrayList<String> = arrayListOf()
 
-        val ln0:Long=0
+        // val ln0:Long=0
         val ln1:Long=1
         val ln2:Long=2
 
@@ -155,14 +155,14 @@ class FeedFragment : Fragment() {
                 uid_list.add(uid)
 
                 val feedRef = db.collection("feeds")
-                feedRef.whereIn("uid", uid_list).get()
+                feedRef.whereIn("uid", uid_list).orderBy("date",Query.Direction.DESCENDING).get()
                     .addOnSuccessListener { result ->
 
                         for (document in result){
                             Log.d(TAG, document.data["publicScope"].toString())
                             if(document.data["publicScope"]?.equals(ln1) == true  || document.data["publicScope"]?.equals(ln2) == true ){
 
-                                feedRef.orderBy("date", Query.Direction.DESCENDING)
+                                // feedRef.orderBy("date", Query.Direction.DESCENDING)
 
                                 val item = FeedModel(
                                     document["cid"] as String,
