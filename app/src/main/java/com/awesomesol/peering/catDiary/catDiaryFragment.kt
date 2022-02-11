@@ -72,8 +72,19 @@ class catDiaryFragment : Fragment() {
             dialog?.showDialog()
             dialog?.setOnClickListener(object : CategoryDialog.OnDialogClickListener {
                 override fun onClicked(categoryName: String) {
-                    db.collection("categories").document(uid)
-                        .update("categoryList", categoryName)
+//                    val cItem = CategoryInfo(
+//                        arrayListOf(categoryName)
+//                        hashMapOf(categoryList, arrayListOf(categoryName))
+//                    )
+//                    db.collection("categories").document(uid).set(cItem)
+                    db.collection("categories").document(uid).update("category", categoryName)
+
+
+                    categoryDataList.add(categoryName)
+//                    Log.d(TAG, "리스트!!! ${categoryDataList}")
+                    rv2.adapter = CategoryRVAdapter(categoryDataList)
+                    rv2.layoutManager = LinearLayoutManager(requireContext())
+
                 }
 
             })
