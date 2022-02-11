@@ -16,28 +16,43 @@ class FriendRVAdapter(val items : ArrayList<FriendModel>) : RecyclerView.Adapter
         return Viewholder(v)
     }
 
+    interface ItemClick{
+        fun onClick(view: View, position: Int)
+    }
+
+    var itemClick: ItemClick ?= null
+
     override fun onBindViewHolder(holder: FriendRVAdapter.Viewholder, position: Int) {
         holder.bindItems(items[position])
     }
-
+    //item의 총 갯수
     override fun getItemCount(): Int {
         return items.size
     }
     inner class Viewholder(itemView : View) : RecyclerView.ViewHolder(itemView){
+        var uid: String = ""
+        var nickName: String = ""
+        var email: String = ""
+        var profileImg: String = ""
         // friend_rv_item의 item의 값들을 하나하나 넣어주는 코드
         fun bindItems(item: FriendModel){
+            //uid = item.uid
+            nickName = item.nickname
+            email = item.email
+            profileImg = item.profileImg
             val name = itemView.findViewById<TextView>(R.id.tv_FriendRVItem_nickname)
             name.text = item.nickname
             val email = itemView.findViewById<TextView>(R.id.tv_FriendRVItem_email)
             email.text = item.email
             val profileImg = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_profileImg)
             Glide.with(itemView).load(R.drawable.feed_profile).circleCrop().into(profileImg)
-            val feedImg1 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg1)
+            /* val feedImg1 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg1)
             Glide.with(itemView).load(R.drawable.feed_main_img).circleCrop().into(feedImg1)
             val feedImg2 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg2)
             Glide.with(itemView).load(R.drawable.feed_main_img).circleCrop().into(feedImg2)
             val feedImg3 = itemView.findViewById<ImageView>(R.id.iv_FriendRVItem_feedImg3)
             Glide.with(itemView).load(R.drawable.feed_main_img).circleCrop().into(feedImg3)
+            */
         }
     }
 }
