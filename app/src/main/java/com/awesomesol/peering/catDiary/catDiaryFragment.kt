@@ -103,7 +103,7 @@ class catDiaryFragment : Fragment() {
                     val gtem = GroupInfo(
                         gid,
                         groupName,
-                        "",
+                        "https://firebasestorage.googleapis.com/v0/b/peering-58c65.appspot.com/o/applogo.png?alt=media&token=99d9aa01-ddae-45e6-8d9b-fee0a0ad3528",
                         cid,
                         arrayListOf(uid)
                     )
@@ -119,7 +119,7 @@ class catDiaryFragment : Fragment() {
                         .addOnSuccessListener {
                             groupDataList.add(gtem)
                             rv3.adapter = ShareDiaryRVAdapter(groupDataList)
-                            rv3.layoutManager = GridLayoutManager(context, 4)
+                            rv3.layoutManager = GridLayoutManager(context, 3)
                         }
                     db.collection("calendars").document(cid).set(gcal)
 
@@ -217,7 +217,7 @@ class catDiaryFragment : Fragment() {
 
 
             rv3.adapter = shareadp
-            rv3.layoutManager = GridLayoutManager(context, 4)
+            rv3.layoutManager = GridLayoutManager(context, 3)
 
         }
 
@@ -313,7 +313,6 @@ class catDiaryFragment : Fragment() {
                     Log.d(TAG, groupDataList.toString())
                 }
                 callback(groupDataList)
-
             }
             .addOnFailureListener { exception ->
                 Log.w(TAG, "Error getting documents: ", exception)
