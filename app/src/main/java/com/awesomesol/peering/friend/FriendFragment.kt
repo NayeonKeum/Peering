@@ -117,7 +117,6 @@ class FriendFragment(val uid:String) : Fragment() {
                     }
 
 
-
                     rv.adapter = shareadp
 
                     rv.layoutManager = LinearLayoutManager(requireContext())
