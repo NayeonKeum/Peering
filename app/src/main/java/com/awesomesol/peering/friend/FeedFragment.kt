@@ -12,11 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
-import com.awesomesol.peering.calendar.PostReadOnlyFragment
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.kakao.sdk.user.UserApiClient
 import kotlinx.android.synthetic.main.fragment_feed.*
 
 class FeedFragment : Fragment() {
@@ -28,8 +27,6 @@ class FeedFragment : Fragment() {
     val adapter = FeedRVAdapter(feedDataList)     // 리사이클러 뷰 어댑터
 
     private lateinit var callback:OnBackPressedCallback
-
-    private var uid:String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,12 +42,9 @@ class FeedFragment : Fragment() {
 //                // 친구의 UUID 로 메시지 보내기 가능
 //            }
 //        }
-        arguments?.let {
-            uid = it.getString("id").toString()
 
-        }
+
     }
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         callback = object : OnBackPressedCallback(true) {
@@ -58,7 +52,7 @@ class FeedFragment : Fragment() {
                 Log.d(TAG, "백프레스 눌름")
                 val calendarFragment = CalendarMainFragment()
                 activity?.supportFragmentManager?.beginTransaction()
-                        ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
+                    ?.replace(R.id.main_screen_panel, calendarFragment)?.commit()
             }
         }
         requireActivity().onBackPressedDispatcher.addCallback(this, callback)
@@ -69,6 +63,54 @@ class FeedFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
+        /*
+        val feeds = db.collection("feeds")
+
+        val feed1 = hashMapOf(
+            "mainImg" to "a",
+            "profileImg" to "b",
+            "nickname" to "Lee",
+            "content" to "반가워!!!! 이게 잘 되어야 할텐데....제발ㄹ...."
+        )
+
+        feeds.document("Feed_one").set(feed1)
+
+        val feed2 = hashMapOf(
+            "mainImg" to "c",
+            "profileImg" to "d",
+            "nickname" to "Kim",
+            "content" to "hihihihihihiihihihi 안녕 반가워~!!~!!~!!~!!"
+        )
+
+        feeds.document("Feed_two").set(feed2)
+
+        val feed3 = hashMapOf(
+            "mainImg" to "e",
+            "profileImg" to "f",
+            "nickname" to "Cho",
+            "content" to "이건 세 번째 리사이클러뷰 item에 들어갈 내용이다~~!!!!! 일단 오케이오케이...!!!!!"
+        )
+
+        feeds.document("Feed_three").set(feed3)
+
+        val feed4 = hashMapOf(
+            "mainImg" to "g",
+            "profileImg" to "h",
+            "nickname" to "Park",
+            "content" to "더이상 무슨 말을 해야 할 지 모르겠다 이걸로 끄으으으으으으ㅡㅌ"
+        )
+
+        feeds.document("Feed_four").set(feed4)
+
+        val feed5 = hashMapOf(
+            "mainImg" to "g",
+            "profileImg" to "h",
+            "nickname" to "Yang",
+            "content" to "끝인 줄 알았지만 일단 몇 개 더 추가할 것이다!"
+        )
+
+        feeds.document("Feed_five").set(feed5)*/
+
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_feed, container, false)
         val rv = view.findViewById<RecyclerView>(R.id.rv_FeedFragment)
@@ -78,40 +120,10 @@ class FeedFragment : Fragment() {
         // adapter에서 item을 클릭할 경우 FeedFragment으로 넘어가는 코드
         adapter.itemClick = object : FeedRVAdapter.ItemClick{
             override fun onClick(view: View, position: Int) {
-                val postreadonlyFragment = PostReadOnlyFragment()
-
-                var cid=adapter.items[position].cid
-                var uid=adapter.items[position].uid
-                var nickname=adapter.items[position].nickname
-                var mainImg=adapter.items[position].mainImg
-                var profileImg=adapter.items[position].profileImg
-                var content=adapter.items[position].content
-                var publicScope=adapter.items[position].publicScope
-                var category=adapter.items[position].category
-                var dateym=adapter.items[position].date
-                var type=adapter.items[position].type
-                var group=adapter.items[position].isGroup
-
-                Log.d(TAG, "mainImg, $mainImg")
-
-                var date="${dateym.split("-")[0]}년 ${dateym.split("-")[1]}월 ${dateym.split("-")[2]}일"
-
-
-                var bundle = Bundle()
-                bundle.putString("date", date) //nn년 nn월 nn일
-                bundle.putString("dateym", dateym) // 2022-02-02
-                bundle.putString("cid", cid) // cid
-                bundle.putSerializable("dateGalleryData", mainImg)
-                bundle.putSerializable("content", content)
-                bundle.putString("uid", uid) // 친구!!!!! uid임
-                bundle.putString("nickname", nickname) //
-                bundle.putString("profileImagePath", profileImg)
-                bundle.putString("group", group.toString())
-
-                postreadonlyFragment.arguments = bundle
+                val diaryreadFragment = DiaryReadFragment()
 
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_screen_panel, postreadonlyFragment).commit()
+                    .replace(R.id.main_screen_panel, diaryreadFragment).commit()
             }
         }
         rv.adapter = adapter
@@ -122,70 +134,50 @@ class FeedFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         friendBtnClick()
     }
 
-    // friend
+    // friends 버튼 클릭
     private fun friendBtnClick() {
         iv_FeedFragment_friends.setOnClickListener {
-            val friendFragment = FriendFragment()
-            requireActivity().supportFragmentManager.beginTransaction()
-                .replace(R.id.main_screen_panel, friendFragment).commit()
-
+            UserApiClient.instance.me{ user, error->
+                var uid = user?.id.toString()
+                val friendFragment = FriendFragment(uid)
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_screen_panel, friendFragment).commit()
+            }
         }
     }
 
     private fun getFBFeedData(){
-        val uid_list : ArrayList<String> = arrayListOf()
+        db.collection("feeds")    // 작업할 컬렉션
+            .get()                   // 문서 가져오기
+            .addOnSuccessListener { result ->
+                // 성공할 경우
+                Log.d(TAG, "result $result")
+                feedDataList.clear()
+                for (document in result){    // 가져온 문서들은 result에 들어감
+                    val item = FeedModel(
+                        document["cid"] as String,
+                        document["uid"] as String,
+                        document["nickname"] as String,
+                        document["mainImg"] as ArrayList<HashMap<String, Any>>,
+                        document["profileImg"] as String,
+                        document["content"] as String,
+                        document["publicScope"] as Long,
+                        document["category"] as String,
+                        document["date"] as String,
+                        document["type"] as Long,
+                        document["group"] as Long)
 
-        // val ln0:Long=0
-        val ln1:Long=1
-        val ln2:Long=2
-
-        db.collection("users").document(uid).get()
-            .addOnSuccessListener {
-                val hmap = it.data?.get("friendList") as HashMap<String, Long>
-                for (data in hmap){
-                    if(data.value == ln1){
-                        uid_list.add(data.key)
-                    }
+                    feedDataList.add(item)
+                    Log.d(TAG, "${document.id} => ${document.data}")
                 }
-
-
-                uid_list.add(uid)
-
-                val feedRef = db.collection("feeds")
-                feedRef.whereIn("uid", uid_list).orderBy("date",Query.Direction.DESCENDING).get()
-                    .addOnSuccessListener { result ->
-
-                        for (document in result){
-                            Log.d(TAG, document.data["publicScope"].toString())
-                            if(document.data["publicScope"]?.equals(ln1) == true  || document.data["publicScope"]?.equals(ln2) == true ){
-
-                                // feedRef.orderBy("date", Query.Direction.DESCENDING)
-
-                                val item = FeedModel(
-                                    document["cid"] as String,
-                                    document["uid"] as String,
-                                    document["nickname"] as String,
-                                    document["mainImg"] as ArrayList<HashMap<String, Any>>,
-                                    document["profileImg"] as String,
-                                    document["content"] as String,
-                                    document["publicScope"] as Long,
-                                    document["category"] as String,
-                                    document["date"] as String,
-                                    document["type"] as Long,
-                                    document["group"] as Long)
-
-                                feedDataList.add(item)
-                                Log.d(TAG, "${document.id} => ${document.data}")
-                            }
-                        }
-                        adapter.notifyDataSetChanged()    // 리사이클러 뷰 갱신
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.w(TAG, "Error getting documents: ", exception)
-                    }
+                adapter.notifyDataSetChanged()    // 리사이클러 뷰 갱신
+            }
+            .addOnFailureListener { exception ->
+                Log.w(TAG, "Error getting documents: ", exception)
             }
     }
 }
