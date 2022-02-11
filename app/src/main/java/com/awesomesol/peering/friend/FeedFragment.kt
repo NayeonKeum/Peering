@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.awesomesol.peering.calendar.PostReadOnlyFragment
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -120,11 +121,40 @@ class FeedFragment : Fragment() {
         // adapter에서 item을 클릭할 경우 FeedFragment으로 넘어가는 코드
         adapter.itemClick = object : FeedRVAdapter.ItemClick{
             override fun onClick(view: View, position: Int) {
-                val diaryreadFragment = DiaryReadFragment()
+                val postreadonlyFragment = PostReadOnlyFragment()
+
+                var cid=adapter.items[position].cid
+                var uid=adapter.items[position].uid
+                var nickname=adapter.items[position].nickname
+                var mainImg=adapter.items[position].mainImg
+                var profileImg=adapter.items[position].profileImg
+                var content=adapter.items[position].content
+                var publicScope=adapter.items[position].publicScope
+                var category=adapter.items[position].category
+                var dateym=adapter.items[position].date
+                var type=adapter.items[position].type
+                var group=adapter.items[position].isGroup
+
+
+                var date="${dateym.split("-")[0]}년 ${dateym.split("-")[1]}월 ${dateym.split("-")[2]}일"
+
+
+                var bundle = Bundle()
+                bundle.putString("date", date) //nn년 nn월 nn일
+                bundle.putString("dateym", dateym) // 2022-02-02
+                bundle.putString("cid", cid) // cid
+                bundle.putSerializable("dateGalleryData", mainImg)
+                bundle.putSerializable("content", content)
+                bundle.putString("uid", uid) // 친구!!!!! uid임
+                bundle.putString("nickname", nickname) //
+                bundle.putString("profileImagePath", profileImg)
+
+                postreadonlyFragment.arguments = bundle
 
                 requireActivity().supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_screen_panel, diaryreadFragment).commit()
+                    .replace(R.id.main_screen_panel, postreadonlyFragment).commit()
             }
+
         }
         rv.adapter = adapter
 
