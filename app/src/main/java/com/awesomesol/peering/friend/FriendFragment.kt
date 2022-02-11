@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.awesomesol.peering.R
 import com.awesomesol.peering.calendar.CalendarMainFragment
+import com.awesomesol.peering.catDiary.GroupCalMainFragment
+import com.awesomesol.peering.catDiary.ShareDiaryRVAdapter
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -96,8 +98,28 @@ class FriendFragment(val uid:String) : Fragment() {
                         }
                     }
 
+                    var shareadp= FriendRVAdapter(items)
+                    shareadp.itemClick = object :
+                        FriendRVAdapter.ItemClick {
+                        override fun onClick(view: View, position: Int) {
+                            val galleryFragment = FriendCalMainFragment()
 
-                    rv.adapter = FriendRVAdapter(items)
+                            val item=shareadp.items[position]
+
+                            var bundle = Bundle()
+                            bundle.putString("uu", "sdfsdf")
+
+                            galleryFragment.arguments = bundle
+                            parentFragmentManager.beginTransaction()
+                                .replace(R.id.main_screen_panel, galleryFragment).commit()
+
+                        }
+                    }
+
+
+
+                    rv.adapter = shareadp
+
                     rv.layoutManager = LinearLayoutManager(requireContext())
 
                 }

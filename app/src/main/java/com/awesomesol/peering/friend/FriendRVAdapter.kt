@@ -18,7 +18,19 @@ class FriendRVAdapter(val items : ArrayList<FriendModel>) : RecyclerView.Adapter
 
     override fun onBindViewHolder(holder: FriendRVAdapter.Viewholder, position: Int) {
         holder.bindItems(items[position])
+        if (itemClick != null) {
+            holder?.itemView?.setOnClickListener { v ->
+                itemClick?.onClick(v, position)
+            }
+        }
     }
+
+    interface ItemClick {
+        fun onClick(view: View, position: Int)
+    }
+
+    var itemClick: ItemClick? = null
+
 
     override fun getItemCount(): Int {
         return items.size
